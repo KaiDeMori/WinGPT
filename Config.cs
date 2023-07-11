@@ -1,0 +1,88 @@
+﻿using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
+
+namespace WinGPT;
+
+internal class Config {
+   public static Config       Active             = new();
+   public static Tulpa        ActiveTulpa        = new();
+   public static Conversation ActiveConversation = ActiveTulpa.NewConversation();
+
+   public bool UseSysMsgHack { get; set; }
+
+   private const  string Config_filename                = "Config.json";
+   internal const string tulpas_directory               = "Characters";
+   internal const string conversation_history_directory = "Conversation_History";
+   internal const string marf278down_extenstion         = ".md";
+   internal const string marf278down_filter             = "*.md";
+
+   internal const string conversation_title_prompt = "Generate an ultra short title for this conversation.";
+
+   private static readonly object _lock   = new();
+   public static           bool   loading = false;
+
+   public string BaseDirectory  { get; set; } = "";
+   public string OpenAI_API_Key { get; set; } = "";
+   public string LanguageModel  { get; set; } = "gpt-4";
+
+   public TokenCounter TokenCounter { get; set; } = new();
+
+   public static void Load() {
+      lock (_lock) {
+         if (loading)
+            throw new Exception("Config is already loading.");
+         loading = true;
+      }
+
+      var configfile = Path.Join(Application.StartupPath, Config_filename);
+
+      if (!File.Exists(configfile)) {
+         ConfigErrorCase(false);
+         loading = false;
+         return;
+      }
+
+      JsonSerializerSettings settings = new() {
+         ObjectCreationHandling = ObjectCreationHandling.Replace,
+      };
+      var loadedConfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText(configfile), settings);
+
+      if (Tools.HasNullProperties(loadedConfig))
+         ConfigErrorCase();
+      else
+         Active = loadedConfig;
+
+      lock (_lock) {
+         loading = false;
+      }
+   }
+
+   public static void Save() {
+      lock (_lock) {
+         if (loading)
+            return;
+         //throw new Exception("Do not save while loading.");
+      }
+
+      if (string.IsNullOrWhiteSpace(Active.OpenAI_API_Key))
+         throw new Exception("OpenAI API Key is empty.");
+
+      var configfile = Path.Join(Application.StartupPath, Config_filename);
+      try {
+         var contents = JsonConvert.SerializeObject(Active, Formatting.Indented);
+         File.WriteAllText(configfile, contents);
+      }
+      catch (Exception e) {
+         MessageBox.Show($"Error while saving configuration file: {e.Message}", "Error", MessageBoxButtons.OK,
+            MessageBoxIcon.Error);
+      }
+   }
+
+   private static void ConfigErrorCase(bool invalid = true) {
+      var msg = invalid ? "is invalid" : "was not found";
+      MessageBox.Show($"The configuration file {msg}. Creating default configuration.", "Error", MessageBoxButtons.OK,
+         MessageBoxIcon.Error);
+      Active = new Config();
+      Save();
+   }
+}

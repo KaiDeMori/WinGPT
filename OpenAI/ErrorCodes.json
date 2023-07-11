@@ -1,0 +1,148 @@
+﻿[
+  {
+    "Code": 401,
+    "Name": "Invalid Authentication",
+    "Overview": {
+      "Cause": "Invalid Authentication",
+      "Solution": "Ensure the correct API key and requesting organization are being used."
+    },
+    "Detail": {
+      "Description":
+        "This error message indicates that your authentication credentials are invalid. This could happen for several reasons.",
+      "Reasons": [
+        "You are using a revoked API key.",
+        "You are using a different API key than the one assigned to the requesting organization.",
+        "You are using an API key that does not have the required permissions for the endpoint you are calling."
+      ],
+      "ResolveSteps": [
+        "Check that you are using the correct API key and organization ID in your request header. You can find your API key and organization ID in your account settings.",
+        "If you are unsure whether your API key is valid, you can generate a new one. Make sure to replace your old API key with the new one in your requests and follow our best practices guide."
+      ]
+    }
+  },
+  {
+    "Code": 401,
+    "Name": "Incorrect API key provided",
+    "Overview": {
+      "Cause": "The requesting API key is not correct.",
+      "Solution": "Ensure the API key used is correct, clear your browser cache, or generate a new one."
+    },
+    "Detail": {
+      "Description":
+        "This error message indicates that the API key you are using in your request is not correct. This could happen for several reasons.",
+      "Reasons": [
+        "There is a typo or an extra space in your API key.",
+        "You are using an API key that belongs to a different organization.",
+        "You are using an API key that has been deleted or deactivated.",
+        "An old, revoked API key might be cached locally."
+      ],
+      "ResolveSteps": [
+        "Try clearing your browser's cache and cookies, then try again.",
+        "Check that you are using the correct API key in your request header.",
+        "If you are unsure whether your API key is correct, you can generate a new one. Make sure to replace your old API key in your codebase and follow our best practices guide."
+      ]
+    }
+  },
+  {
+    "Code": 401,
+    "Name": "You must be a member of an organization to use the API",
+    "Overview": {
+      "Cause": "Your account is not part of an organization.",
+      "Solution":
+        "Contact us to get added to a new organization or ask your organization manager to invite you to an organization."
+    },
+    "Detail": {
+      "Description":
+        "This error message indicates that your account is not part of an organization. This could happen for several reasons.",
+      "Reasons": [
+        "You have left or been removed from your previous organization.",
+        "Your organization has been deleted."
+      ],
+      "ResolveSteps": [
+        "If you have left or been removed from your previous organization, you can either request a new organization or get invited to an existing one.",
+        "To request a new organization, reach out to us via help.openai.com",
+        "Existing organization owners can invite you to join their organization via the Members Panel."
+      ]
+    }
+  },
+  {
+    "Code": 429,
+    "Name": "Rate limit reached for requests",
+    "Overview": {
+      "Cause": "You are sending requests too quickly.",
+      "Solution": "Pace your requests. Read the Rate limit guide."
+    },
+    "Detail": {
+      "Description":
+        "This error message indicates that you have hit your assigned rate limit for the API. This means that you have submitted too many tokens or requests in a short period of time and have exceeded the number of requests allowed. This could happen for several reasons.",
+      "Reasons": [
+        "You are using a loop or a script that makes frequent or concurrent requests.",
+        "You are sharing your API key with other users or applications.",
+        "You are using a free plan that has a low rate limit."
+      ],
+      "ResolveSteps": [
+        "Pace your requests and avoid making unnecessary or redundant calls.",
+        "If you are using a loop or a script, make sure to implement a retry logic that respects the rate limit and the response headers. You can read more about our rate limiting policy and best practices in our rate limit guide.",
+        "If you are sharing your organization with other users, note that limits are applied per organization and not per user. It is worth checking on the usage of the rest of your team as this will contribute to the limit.",
+        "If you are using a free or low-tier plan, consider upgrading to a pay-as-you-go plan that offers a higher rate limit. You can compare the restrictions of each plan in our rate limit guide."
+      ]
+    }
+  },
+  {
+    "Code": 429,
+    "Name": "You exceeded your current quota, please check your plan and billing details",
+    "Overview": {
+      "Cause":
+        "You have hit your maximum monthly spend (hard limit) which you can view in the account billing section.",
+      "Solution": "Apply for a quota increase."
+    },
+    "Detail": {
+      "Description":
+        "This error message indicates that you have hit your maximum monthly spend for the API. You can view your maximum monthly limit, under ‘hard limit’ in your [account billing settings](/account/billing/limits). This means that you have consumed all the credits allocated to your plan and have reached the limit of your current billing cycle. This could happen for several reasons.",
+      "Reasons": [
+        "You are using a high-volume or complex service that consumes a lot of credits or tokens.",
+        "Your limit is set too low for your organization’s usage."
+      ],
+      "ResolveSteps": [
+        "Check your current quota in your account settings. You can see how many tokens your requests have consumed in the usage section of your account.",
+        "If you are using a free plan, consider upgrading to a pay-as-you-go plan that offers a higher quota.",
+        "If you need a quota increase, you can apply for one and provide relevant details on expected usage. We will review your request and get back to you in ~7-10 business days."
+      ]
+    }
+  },
+  {
+    "Code": 500,
+    "Name": "The server had an error while processing your request",
+    "Overview": {
+      "Cause": "Issue on our servers.",
+      "Solution": "Retry your request after a brief wait and contact us if the issue persists. Check the status page."
+    },
+    "Detail": {
+      "Description": "No further details provided.",
+      "Reasons": [],
+      "ResolveSteps": []
+    }
+  },
+  {
+    "Code": 503,
+    "Name": "The engine is currently overloaded, please try again later",
+    "Overview": {
+      "Cause": "Our servers are experiencing high traffic.",
+      "Solution": "Please retry your requests after a brief wait."
+    },
+    "Detail": {
+      "Description":
+        "This error message indicates that our servers are experiencing high traffic and are unable to process your request at the moment. This could happen for several reasons.",
+      "Reasons": [
+        "There is a sudden spike or surge in demand for our services.",
+        "There is scheduled or unscheduled maintenance or update on our servers.",
+        "There is an unexpected or unavoidable outage or incident on our servers."
+      ],
+      "ResolveSteps": [
+        "Retry your request after a brief wait. We recommend using an exponential backoff strategy or a retry logic that respects the response headers and the rate limit. You can read more about our rate limit best practices.",
+        "Check our status page for any updates or announcements regarding our services and servers.",
+        "If you are still getting this error after a reasonable amount of time, please contact us for further assistance. We apologize for any inconvenience and appreciate your patience and understanding."
+      ]
+    }
+  }
+]

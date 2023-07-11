@@ -1,0 +1,8 @@
+﻿/.vs
+/bin
+/obj
+/*.user
+/Properties/PublishProfiles/*.user
+Icons/crops_ai_etc/*
+Icons/originals/*
+/_RELEASE
