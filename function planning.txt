@@ -1,0 +1,15 @@
+You will be presented with a chat history.
+1. Generate a short title for the conversation
+2. See if the title fits in any of the predefined categories:
+
+[
+  "Space/Astronomy",
+  "Programming C#",
+  "Beans (plant)"
+]
+
+If it does not fit in any of the predefined categories, create a new category that is appropriate for the topic.
+
+
+function_call={"name": "put_in_category"}
+

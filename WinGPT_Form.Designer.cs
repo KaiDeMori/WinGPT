@@ -40,7 +40,15 @@
             prompt_textBox = new TextBox();
             send_prompt_button = new Button();
             character_textBox = new TextBox();
+            preview_tabControl = new TabControl();
+            webview2_tabPage = new TabPage();
+            webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
+            pretty_tabPage = new TabPage();
+            pretty_htmlPanel = new TheArtOfDev.HtmlRenderer.WinForms.HtmlPanel();
+            markf278down_tabPage = new TabPage();
             response_textBox = new TextBox();
+            cef_tabPage = new TabPage();
+            cefsharp_chromiumWebBrowser = new CefSharp.WinForms.ChromiumWebBrowser();
             new_conversation_button = new Button();
             conversation_name_textBox = new TextBox();
             conversation_history_treeView = new TreeView();
@@ -91,6 +99,12 @@
             text_splitContainer.Panel1.SuspendLayout();
             text_splitContainer.Panel2.SuspendLayout();
             text_splitContainer.SuspendLayout();
+            preview_tabControl.SuspendLayout();
+            webview2_tabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)webView21).BeginInit();
+            pretty_tabPage.SuspendLayout();
+            markf278down_tabPage.SuspendLayout();
+            cef_tabPage.SuspendLayout();
             main_menuStrip.SuspendLayout();
             panel1.SuspendLayout();
             characters_tableLayoutPanel.SuspendLayout();
@@ -116,12 +130,12 @@
             // text_splitContainer.Panel2
             // 
             text_splitContainer.Panel2.BackColor = SystemColors.Control;
-            text_splitContainer.Panel2.Controls.Add(response_textBox);
+            text_splitContainer.Panel2.Controls.Add(preview_tabControl);
             text_splitContainer.Panel2.Controls.Add(new_conversation_button);
             text_splitContainer.Panel2.Controls.Add(conversation_name_textBox);
             text_splitContainer.Panel2.Padding = new Padding(12);
-            text_splitContainer.Size = new Size(475, 283);
-            text_splitContainer.SplitterDistance = 219;
+            text_splitContainer.Size = new Size(552, 324);
+            text_splitContainer.SplitterDistance = 191;
             text_splitContainer.SplitterWidth = 7;
             text_splitContainer.TabIndex = 0;
             // 
@@ -133,7 +147,7 @@
             prompt_textBox.Name = "prompt_textBox";
             prompt_textBox.PlaceholderText = "Prompt";
             prompt_textBox.ScrollBars = ScrollBars.Both;
-            prompt_textBox.Size = new Size(195, 212);
+            prompt_textBox.Size = new Size(167, 253);
             prompt_textBox.TabIndex = 0;
             prompt_textBox.KeyDown += prompt_textBox_KeyDown;
             // 
@@ -143,9 +157,9 @@
             send_prompt_button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             send_prompt_button.Dock = DockStyle.Bottom;
             send_prompt_button.FlatStyle = FlatStyle.System;
-            send_prompt_button.Location = new Point(12, 247);
+            send_prompt_button.Location = new Point(12, 288);
             send_prompt_button.Name = "send_prompt_button";
-            send_prompt_button.Size = new Size(195, 24);
+            send_prompt_button.Size = new Size(167, 24);
             send_prompt_button.TabIndex = 1;
             send_prompt_button.Text = "Send Prompt ->";
             send_prompt_button.UseVisualStyleBackColor = true;
@@ -158,28 +172,121 @@
             character_textBox.Location = new Point(12, 12);
             character_textBox.Name = "character_textBox";
             character_textBox.PlaceholderText = "Current Character";
-            character_textBox.Size = new Size(195, 23);
+            character_textBox.Size = new Size(167, 23);
             character_textBox.TabIndex = 2;
+            // 
+            // preview_tabControl
+            // 
+            preview_tabControl.Controls.Add(webview2_tabPage);
+            preview_tabControl.Controls.Add(markf278down_tabPage);
+            preview_tabControl.Controls.Add(pretty_tabPage);
+            preview_tabControl.Controls.Add(cef_tabPage);
+            preview_tabControl.Dock = DockStyle.Fill;
+            preview_tabControl.Location = new Point(12, 35);
+            preview_tabControl.Multiline = true;
+            preview_tabControl.Name = "preview_tabControl";
+            preview_tabControl.SelectedIndex = 0;
+            preview_tabControl.Size = new Size(330, 252);
+            preview_tabControl.TabIndex = 4;
+            // 
+            // webview2_tabPage
+            // 
+            webview2_tabPage.Controls.Add(webView21);
+            webview2_tabPage.Location = new Point(4, 24);
+            webview2_tabPage.Name = "webview2_tabPage";
+            webview2_tabPage.Padding = new Padding(3);
+            webview2_tabPage.Size = new Size(322, 224);
+            webview2_tabPage.TabIndex = 2;
+            webview2_tabPage.Text = "WebView2";
+            webview2_tabPage.UseVisualStyleBackColor = true;
+            // 
+            // webView21
+            // 
+            webView21.AllowExternalDrop = true;
+            webView21.CreationProperties = null;
+            webView21.DefaultBackgroundColor = Color.White;
+            webView21.Dock = DockStyle.Fill;
+            webView21.Location = new Point(3, 3);
+            webView21.Name = "webView21";
+            webView21.Size = new Size(316, 218);
+            webView21.TabIndex = 0;
+            webView21.ZoomFactor = 1D;
+            // 
+            // pretty_tabPage
+            // 
+            pretty_tabPage.Controls.Add(pretty_htmlPanel);
+            pretty_tabPage.Location = new Point(4, 24);
+            pretty_tabPage.Name = "pretty_tabPage";
+            pretty_tabPage.Padding = new Padding(3);
+            pretty_tabPage.Size = new Size(322, 224);
+            pretty_tabPage.TabIndex = 0;
+            pretty_tabPage.Text = "HTMLRenderer";
+            pretty_tabPage.UseVisualStyleBackColor = true;
+            // 
+            // pretty_htmlPanel
+            // 
+            pretty_htmlPanel.AutoScroll = true;
+            pretty_htmlPanel.AutoScrollMinSize = new Size(316, 20);
+            pretty_htmlPanel.BackColor = SystemColors.Window;
+            pretty_htmlPanel.BaseStylesheet = null;
+            pretty_htmlPanel.Dock = DockStyle.Fill;
+            pretty_htmlPanel.Location = new Point(3, 3);
+            pretty_htmlPanel.Name = "pretty_htmlPanel";
+            pretty_htmlPanel.Size = new Size(316, 218);
+            pretty_htmlPanel.TabIndex = 0;
+            pretty_htmlPanel.Text = "TheArtOfDev";
+            pretty_htmlPanel.UseGdiPlusTextRendering = true;
+            // 
+            // markf278down_tabPage
+            // 
+            markf278down_tabPage.Controls.Add(response_textBox);
+            markf278down_tabPage.Location = new Point(4, 24);
+            markf278down_tabPage.Name = "markf278down_tabPage";
+            markf278down_tabPage.Padding = new Padding(3);
+            markf278down_tabPage.Size = new Size(322, 224);
+            markf278down_tabPage.TabIndex = 1;
+            markf278down_tabPage.Text = "markf278down";
+            markf278down_tabPage.UseVisualStyleBackColor = true;
             // 
             // response_textBox
             // 
             response_textBox.Dock = DockStyle.Fill;
-            response_textBox.Location = new Point(12, 35);
+            response_textBox.Location = new Point(3, 3);
             response_textBox.Multiline = true;
             response_textBox.Name = "response_textBox";
             response_textBox.PlaceholderText = "Conversation";
             response_textBox.ScrollBars = ScrollBars.Both;
-            response_textBox.Size = new Size(225, 211);
+            response_textBox.Size = new Size(316, 218);
             response_textBox.TabIndex = 1;
+            // 
+            // cef_tabPage
+            // 
+            cef_tabPage.Controls.Add(cefsharp_chromiumWebBrowser);
+            cef_tabPage.Location = new Point(4, 24);
+            cef_tabPage.Name = "cef_tabPage";
+            cef_tabPage.Padding = new Padding(3);
+            cef_tabPage.Size = new Size(322, 224);
+            cef_tabPage.TabIndex = 3;
+            cef_tabPage.Text = "CEFSharp";
+            cef_tabPage.UseVisualStyleBackColor = true;
+            // 
+            // cefsharp_chromiumWebBrowser
+            // 
+            cefsharp_chromiumWebBrowser.ActivateBrowserOnCreation = false;
+            cefsharp_chromiumWebBrowser.Dock = DockStyle.Fill;
+            cefsharp_chromiumWebBrowser.Location = new Point(3, 3);
+            cefsharp_chromiumWebBrowser.Name = "cefsharp_chromiumWebBrowser";
+            cefsharp_chromiumWebBrowser.Size = new Size(316, 218);
+            cefsharp_chromiumWebBrowser.TabIndex = 0;
             // 
             // new_conversation_button
             // 
             new_conversation_button.AutoSize = true;
             new_conversation_button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             new_conversation_button.Dock = DockStyle.Bottom;
-            new_conversation_button.Location = new Point(12, 246);
+            new_conversation_button.Location = new Point(12, 287);
             new_conversation_button.Name = "new_conversation_button";
-            new_conversation_button.Size = new Size(225, 25);
+            new_conversation_button.Size = new Size(330, 25);
             new_conversation_button.TabIndex = 2;
             new_conversation_button.Text = "New Conversation";
             new_conversation_button.UseVisualStyleBackColor = true;
@@ -191,7 +298,7 @@
             conversation_name_textBox.Location = new Point(12, 12);
             conversation_name_textBox.Name = "conversation_name_textBox";
             conversation_name_textBox.PlaceholderText = "Name of Conversation";
-            conversation_name_textBox.Size = new Size(225, 23);
+            conversation_name_textBox.Size = new Size(330, 23);
             conversation_name_textBox.TabIndex = 3;
             conversation_name_textBox.KeyDown += conversation_name_textBox_KeyDown;
             conversation_name_textBox.MouseDoubleClick += conversation_name_textBox_MouseDoubleClick;
@@ -213,7 +320,7 @@
             treeNode5.Text = "Conversation History Root";
             conversation_history_treeView.Nodes.AddRange(new TreeNode[] { treeNode5 });
             conversation_history_treeView.PathSeparator = "/";
-            conversation_history_treeView.Size = new Size(161, 283);
+            conversation_history_treeView.Size = new Size(161, 324);
             conversation_history_treeView.TabIndex = 0;
             conversation_history_treeView.AfterSelect += conversation_history_treeView_AfterSelect;
             // 
@@ -221,7 +328,7 @@
             // 
             splitter1.Location = new Point(161, 37);
             splitter1.Name = "splitter1";
-            splitter1.Size = new Size(3, 283);
+            splitter1.Size = new Size(3, 324);
             splitter1.TabIndex = 1;
             splitter1.TabStop = false;
             // 
@@ -231,7 +338,7 @@
             main_menuStrip.Location = new Point(0, 0);
             main_menuStrip.Name = "main_menuStrip";
             main_menuStrip.ShowItemToolTips = true;
-            main_menuStrip.Size = new Size(636, 24);
+            main_menuStrip.Size = new Size(713, 24);
             main_menuStrip.TabIndex = 2;
             main_menuStrip.Text = "Main Menu";
             // 
@@ -306,7 +413,7 @@
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(0, 24);
             panel1.Name = "panel1";
-            panel1.Size = new Size(636, 320);
+            panel1.Size = new Size(713, 361);
             panel1.TabIndex = 2;
             // 
             // characters_tableLayoutPanel
@@ -321,7 +428,7 @@
             characters_tableLayoutPanel.RowCount = 1;
             characters_tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             characters_tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            characters_tableLayoutPanel.Size = new Size(636, 37);
+            characters_tableLayoutPanel.Size = new Size(713, 37);
             characters_tableLayoutPanel.TabIndex = 3;
             // 
             // characters_flowLayoutPanel
@@ -330,9 +437,9 @@
             characters_flowLayoutPanel.AutoSize = true;
             characters_flowLayoutPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             characters_flowLayoutPanel.Controls.Add(placeholder_radioButton);
-            characters_flowLayoutPanel.Location = new Point(261, 3);
+            characters_flowLayoutPanel.Location = new Point(280, 3);
             characters_flowLayoutPanel.Name = "characters_flowLayoutPanel";
-            characters_flowLayoutPanel.Size = new Size(113, 31);
+            characters_flowLayoutPanel.Size = new Size(152, 31);
             characters_flowLayoutPanel.TabIndex = 2;
             // 
             // placeholder_radioButton
@@ -341,10 +448,10 @@
             placeholder_radioButton.AutoSize = true;
             placeholder_radioButton.Location = new Point(3, 3);
             placeholder_radioButton.Name = "placeholder_radioButton";
-            placeholder_radioButton.Size = new Size(107, 25);
+            placeholder_radioButton.Size = new Size(146, 25);
             placeholder_radioButton.TabIndex = 2;
             placeholder_radioButton.TabStop = true;
-            placeholder_radioButton.Text = "_PLACEHOLDER_";
+            placeholder_radioButton.Text = "_TULPA_PLACEHOLDER_";
             placeholder_radioButton.UseVisualStyleBackColor = true;
             // 
             // contentsToolStripMenuItem
@@ -519,9 +626,9 @@
             // main_statusStrip
             // 
             main_statusStrip.Items.AddRange(new ToolStripItem[] { main_toolStripStatusLabel, main_toolStripProgressBar });
-            main_statusStrip.Location = new Point(0, 344);
+            main_statusStrip.Location = new Point(0, 385);
             main_statusStrip.Name = "main_statusStrip";
-            main_statusStrip.Size = new Size(636, 22);
+            main_statusStrip.Size = new Size(713, 22);
             main_statusStrip.TabIndex = 4;
             main_statusStrip.Text = "statusStrip1";
             // 
@@ -545,7 +652,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(636, 366);
+            ClientSize = new Size(713, 407);
             Controls.Add(panel1);
             Controls.Add(main_menuStrip);
             Controls.Add(main_statusStrip);
@@ -559,6 +666,13 @@
             text_splitContainer.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)text_splitContainer).EndInit();
             text_splitContainer.ResumeLayout(false);
+            preview_tabControl.ResumeLayout(false);
+            webview2_tabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)webView21).EndInit();
+            pretty_tabPage.ResumeLayout(false);
+            markf278down_tabPage.ResumeLayout(false);
+            markf278down_tabPage.PerformLayout();
+            cef_tabPage.ResumeLayout(false);
             main_menuStrip.ResumeLayout(false);
             main_menuStrip.PerformLayout();
             panel1.ResumeLayout(false);
@@ -631,5 +745,13 @@
         private ToolStripMenuItem tokenCounterToolStripMenuItem;
         private ToolStripMenuItem sysmsghack_ToolStripMenuItem;
         private ToolStripMenuItem models_ToolStripMenuItem;
+        private TabControl preview_tabControl;
+        private TabPage pretty_tabPage;
+        private TabPage markf278down_tabPage;
+        private TheArtOfDev.HtmlRenderer.WinForms.HtmlPanel pretty_htmlPanel;
+        private TabPage webview2_tabPage;
+        private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
+        private TabPage cef_tabPage;
+        private CefSharp.WinForms.ChromiumWebBrowser cefsharp_chromiumWebBrowser;
     }
 }
