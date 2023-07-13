@@ -70,12 +70,10 @@ public class Conversation {
       return sb.ToString();
    }
 
-   public string Create_UI_Text() {
-      StringBuilder sb = new();
-      foreach (var message in Messages)
-         sb.Append(message.ToString());
-
-      return sb.ToString();
+   public string Create_marf278down() {
+      //we also need to replace the default newline /n with the system newline /r/n
+      string messages = string.Join("", Messages.Select(m => m.ToString().Replace("\n", Environment.NewLine)));
+      return messages;
    }
 
    public async Task CreateTitleAsync() {

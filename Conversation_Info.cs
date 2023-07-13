@@ -3,10 +3,11 @@
 namespace WinGPT;
 
 public class Conversation_Info {
-   /// <summary>
-   /// The name of the conversation.
-   /// </summary>
-   public string? Name { get;  set; }
+
+    /// <summary>
+    /// A summary of the conversation.
+    /// </summary>
+    public string? Summary { get;  set; }
 
    /// <summary>
    /// The relative path and filename of the last tulpa file that was used with this conversation.

@@ -16,16 +16,41 @@ internal class Config {
    internal const string marf278down_extenstion         = ".md";
    internal const string marf278down_filter             = "*.md";
 
+   internal static readonly string prism_css;
+   internal static readonly string my_css;
+   internal static readonly string prism_js;
+
+
    internal const string conversation_title_prompt = "Generate an ultra short title for this conversation.";
+   private const  string WebstuffsPrismFancyCss    = "webstuffs/prism_fancy.css";
+   private const  string WebstuffsPrismFancyJs     = "webstuffs/prism_fancy.js";
+   private const  string WebstuffsMyCss            = "webstuffs/my.css";
 
    private static readonly object _lock   = new();
    public static           bool   loading = false;
 
-   public string BaseDirectory  { get; set; } = "";
-   public string OpenAI_API_Key { get; set; } = "";
-   public string LanguageModel  { get; set; } = "gpt-4";
+   public string? BaseDirectory  { get; set; }
+   public string  OpenAI_API_Key { get; set; } = "";
+   public string  LanguageModel  { get; set; } = "gpt-4";
 
    public TokenCounter TokenCounter { get; set; } = new();
+
+   static Config() {
+      try {
+         prism_css = File.ReadAllText(WebstuffsPrismFancyCss);
+         prism_js  = File.ReadAllText(WebstuffsPrismFancyJs);
+         my_css  = File.ReadAllText(WebstuffsMyCss);
+      }
+      catch (Exception e) {
+         MessageBox.Show(
+            $"Error while loading Prism CSS and JS files.\r\n"                       +
+            $"Please make sure that the files\r\n"                                   +
+            $"{WebstuffsPrismFancyCss} and {WebstuffsPrismFancyJs} are present.\r\n" +
+            $"{e.Message}",
+            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+         Environment.Exit(1);
+      }
+   }
 
    public static void Load() {
       lock (_lock) {
