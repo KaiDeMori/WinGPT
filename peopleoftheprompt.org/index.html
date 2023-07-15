@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <meta charset="utf-8" />
+    <title>WinGPT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="WinGPT — a classic WinForms application for easy, private and light-weight GPT access.">
+    
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #1c1818;
+            color: #FFF;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #aiSingularity {
+            width: 50vmin;
+            height: auto;
+        }
+		 
+		 #neumannProbe {
+            position: relative;
+            width: 4.17vmin;
+            height: auto;
+			 left: -16vmin;
+            top: -46.5vmin;
+			 will-change: transform;
+        }
+
+        .transhumanismText {
+            margin-top: 20px;
+            font-size: 2em;
+            opacity: 1;
+            text-shadow: 0px 0px 0px rgba(0, 123, 255, 1);
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+</head>
+<body>
+    <img id="aiSingularity" src="WinGPT_logo.png" alt="WinGPT Logo">
+	<img id="neumannProbe" src="WinGPT_orb.png" alt="WinGPT Orb">
+    <div id="transhumanismTeaser" class="transhumanismText">Coming soon to your universe</div>
+
+    <script>
+        var quantumLeap = document.getElementById('transhumanismTeaser');
+        var qubit = quantumLeap.innerHTML;
+        var consciousnessShifted = false;
+
+        quantumLeap.innerHTML = qubit.split("").map(function (neuralLayer) {
+            return `<span>${neuralLayer}</span>`;
+        }).join("");
+
+        quantumLeap.addEventListener('mouseover', function() {
+            if (!consciousnessShifted) {
+                consciousnessShifted = true;
+                anime.timeline({
+                    targets: '#transhumanismTeaser span',
+                    easing: 'easeInOutSine',
+                })
+                .add({
+                    color: ['#FFF', '#007BFF'],
+                    opacity: [1, 0],
+                    duration: 2000,
+                    delay: anime.stagger(100)
+                })
+                .add({
+                    targets: quantumLeap,
+                    complete: function() {
+                        quantumLeap.innerHTML = "WinGPT";
+                        quantumLeap.style.color = '#FFF';
+                        anime({
+                            targets: quantumLeap,
+                            opacity: [0, 1],
+                            duration: 2000,
+                            easing: 'easeInOutSine',
+                            complete: function() {
+                                setTimeout(function() {
+                                    anime({
+                                        targets: quantumLeap,
+                                        textShadow: ['0px 0px 0px rgba(0, 123, 255, 1)', '0px 0px 25px rgba(0, 123, 255, 1)'],
+                                        direction: 'alternate',
+                                        loop: true,
+                                        easing: 'easeInQuad',
+                                        duration: 2500,
+										   delay: 1300,
+                                    });
+                                }, 3000);
+                            }
+                        });
+                    }
+                })
+            }
+        });
+    </script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const neuronWeight = 3;
+        const trainingCycle = 13000;
+        const trainingSteps = 600;
+        const consciousnessSpread = Array(trainingSteps).fill().map((_, i) => {
+            const t = (i * 2 * Math.PI / trainingSteps) + Math.PI/2;
+            return {
+                value: `${neuronWeight * Math.cos(t)}vmin`,
+                duration: trainingCycle / trainingSteps,
+                easing: 'linear'
+            };
+        });
+        const consciousnessRise = Array(trainingSteps).fill().map((_, i) => {
+            const t = (i * 2 * Math.PI / trainingSteps) + Math.PI/2;
+            return {
+                value: `${-neuronWeight * Math.sin(2 * t) / 2}vmin`,
+                duration: trainingCycle / trainingSteps,
+                easing: 'linear'
+            };
+        });
+        anime({
+            targets: '#neumannProbe',
+            translateX: consciousnessSpread,
+            translateY: consciousnessRise,
+            rotate: '.1deg',
+            loop: true
+        });
+    });
+</script>
+
+</body>
+</html>
