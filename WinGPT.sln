@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinGPT", "WinGPT.csproj", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinGPTTests", "..\WinGPTTests\WinGPTTests.csproj", "{C923C935-B53E-498D-B72C-104194292703}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JSON_Schema_Trials", "..\JSON_Schema_Trials\JSON_Schema_Trials.csproj", "{58B62319-9FAD-48B5-AF9D-3E6D91E3E948}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{C923C935-B53E-498D-B72C-104194292703}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C923C935-B53E-498D-B72C-104194292703}.Release|x64.ActiveCfg = Release|x64
 		{C923C935-B53E-498D-B72C-104194292703}.Release|x64.Build.0 = Release|x64
+		{58B62319-9FAD-48B5-AF9D-3E6D91E3E948}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58B62319-9FAD-48B5-AF9D-3E6D91E3E948}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58B62319-9FAD-48B5-AF9D-3E6D91E3E948}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{58B62319-9FAD-48B5-AF9D-3E6D91E3E948}.Debug|x64.Build.0 = Debug|Any CPU
+		{58B62319-9FAD-48B5-AF9D-3E6D91E3E948}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58B62319-9FAD-48B5-AF9D-3E6D91E3E948}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58B62319-9FAD-48B5-AF9D-3E6D91E3E948}.Release|x64.ActiveCfg = Release|Any CPU
+		{58B62319-9FAD-48B5-AF9D-3E6D91E3E948}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

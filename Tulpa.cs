@@ -42,18 +42,26 @@ public class Tulpa : InterTulpa {
       return tulpa;
    }
 
+   /// <summary>
+   /// I think this is wrong. We should not create a new conversation here?
+   /// Placeholder for now.
+   /// Not sure if we want to give the tulpa a chance to do something when it is activated.
+   /// </summary>
+   /// <param name="conversation"></param>
    public void Activate(Conversation conversation) {
       //nothing to do here for now.
       //overwrite in custom InterTulpas
    }
 
+   [Obsolete("thats not handled by the tulpa anymore")]
    public Conversation NewConversation() {
-      string conversation_Filename = Create_New_Conversation_Filename();
-      var    full_HistoryDirectory = ConversationHistory.GetAbsoluteHistoryDirectory();
+      //string conversation_Filename = AGI.Create_New_Conversation_Filename();
+      //var full_HistoryDirectory = ConversationHistory.GetAbsoluteHistoryDirectory();
       //we need the absolute path here as a FileInfo
-      var full_HistoryFile = new FileInfo(Path.Combine(full_HistoryDirectory.FullName, conversation_Filename));
-      var conversation     = new Conversation(full_HistoryFile);
-      return conversation;
+      //var full_HistoryFile = new FileInfo(Path.Combine(full_HistoryDirectory.FullName, conversation_Filename));
+      //var conversation     = new Conversation(full_HistoryFile);
+      //return conversation;
+      return null;
    }
 
    /// <summary>
@@ -75,8 +83,10 @@ public class Tulpa : InterTulpa {
       var all_immutable = all_messages.ToImmutableList();
 
       //debug as json
-      var all_json = JsonConvert.SerializeObject(all_immutable, Formatting.Indented);
-      System.IO.File.WriteAllText("_all_.json", all_json);
+      //var all_json = JsonConvert.SerializeObject(all_immutable, Formatting.Indented, new JsonSerializerSettings {
+      //   NullValueHandling = NullValueHandling.Ignore
+      //});
+      //System.IO.File.WriteAllText("_all_.json", all_json);
 
       Request request = new() {
          messages    = all_immutable,
@@ -84,7 +94,7 @@ public class Tulpa : InterTulpa {
          temperature = Configuration.Temperature,
       };
 
-      Response? response = await Completion.POST_Async(request);
+      Response? response = await Completions.POST_Async(request);
       if (response == null) {
          // all error handling is done in the POST_Async method
          return new_messages;
@@ -96,19 +106,9 @@ public class Tulpa : InterTulpa {
          return new_messages;
       }
 
-      Message response_message = zeroth_Choice.Message;
+      Message response_message = zeroth_Choice.message;
       new_messages.Add(response_message);
 
       return new_messages;
-   }
-
-
-   private string Create_New_Conversation_Filename() {
-      var tulpa_name     = Configuration.Name;
-      var valid_filename = Tools.To_valid_filename(tulpa_name);
-      var name_only      = $"{valid_filename} - {DateTime.Now:yyyy-MM-dd HH-mm-ss}";
-      var filename       = $"{name_only}{Config.marf278down_extenstion}";
-      //TADA some directory stuff here
-      return filename;
    }
 }

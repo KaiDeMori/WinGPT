@@ -5,28 +5,36 @@ using static WinGPT.Tools;
 
 namespace WinGPT.OpenAI.Chat;
 
-public class Completion {
+public class Completions {
    public static async Task<Response?> POST_Async(Request request) {
       var url = "https://api.openai.com/v1/chat/completions";
 
       // Serialize the request object to JSON
-      string jsonRequest = JsonConvert.SerializeObject(request);
+      string request_content_json = JsonConvert.SerializeObject(request, Formatting.Indented, new JsonSerializerSettings {
+         NullValueHandling = NullValueHandling.Ignore,
+      });
+
+      File.WriteAllText("request.json", request_content_json);
 
       //replace all "system" by "System" -> Bad Request
       //jsonRequest = jsonRequest.Replace("\"system\"", "\"System\"");
 
       Response? response = null;
 
-      // Create the HttpContent for the form to be posted.
-      StringContent content = new(jsonRequest, Encoding.UTF8, "application/json");
+      // Create thae HttpContent for the form to be posted.
+      StringContent content = new(request_content_json, Encoding.UTF8, "application/json");
 
       try {
          // Make the request
-         HttpResponseMessage responseMessage = await HTTP_Client.Gimme().PostAsync(url, content);
+         HttpResponseMessage responseMessage = await HTTP_Client.Gimme().PostAsync(url, content).ConfigureAwait(false);
+         ;
 
          if (responseMessage.IsSuccessStatusCode) {
             // If the request was successful, parse the returned data
-            string jsonResponse = await responseMessage.Content.ReadAsStringAsync();
+            string jsonResponse = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+            File.WriteAllText("response.json", jsonResponse);
+
             response = JsonConvert.DeserializeObject<Response>(jsonResponse);
 
             if (response == null) {
@@ -40,6 +48,7 @@ public class Completion {
          }
          else {
             //MessageBox.Show($"Error: {responseMessage.ReasonPhrase}", "Error", MessageBoxButtons.OK);
+
             handle_Error_Response(responseMessage);
          }
       }

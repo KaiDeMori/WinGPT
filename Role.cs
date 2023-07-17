@@ -7,7 +7,7 @@ public enum Role {
    system,
    user,
    assistant,
-   Function,
+   function,
 }
 
 public static class RoleHelper {
@@ -15,7 +15,7 @@ public static class RoleHelper {
       {Role.system, SpecialTokens.System},
       {Role.user, SpecialTokens.User},
       {Role.assistant, SpecialTokens.Assistant},
-      {Role.Function, SpecialTokens.Function},
+      {Role.function, SpecialTokens.Function},
    };
 
    public static string ToSpecialToken(this Role role) {
