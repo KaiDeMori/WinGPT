@@ -30,13 +30,13 @@ internal static class Startup {
    }
 
    private static bool AssertSubdirectories() {
-      var tulpas_directory       = Path.Join(Config.Active.BaseDirectory, Config.tulpas_directory);
-      var chat_history_directory = Path.Join(Config.Active.BaseDirectory, Config.conversation_history_directory);
-
+      var tulpas_directory = Path.Join(Config.Active.BaseDirectory, Config.tulpas_directory);
       if (!Directory.Exists(tulpas_directory))
          Directory.CreateDirectory(tulpas_directory);
-      if (!Directory.Exists(chat_history_directory))
-         Directory.CreateDirectory(chat_history_directory);
+
+      DirectoryInfo history_directory = Config.History_Directory;
+      if (!history_directory.Exists)
+         history_directory.Create();
 
       return true;
    }
@@ -141,6 +141,4 @@ internal static class Startup {
 
       return tulpas;
    }
-
-
 }

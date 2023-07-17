@@ -35,7 +35,7 @@ internal class QuickTulpaTest {
          {SpecialTokens.System, Role.system},
          {SpecialTokens.User, Role.user},
          {SpecialTokens.Assistant, Role.assistant},
-         {SpecialTokens.Function, Role.Function},
+         {SpecialTokens.Function, Role.function},
       };
 
       var contentMemory = content.AsMemory();

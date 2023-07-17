@@ -4,27 +4,32 @@ using Formatting = Newtonsoft.Json.Formatting;
 namespace WinGPT;
 
 internal class Config {
-   public static Config       Active             = new();
-   public static Tulpa        ActiveTulpa        = new();
-   public static Conversation ActiveConversation = ActiveTulpa.NewConversation();
+   public static Config        Active      = new();
+   public static Tulpa         ActiveTulpa = new();
+   public static Conversation? ActiveConversation;
 
    public bool UseSysMsgHack { get; set; }
 
-   private const  string Config_filename                = "Config.json";
-   internal const string tulpas_directory               = "Characters";
-   internal const string conversation_history_directory = "Conversation_History";
-   internal const string marf278down_extenstion         = ".md";
-   internal const string marf278down_filter             = "*.md";
+   private const  string Config_filename  = "Config.json";
+   internal const string tulpas_directory = "Characters";
+
+   private const   string        history_directory = "Conversation_History";
+   internal static DirectoryInfo History_Directory => new(Path.Join(Active.BaseDirectory, history_directory));
+
+   internal const string marf278down_extenstion = ".md";
+   internal const string marf278down_filter     = "*.md";
 
    internal static readonly string prism_css;
    internal static readonly string my_css;
    internal static readonly string prism_js;
 
 
-   internal const string conversation_title_prompt = "Generate an ultra short title for this conversation.";
-   private const  string WebstuffsPrismFancyCss    = "webstuffs/prism_fancy.css";
-   private const  string WebstuffsPrismFancyJs     = "webstuffs/prism_fancy.js";
-   private const  string WebstuffsMyCss            = "webstuffs/my.css";
+   internal const string        conversation_title_prompt           = "Generate an ultra short title for this conversation.";
+   private const  string        WebstuffsPrismFancyCss              = "webstuffs/prism_fancy.css";
+   private const  string        WebstuffsPrismFancyJs               = "webstuffs/prism_fancy.js";
+   private const  string        WebstuffsMyCss                      = "webstuffs/my.css";
+   private const  string        Preliminary_Conversations_Directory = "tmp";
+   public static  DirectoryInfo Preliminary_Conversations_Path => new(Path.Join(Active.BaseDirectory, Preliminary_Conversations_Directory));
 
    private static readonly object _lock   = new();
    public static           bool   loading = false;
@@ -39,7 +44,7 @@ internal class Config {
       try {
          prism_css = File.ReadAllText(WebstuffsPrismFancyCss);
          prism_js  = File.ReadAllText(WebstuffsPrismFancyJs);
-         my_css  = File.ReadAllText(WebstuffsMyCss);
+         my_css    = File.ReadAllText(WebstuffsMyCss);
       }
       catch (Exception e) {
          MessageBox.Show(
@@ -70,12 +75,13 @@ internal class Config {
       JsonSerializerSettings settings = new() {
          ObjectCreationHandling = ObjectCreationHandling.Replace,
       };
-      var loadedConfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText(configfile), settings);
-
-      if (Tools.HasNullProperties(loadedConfig))
+      Config? loadedConfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText(configfile), settings);
+      if (Tools.HasNullProperties(loadedConfig)) {
          ConfigErrorCase();
-      else
+      }
+      else {
          Active = loadedConfig;
+      }
 
       lock (_lock) {
          loading = false;

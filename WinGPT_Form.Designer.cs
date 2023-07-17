@@ -36,21 +36,25 @@
             TreeNode treeNode5 = new TreeNode("Conversation History Root", new TreeNode[] { treeNode2, treeNode3, treeNode4 });
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WinGPT_Form));
             main_toolTip = new ToolTip(components);
+            history_file_name_textBox = new TextBox();
             text_splitContainer = new SplitContainer();
             prompt_textBox = new TextBox();
+            panel2 = new Panel();
+            button1 = new Button();
+            uploaded_files_comboBox = new ComboBox();
+            upload_button = new Button();
             send_prompt_button = new Button();
             character_textBox = new TextBox();
             preview_tabControl = new TabControl();
             webview2_tabPage = new TabPage();
             webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
-            pretty_tabPage = new TabPage();
-            pretty_htmlPanel = new TheArtOfDev.HtmlRenderer.WinForms.HtmlPanel();
             markf278down_tabPage = new TabPage();
             response_textBox = new TextBox();
+            pretty_tabPage = new TabPage();
+            pretty_htmlPanel = new TheArtOfDev.HtmlRenderer.WinForms.HtmlPanel();
             cef_tabPage = new TabPage();
             cefsharp_chromiumWebBrowser = new CefSharp.WinForms.ChromiumWebBrowser();
             new_conversation_button = new Button();
-            conversation_name_textBox = new TextBox();
             conversation_history_treeView = new TreeView();
             splitter1 = new Splitter();
             main_menuStrip = new MenuStrip();
@@ -95,15 +99,17 @@
             main_toolStripStatusLabel = new ToolStripStatusLabel();
             main_toolStripProgressBar = new ToolStripProgressBar();
             base_directory_vistaFolderBrowserDialog = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog();
+            upload_vistaOpenFileDialog = new Ookii.Dialogs.WinForms.VistaOpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)text_splitContainer).BeginInit();
             text_splitContainer.Panel1.SuspendLayout();
             text_splitContainer.Panel2.SuspendLayout();
             text_splitContainer.SuspendLayout();
+            panel2.SuspendLayout();
             preview_tabControl.SuspendLayout();
             webview2_tabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)webView21).BeginInit();
-            pretty_tabPage.SuspendLayout();
             markf278down_tabPage.SuspendLayout();
+            pretty_tabPage.SuspendLayout();
             cef_tabPage.SuspendLayout();
             main_menuStrip.SuspendLayout();
             panel1.SuspendLayout();
@@ -111,6 +117,18 @@
             characters_flowLayoutPanel.SuspendLayout();
             main_statusStrip.SuspendLayout();
             SuspendLayout();
+            // 
+            // history_file_name_textBox
+            // 
+            history_file_name_textBox.Dock = DockStyle.Top;
+            history_file_name_textBox.Location = new Point(12, 12);
+            history_file_name_textBox.Name = "history_file_name_textBox";
+            history_file_name_textBox.PlaceholderText = "Filename";
+            history_file_name_textBox.Size = new Size(330, 23);
+            history_file_name_textBox.TabIndex = 3;
+            main_toolTip.SetToolTip(history_file_name_textBox, "Summary");
+            history_file_name_textBox.KeyDown += conversation_name_textBox_KeyDown;
+            history_file_name_textBox.MouseDoubleClick += conversation_name_textBox_MouseDoubleClick;
             // 
             // text_splitContainer
             // 
@@ -123,7 +141,7 @@
             // 
             text_splitContainer.Panel1.BackColor = SystemColors.Control;
             text_splitContainer.Panel1.Controls.Add(prompt_textBox);
-            text_splitContainer.Panel1.Controls.Add(send_prompt_button);
+            text_splitContainer.Panel1.Controls.Add(panel2);
             text_splitContainer.Panel1.Controls.Add(character_textBox);
             text_splitContainer.Panel1.Padding = new Padding(12);
             // 
@@ -132,10 +150,10 @@
             text_splitContainer.Panel2.BackColor = SystemColors.Control;
             text_splitContainer.Panel2.Controls.Add(preview_tabControl);
             text_splitContainer.Panel2.Controls.Add(new_conversation_button);
-            text_splitContainer.Panel2.Controls.Add(conversation_name_textBox);
+            text_splitContainer.Panel2.Controls.Add(history_file_name_textBox);
             text_splitContainer.Panel2.Padding = new Padding(12);
-            text_splitContainer.Size = new Size(552, 324);
-            text_splitContainer.SplitterDistance = 191;
+            text_splitContainer.Size = new Size(721, 324);
+            text_splitContainer.SplitterDistance = 360;
             text_splitContainer.SplitterWidth = 7;
             text_splitContainer.TabIndex = 0;
             // 
@@ -147,19 +165,60 @@
             prompt_textBox.Name = "prompt_textBox";
             prompt_textBox.PlaceholderText = "Prompt";
             prompt_textBox.ScrollBars = ScrollBars.Both;
-            prompt_textBox.Size = new Size(167, 253);
+            prompt_textBox.Size = new Size(336, 244);
             prompt_textBox.TabIndex = 0;
             prompt_textBox.KeyDown += prompt_textBox_KeyDown;
             // 
+            // panel2
+            // 
+            panel2.Controls.Add(button1);
+            panel2.Controls.Add(uploaded_files_comboBox);
+            panel2.Controls.Add(upload_button);
+            panel2.Controls.Add(send_prompt_button);
+            panel2.Dock = DockStyle.Bottom;
+            panel2.Location = new Point(12, 279);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(336, 33);
+            panel2.TabIndex = 3;
+            // 
+            // button1
+            // 
+            button1.Location = new Point(3, 95);
+            button1.Name = "button1";
+            button1.Size = new Size(33, 24);
+            button1.TabIndex = 4;
+            button1.Text = "del";
+            button1.UseVisualStyleBackColor = true;
+            // 
+            // uploaded_files_comboBox
+            // 
+            uploaded_files_comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            uploaded_files_comboBox.FormattingEnabled = true;
+            uploaded_files_comboBox.Items.AddRange(new object[] { "File 1", "File 2", "File 3.md" });
+            uploaded_files_comboBox.Location = new Point(42, 95);
+            uploaded_files_comboBox.Name = "uploaded_files_comboBox";
+            uploaded_files_comboBox.Size = new Size(160, 23);
+            uploaded_files_comboBox.TabIndex = 3;
+            // 
+            // upload_button
+            // 
+            upload_button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            upload_button.FlatStyle = FlatStyle.System;
+            upload_button.Location = new Point(3, 65);
+            upload_button.Name = "upload_button";
+            upload_button.Size = new Size(127, 24);
+            upload_button.TabIndex = 2;
+            upload_button.Text = "Upload File(s)";
+            upload_button.UseVisualStyleBackColor = true;
+            upload_button.Click += upload_button_Click;
+            // 
             // send_prompt_button
             // 
-            send_prompt_button.AutoSize = true;
             send_prompt_button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            send_prompt_button.Dock = DockStyle.Bottom;
             send_prompt_button.FlatStyle = FlatStyle.System;
-            send_prompt_button.Location = new Point(12, 288);
+            send_prompt_button.Location = new Point(0, 8);
             send_prompt_button.Name = "send_prompt_button";
-            send_prompt_button.Size = new Size(167, 24);
+            send_prompt_button.Size = new Size(336, 24);
             send_prompt_button.TabIndex = 1;
             send_prompt_button.Text = "Send Prompt ->";
             send_prompt_button.UseVisualStyleBackColor = true;
@@ -172,7 +231,7 @@
             character_textBox.Location = new Point(12, 12);
             character_textBox.Name = "character_textBox";
             character_textBox.PlaceholderText = "Current Character";
-            character_textBox.Size = new Size(167, 23);
+            character_textBox.Size = new Size(336, 23);
             character_textBox.TabIndex = 2;
             // 
             // preview_tabControl
@@ -212,6 +271,28 @@
             webView21.TabIndex = 0;
             webView21.ZoomFactor = 1D;
             // 
+            // markf278down_tabPage
+            // 
+            markf278down_tabPage.Controls.Add(response_textBox);
+            markf278down_tabPage.Location = new Point(4, 24);
+            markf278down_tabPage.Name = "markf278down_tabPage";
+            markf278down_tabPage.Padding = new Padding(3);
+            markf278down_tabPage.Size = new Size(322, 224);
+            markf278down_tabPage.TabIndex = 1;
+            markf278down_tabPage.Text = "markf278down";
+            markf278down_tabPage.UseVisualStyleBackColor = true;
+            // 
+            // response_textBox
+            // 
+            response_textBox.Dock = DockStyle.Fill;
+            response_textBox.Location = new Point(3, 3);
+            response_textBox.Multiline = true;
+            response_textBox.Name = "response_textBox";
+            response_textBox.PlaceholderText = "Conversation";
+            response_textBox.ScrollBars = ScrollBars.Both;
+            response_textBox.Size = new Size(316, 218);
+            response_textBox.TabIndex = 1;
+            // 
             // pretty_tabPage
             // 
             pretty_tabPage.Controls.Add(pretty_htmlPanel);
@@ -236,28 +317,6 @@
             pretty_htmlPanel.TabIndex = 0;
             pretty_htmlPanel.Text = "TheArtOfDev";
             pretty_htmlPanel.UseGdiPlusTextRendering = true;
-            // 
-            // markf278down_tabPage
-            // 
-            markf278down_tabPage.Controls.Add(response_textBox);
-            markf278down_tabPage.Location = new Point(4, 24);
-            markf278down_tabPage.Name = "markf278down_tabPage";
-            markf278down_tabPage.Padding = new Padding(3);
-            markf278down_tabPage.Size = new Size(322, 224);
-            markf278down_tabPage.TabIndex = 1;
-            markf278down_tabPage.Text = "markf278down";
-            markf278down_tabPage.UseVisualStyleBackColor = true;
-            // 
-            // response_textBox
-            // 
-            response_textBox.Dock = DockStyle.Fill;
-            response_textBox.Location = new Point(3, 3);
-            response_textBox.Multiline = true;
-            response_textBox.Name = "response_textBox";
-            response_textBox.PlaceholderText = "Conversation";
-            response_textBox.ScrollBars = ScrollBars.Both;
-            response_textBox.Size = new Size(316, 218);
-            response_textBox.TabIndex = 1;
             // 
             // cef_tabPage
             // 
@@ -291,17 +350,6 @@
             new_conversation_button.Text = "New Conversation";
             new_conversation_button.UseVisualStyleBackColor = true;
             new_conversation_button.Click += new_conversation_button_Click;
-            // 
-            // conversation_name_textBox
-            // 
-            conversation_name_textBox.Dock = DockStyle.Top;
-            conversation_name_textBox.Location = new Point(12, 12);
-            conversation_name_textBox.Name = "conversation_name_textBox";
-            conversation_name_textBox.PlaceholderText = "Name of Conversation";
-            conversation_name_textBox.Size = new Size(330, 23);
-            conversation_name_textBox.TabIndex = 3;
-            conversation_name_textBox.KeyDown += conversation_name_textBox_KeyDown;
-            conversation_name_textBox.MouseDoubleClick += conversation_name_textBox_MouseDoubleClick;
             // 
             // conversation_history_treeView
             // 
@@ -338,7 +386,7 @@
             main_menuStrip.Location = new Point(0, 0);
             main_menuStrip.Name = "main_menuStrip";
             main_menuStrip.ShowItemToolTips = true;
-            main_menuStrip.Size = new Size(713, 24);
+            main_menuStrip.Size = new Size(882, 24);
             main_menuStrip.TabIndex = 2;
             main_menuStrip.Text = "Main Menu";
             // 
@@ -413,7 +461,7 @@
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(0, 24);
             panel1.Name = "panel1";
-            panel1.Size = new Size(713, 361);
+            panel1.Size = new Size(882, 361);
             panel1.TabIndex = 2;
             // 
             // characters_tableLayoutPanel
@@ -428,7 +476,7 @@
             characters_tableLayoutPanel.RowCount = 1;
             characters_tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             characters_tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            characters_tableLayoutPanel.Size = new Size(713, 37);
+            characters_tableLayoutPanel.Size = new Size(882, 37);
             characters_tableLayoutPanel.TabIndex = 3;
             // 
             // characters_flowLayoutPanel
@@ -437,7 +485,7 @@
             characters_flowLayoutPanel.AutoSize = true;
             characters_flowLayoutPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             characters_flowLayoutPanel.Controls.Add(placeholder_radioButton);
-            characters_flowLayoutPanel.Location = new Point(280, 3);
+            characters_flowLayoutPanel.Location = new Point(365, 3);
             characters_flowLayoutPanel.Name = "characters_flowLayoutPanel";
             characters_flowLayoutPanel.Size = new Size(152, 31);
             characters_flowLayoutPanel.TabIndex = 2;
@@ -628,7 +676,7 @@
             main_statusStrip.Items.AddRange(new ToolStripItem[] { main_toolStripStatusLabel, main_toolStripProgressBar });
             main_statusStrip.Location = new Point(0, 385);
             main_statusStrip.Name = "main_statusStrip";
-            main_statusStrip.Size = new Size(713, 22);
+            main_statusStrip.Size = new Size(882, 22);
             main_statusStrip.TabIndex = 4;
             main_statusStrip.Text = "statusStrip1";
             // 
@@ -648,11 +696,16 @@
             // 
             base_directory_vistaFolderBrowserDialog.Description = "Select Base Directory";
             // 
+            // upload_vistaOpenFileDialog
+            // 
+            upload_vistaOpenFileDialog.FileName = "vistaOpenFileDialog1";
+            upload_vistaOpenFileDialog.Filter = null;
+            // 
             // WinGPT_Form
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(713, 407);
+            ClientSize = new Size(882, 407);
             Controls.Add(panel1);
             Controls.Add(main_menuStrip);
             Controls.Add(main_statusStrip);
@@ -666,12 +719,13 @@
             text_splitContainer.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)text_splitContainer).EndInit();
             text_splitContainer.ResumeLayout(false);
+            panel2.ResumeLayout(false);
             preview_tabControl.ResumeLayout(false);
             webview2_tabPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)webView21).EndInit();
-            pretty_tabPage.ResumeLayout(false);
             markf278down_tabPage.ResumeLayout(false);
             markf278down_tabPage.PerformLayout();
+            pretty_tabPage.ResumeLayout(false);
             cef_tabPage.ResumeLayout(false);
             main_menuStrip.ResumeLayout(false);
             main_menuStrip.PerformLayout();
@@ -728,7 +782,7 @@
         private ToolStripMenuItem openai_api_key_toolStripMenuItem;
         private ToolStripMenuItem helpToolStripMenuItem;
         private ToolStripMenuItem aboutToolStripMenuItem1;
-        private TextBox conversation_name_textBox;
+        private TextBox history_file_name_textBox;
         private TextBox character_textBox;
         private TableLayoutPanel characters_tableLayoutPanel;
         private FlowLayoutPanel characters_flowLayoutPanel;
@@ -753,5 +807,10 @@
         private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
         private TabPage cef_tabPage;
         private CefSharp.WinForms.ChromiumWebBrowser cefsharp_chromiumWebBrowser;
+        private Panel panel2;
+        private Button upload_button;
+        private ComboBox uploaded_files_comboBox;
+        private Ookii.Dialogs.WinForms.VistaOpenFileDialog upload_vistaOpenFileDialog;
+        private Button button1;
     }
 }

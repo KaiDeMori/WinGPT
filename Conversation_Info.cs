@@ -7,12 +7,18 @@ public class Conversation_Info {
     /// <summary>
     /// A summary of the conversation.
     /// </summary>
-    public string? Summary { get;  set; }
+    public string? Summary { get; set; }
 
    /// <summary>
    /// The relative path and filename of the last tulpa file that was used with this conversation.
    /// </summary>
    public string TulpaFile { get; set; } = string.Empty;
+
+   /// <summary>
+   /// This might become really important for categorizing conversations.
+   /// And maybe for AutoSort ;-)
+   /// </summary>
+   public DateTime Started { get; set; } = DateTime.Now;
 
    //public float Temperature { get; set; } = 0f;
 

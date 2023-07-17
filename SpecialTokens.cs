@@ -30,7 +30,7 @@ internal class SpecialTokens {
       {System, Role.system},
       {User, Role.user},
       {Assistant, Role.assistant},
-      {Function, Role.Function},
+      {Function, Role.function},
    };
 
    enum specialTokensEnum {

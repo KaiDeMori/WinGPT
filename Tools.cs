@@ -1,5 +1,7 @@
 ﻿using System.Collections;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 
 namespace WinGPT;
 
@@ -52,9 +54,9 @@ public static class Tools {
       }
    }
 
-
    /// <summary>
    /// Checks if the given object has any null properties.
+   /// Ignores static properties.
    /// </summary>
    /// <param name="obj">The object to check for null properties.</param>
    /// <returns>
@@ -77,7 +79,7 @@ public static class Tools {
       }
 
       if (!type.IsArray)
-         return type.GetProperties()
+         return type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .Where(property => !property.GetIndexParameters().Any()) // Filter out indexer properties
             .Any(property => HasNullProperties(property.GetValue(obj)));
 
@@ -93,6 +95,8 @@ public static class Tools {
             .Aggregate(filename, (current, invalidChar) =>
                current.Replace(invalidChar, '_'));
       }
+
+      filename = filename.Trim();
 
       return filename;
    }
