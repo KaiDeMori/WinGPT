@@ -3,11 +3,10 @@
 namespace WinGPT;
 
 public class Conversation_Info {
-
-    /// <summary>
-    /// A summary of the conversation.
-    /// </summary>
-    public string? Summary { get; set; }
+   /// <summary>
+   /// A summary of the conversation.
+   /// </summary>
+   public string? Summary { get; set; }
 
    /// <summary>
    /// The relative path and filename of the last tulpa file that was used with this conversation.
@@ -18,7 +17,7 @@ public class Conversation_Info {
    /// This might become really important for categorizing conversations.
    /// And maybe for AutoSort ;-)
    /// </summary>
-   public DateTime Started { get; set; } = DateTime.Now;
+   public DateTimeOffset Started { get; set; } = DateTimeOffset.Now;
 
    //public float Temperature { get; set; } = 0f;
 
@@ -28,39 +27,48 @@ public class Conversation_Info {
          .ToDictionary(property => $"{property.Name}:");
 
       var info = new Conversation_Info();
+
       foreach (var line in lines) {
-         foreach (var key in configMap.Keys) {
-            if (!line.StartsWith(key, StringComparison.InvariantCultureIgnoreCase))
-               continue;
+         var configKey = configMap.Keys.FirstOrDefault(key => line.StartsWith(key, StringComparison.InvariantCultureIgnoreCase));
+         if (configKey == null)
+            continue;
 
-            var value    = line[key.Length..].Trim();
-            var property = configMap[key];
-            if (property.PropertyType == typeof(float)) {
-               // If the property is a float, parse the value as a float
-               if (float.TryParse(value, out var tempValue))
-                  property.SetValue(info, tempValue);
-               else
-                  property.SetValue(info, 0f);
-            }
-            else {
-               // Otherwise, set the value directly
-               property.SetValue(info, value);
-            }
+         var valueString = line[configKey.Length..].Trim();
+         var property    = configMap[configKey];
 
-            break;
-         }
+         var parsedValue = ParseValue(property.PropertyType, valueString);
+         property.SetValue(info, parsedValue);
       }
 
       return info;
    }
+
+   private static object ParseValue(Type propertyType, string valueString) =>
+      propertyType switch {
+         _ when propertyType == typeof(float) =>
+            float.TryParse(valueString, out var floatValue) ? floatValue : 0f,
+         _ when propertyType == typeof(DateTimeOffset) =>
+            DateTimeOffset.TryParse(valueString, out var dateValue) ? dateValue : DateTimeOffset.MinValue,
+         _ => valueString,
+      };
+
 
    public StringBuilder Create_history_file_content() {
       var infoProperties = typeof(Conversation_Info).GetProperties();
       var info           = new StringBuilder();
 
       foreach (var property in infoProperties) {
-         var value = property.GetValue(this);
-         info.AppendLine($"{property.Name}: {value}");
+         var    value = property.GetValue(this);
+         string valueString;
+
+         if (value is DateTimeOffset dateTimeOffset) {
+            valueString = dateTimeOffset.ToString("o");
+         }
+         else {
+            valueString = value?.ToString() ?? "null";
+         }
+
+         info.AppendLine($"{property.Name}: {valueString}");
       }
 
       return info;

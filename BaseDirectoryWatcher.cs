@@ -11,8 +11,8 @@ public class BaseDirectoryWatcher {
       fileSystemWatcher = new FileSystemWatcher {
          Path                  = path.FullName,
          NotifyFilter          = NotifyFilters.FileName | NotifyFilters.DirectoryName,
-         Filter                = Config.marf278down_extenstion, // Watch all markdown files
-         IncludeSubdirectories = true    // Watch for changes in subdirectories
+         Filter                = Config.marf278down_filter, // Watch all markdown files
+         IncludeSubdirectories = true                       // Watch for changes in subdirectories
       };
 
       // Add event handlers
@@ -114,7 +114,7 @@ public class BaseDirectoryWatcher {
 
    private static TreeNode? FindNodeByTag(TreeNodeCollection nodes, FileSystemInfo tag) {
       foreach (TreeNode node in nodes) {
-         if (node.Tag is FileSystemInfo info && info.FullName == tag.FullName) {
+         if (node.Tag is FileSystemInfo info && info.Name == tag.Name) {
             return node;
          }
 

@@ -75,7 +75,8 @@ internal static class HistoryFileParser {
 
       conversation = new Conversation(historyFile) {
          Info     = info,
-         Messages = messages
+         Messages = messages,
+         taxonomy_required = false,
       };
 
       return true;
