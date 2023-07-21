@@ -40,6 +40,7 @@
             text_splitContainer = new SplitContainer();
             prompt_textBox = new TextBox();
             panel2 = new Panel();
+            clear_button = new Button();
             button1 = new Button();
             uploaded_files_comboBox = new ComboBox();
             upload_button = new Button();
@@ -165,21 +166,32 @@
             prompt_textBox.Name = "prompt_textBox";
             prompt_textBox.PlaceholderText = "Prompt";
             prompt_textBox.ScrollBars = ScrollBars.Both;
-            prompt_textBox.Size = new Size(336, 244);
+            prompt_textBox.Size = new Size(336, 247);
             prompt_textBox.TabIndex = 0;
             prompt_textBox.KeyDown += prompt_textBox_KeyDown;
             // 
             // panel2
             // 
+            panel2.Controls.Add(clear_button);
             panel2.Controls.Add(button1);
             panel2.Controls.Add(uploaded_files_comboBox);
             panel2.Controls.Add(upload_button);
             panel2.Controls.Add(send_prompt_button);
             panel2.Dock = DockStyle.Bottom;
-            panel2.Location = new Point(12, 279);
+            panel2.Location = new Point(12, 282);
             panel2.Name = "panel2";
-            panel2.Size = new Size(336, 33);
+            panel2.Size = new Size(336, 30);
             panel2.TabIndex = 3;
+            // 
+            // clear_button
+            // 
+            clear_button.Location = new Point(3, 6);
+            clear_button.Name = "clear_button";
+            clear_button.Size = new Size(75, 24);
+            clear_button.TabIndex = 5;
+            clear_button.Text = "Clear";
+            clear_button.UseVisualStyleBackColor = true;
+            clear_button.Click += clear_button_Click;
             // 
             // button1
             // 
@@ -214,11 +226,12 @@
             // 
             // send_prompt_button
             // 
+            send_prompt_button.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             send_prompt_button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             send_prompt_button.FlatStyle = FlatStyle.System;
-            send_prompt_button.Location = new Point(0, 8);
+            send_prompt_button.Location = new Point(189, 6);
             send_prompt_button.Name = "send_prompt_button";
-            send_prompt_button.Size = new Size(336, 24);
+            send_prompt_button.Size = new Size(144, 24);
             send_prompt_button.TabIndex = 1;
             send_prompt_button.Text = "Send Prompt ->";
             send_prompt_button.UseVisualStyleBackColor = true;
@@ -370,7 +383,9 @@
             conversation_history_treeView.PathSeparator = "/";
             conversation_history_treeView.Size = new Size(161, 324);
             conversation_history_treeView.TabIndex = 0;
+            conversation_history_treeView.BeforeCollapse += conversation_history_treeView_BeforeCollapse;
             conversation_history_treeView.AfterSelect += conversation_history_treeView_AfterSelect;
+            conversation_history_treeView.NodeMouseDoubleClick += conversation_history_treeView_NodeMouseDoubleClick;
             // 
             // splitter1
             // 
@@ -812,5 +827,6 @@
         private ComboBox uploaded_files_comboBox;
         private Ookii.Dialogs.WinForms.VistaOpenFileDialog upload_vistaOpenFileDialog;
         private Button button1;
+        private Button clear_button;
     }
 }

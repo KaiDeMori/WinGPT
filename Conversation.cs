@@ -1,5 +1,8 @@
 ﻿using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Text;
+using Markdig;
+using Markdig.Prism;
 using WinGPT.OpenAI;
 using WinGPT.OpenAI.Chat;
 using WinGPT.Taxonomy;
@@ -9,6 +12,8 @@ namespace WinGPT;
 using Message = OpenAI.Chat.Message;
 
 public class Conversation {
+   public static Conversation? Active { get; private set; }
+
    public Conversation_Info Info { get; set; } = new();
 
    /// <summary>
@@ -256,7 +261,9 @@ public class Conversation {
    };
 
    public static void ShowError(FileUpdateLocationResult result) {
-      string title = result == FileUpdateLocationResult.Success || result == FileUpdateLocationResult.SuccessWithRename ? "File Move Success" : "File Move Error";
+      string title = result == FileUpdateLocationResult.Success || result == FileUpdateLocationResult.SuccessWithRename
+         ? "File Move Success"
+         : "File Move Error";
       MessageBox.Show(ErrorMessages[result], title, MessageBoxButtons.OK, MessageBoxIcon.Information);
    }
 }

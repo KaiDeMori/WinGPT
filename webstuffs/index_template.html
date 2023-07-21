@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<script>
+		function scrollToLastPlaceholder() {
+			var paragraphs = document.getElementsByTagName('p');
+			var lastParagraphWithPlaceholder = null;
+
+			for (var i = 0; i < paragraphs.length; i++) {
+				if (paragraphs[i].textContent === "🤖Assistant") {
+					lastParagraphWithPlaceholder = paragraphs[i];
+				}
+			}
+
+			if (lastParagraphWithPlaceholder) {
+				lastParagraphWithPlaceholder.scrollIntoView(/*{ behavior: "smooth" }*/);
+			}
+		}
+
+		window.onload = function () {
+			scrollToLastPlaceholder();
+		};
+	</script>
+
+	<link rel="stylesheet" href="my.css">
+	<link rel="stylesheet" href="prism_fancy.css">
+	<script src="prism_fancy.js"></script>
+
+</head>
+<body class="line-numbers match-braces">
+%%HTML_fragment%%
+</body>
+</html>

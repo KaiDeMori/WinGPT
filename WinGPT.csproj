@@ -61,6 +61,9 @@
 	  <None Update="Taxonomy\system_message_template.md">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <None Update="webstuffs\index_template.html">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="webstuffs\my.css">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>

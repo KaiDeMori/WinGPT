@@ -49,7 +49,7 @@ public static class Taxonomer {
       //};
       ////to json
 
-      var functionCallSettings = new FunctionCallSettings(taxonomy_function_name);
+      //var functionCallSettings = new FunctionCallSettings(taxonomy_function_name);
 
       //Let's get the request ready
       var request = new Request() {
@@ -60,9 +60,9 @@ public static class Taxonomer {
          temperature   = 0.0
       };
 
-      string request_json = JsonConvert.SerializeObject(request, Formatting.Indented, new JsonSerializerSettings {
-         NullValueHandling = NullValueHandling.Ignore,
-      });
+      //string request_json = JsonConvert.SerializeObject(request, Formatting.Indented, new JsonSerializerSettings {
+      //   NullValueHandling = NullValueHandling.Ignore,
+      //});
 
 
       //and send it to the AI
@@ -116,7 +116,6 @@ public static class Taxonomer {
          //serialize the functionCall to json
          string functionCall_json = JsonConvert.SerializeObject(functionCall);
 
-
          JObject jsonObject = JObject.Parse(functionCall_json);
          if (!jsonObject.IsValid(schema))
             return false;
@@ -142,7 +141,13 @@ public static class Taxonomer {
       if (function_parameters == null)
          return;
 
-      //first, show in Taxonomy_Form
+      // check if function_parameters.filename ends with
+      // Config.marf278down_extenstion and if not, add it
+      if (!function_parameters.filename.EndsWith(Config.marf278down_extenstion))
+         function_parameters.filename += Config.marf278down_extenstion;
+
+
+      //show in Taxonomy_Form
       var taxonomy_form = new Taxonomy_Form(function_parameters);
       taxonomy_form.ShowDialog();
       string category;
