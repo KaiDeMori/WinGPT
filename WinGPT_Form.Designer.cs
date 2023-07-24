@@ -29,18 +29,19 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            TreeNode treeNode1 = new TreeNode("Node2");
-            TreeNode treeNode2 = new TreeNode("Chat1", new TreeNode[] { treeNode1 });
-            TreeNode treeNode3 = new TreeNode("Node3");
-            TreeNode treeNode4 = new TreeNode("Node4");
-            TreeNode treeNode5 = new TreeNode("Conversation History Root", new TreeNode[] { treeNode2, treeNode3, treeNode4 });
+            TreeNode treeNode6 = new TreeNode("Node2");
+            TreeNode treeNode7 = new TreeNode("Chat1", new TreeNode[] { treeNode6 });
+            TreeNode treeNode8 = new TreeNode("Node3");
+            TreeNode treeNode9 = new TreeNode("Node4");
+            TreeNode treeNode10 = new TreeNode("Conversation History Root", new TreeNode[] { treeNode7, treeNode8, treeNode9 });
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WinGPT_Form));
             main_toolTip = new ToolTip(components);
             history_file_name_textBox = new TextBox();
+            autoclear_checkBox = new CheckBox();
+            clear_button = new Button();
             text_splitContainer = new SplitContainer();
             prompt_textBox = new TextBox();
             panel2 = new Panel();
-            clear_button = new Button();
             button1 = new Button();
             uploaded_files_comboBox = new ComboBox();
             upload_button = new Button();
@@ -131,6 +132,30 @@
             history_file_name_textBox.KeyDown += conversation_name_textBox_KeyDown;
             history_file_name_textBox.MouseDoubleClick += conversation_name_textBox_MouseDoubleClick;
             // 
+            // autoclear_checkBox
+            // 
+            autoclear_checkBox.AutoSize = true;
+            autoclear_checkBox.Checked = true;
+            autoclear_checkBox.CheckState = CheckState.Checked;
+            autoclear_checkBox.Location = new Point(81, 9);
+            autoclear_checkBox.Name = "autoclear_checkBox";
+            autoclear_checkBox.Size = new Size(78, 19);
+            autoclear_checkBox.TabIndex = 6;
+            autoclear_checkBox.Text = "auto clear";
+            main_toolTip.SetToolTip(autoclear_checkBox, "Automatically clear the prompt text after sending the prompt.");
+            autoclear_checkBox.UseVisualStyleBackColor = true;
+            // 
+            // clear_button
+            // 
+            clear_button.Location = new Point(0, 5);
+            clear_button.Name = "clear_button";
+            clear_button.Size = new Size(75, 24);
+            clear_button.TabIndex = 5;
+            clear_button.Text = "Clear";
+            main_toolTip.SetToolTip(clear_button, "Clears the prompt text.");
+            clear_button.UseVisualStyleBackColor = true;
+            clear_button.Click += clear_button_Click;
+            // 
             // text_splitContainer
             // 
             text_splitContainer.BackColor = SystemColors.ControlDark;
@@ -172,6 +197,7 @@
             // 
             // panel2
             // 
+            panel2.Controls.Add(autoclear_checkBox);
             panel2.Controls.Add(clear_button);
             panel2.Controls.Add(button1);
             panel2.Controls.Add(uploaded_files_comboBox);
@@ -182,16 +208,6 @@
             panel2.Name = "panel2";
             panel2.Size = new Size(336, 30);
             panel2.TabIndex = 3;
-            // 
-            // clear_button
-            // 
-            clear_button.Location = new Point(3, 6);
-            clear_button.Name = "clear_button";
-            clear_button.Size = new Size(75, 24);
-            clear_button.TabIndex = 5;
-            clear_button.Text = "Clear";
-            clear_button.UseVisualStyleBackColor = true;
-            clear_button.Click += clear_button_Click;
             // 
             // button1
             // 
@@ -229,9 +245,9 @@
             send_prompt_button.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             send_prompt_button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             send_prompt_button.FlatStyle = FlatStyle.System;
-            send_prompt_button.Location = new Point(189, 6);
+            send_prompt_button.Location = new Point(192, 5);
             send_prompt_button.Name = "send_prompt_button";
-            send_prompt_button.Size = new Size(144, 24);
+            send_prompt_button.Size = new Size(144, 25);
             send_prompt_button.TabIndex = 1;
             send_prompt_button.Text = "Send Prompt ->";
             send_prompt_button.UseVisualStyleBackColor = true;
@@ -302,6 +318,7 @@
             response_textBox.Multiline = true;
             response_textBox.Name = "response_textBox";
             response_textBox.PlaceholderText = "Conversation";
+            response_textBox.ReadOnly = true;
             response_textBox.ScrollBars = ScrollBars.Both;
             response_textBox.Size = new Size(316, 218);
             response_textBox.TabIndex = 1;
@@ -369,17 +386,17 @@
             conversation_history_treeView.Dock = DockStyle.Left;
             conversation_history_treeView.Location = new Point(0, 37);
             conversation_history_treeView.Name = "conversation_history_treeView";
-            treeNode1.Name = "Node2";
-            treeNode1.Text = "Node2";
-            treeNode2.Name = "Node1";
-            treeNode2.Text = "Chat1";
-            treeNode3.Name = "Node3";
-            treeNode3.Text = "Node3";
-            treeNode4.Name = "Node4";
-            treeNode4.Text = "Node4";
-            treeNode5.Name = "RootNode";
-            treeNode5.Text = "Conversation History Root";
-            conversation_history_treeView.Nodes.AddRange(new TreeNode[] { treeNode5 });
+            treeNode6.Name = "Node2";
+            treeNode6.Text = "Node2";
+            treeNode7.Name = "Node1";
+            treeNode7.Text = "Chat1";
+            treeNode8.Name = "Node3";
+            treeNode8.Text = "Node3";
+            treeNode9.Name = "Node4";
+            treeNode9.Text = "Node4";
+            treeNode10.Name = "RootNode";
+            treeNode10.Text = "Conversation History Root";
+            conversation_history_treeView.Nodes.AddRange(new TreeNode[] { treeNode10 });
             conversation_history_treeView.PathSeparator = "/";
             conversation_history_treeView.Size = new Size(161, 324);
             conversation_history_treeView.TabIndex = 0;
@@ -735,6 +752,7 @@
             ((System.ComponentModel.ISupportInitialize)text_splitContainer).EndInit();
             text_splitContainer.ResumeLayout(false);
             panel2.ResumeLayout(false);
+            panel2.PerformLayout();
             preview_tabControl.ResumeLayout(false);
             webview2_tabPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)webView21).EndInit();
@@ -828,5 +846,7 @@
         private Ookii.Dialogs.WinForms.VistaOpenFileDialog upload_vistaOpenFileDialog;
         private Button button1;
         private Button clear_button;
+        private CheckBox autoclear_checkBox;
+        private NumericUpDown numericUpDown1;
     }
 }
