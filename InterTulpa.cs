@@ -3,7 +3,9 @@
 namespace WinGPT;
 
 public interface InterTulpa {
-   public void                Activate(Conversation conversation);
-   public Conversation        NewConversation();
-   public Task<List<Message>> SendAsync(Message user_message, Conversation conversation);
+   public Task<Message[]> SendAsync(Message user_message, Conversation conversation);
+
+
+   //public void Activate(Conversation conversation);
+   //public Conversation NewConversation();
 }

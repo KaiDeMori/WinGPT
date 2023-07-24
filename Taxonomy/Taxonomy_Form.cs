@@ -6,6 +6,8 @@ public partial class Taxonomy_Form : Form {
    public Taxonomy_Form(Function_Parmeters functionParameters) {
       InitializeComponent();
 
+      this.FormClosing += Taxonomy_Form_FormClosing;
+
       // Bind TextBox controls to the respective properties of the function parameters
       summary_textBox.DataBindings.Add("Text", functionParameters, nameof(Function_Parmeters.summary));
       filename_textBox.DataBindings.Add("Text", functionParameters, nameof(Function_Parmeters.filename));
@@ -59,8 +61,18 @@ public partial class Taxonomy_Form : Form {
       };
    }
 
+   private void Taxonomy_Form_FormClosing(object? sender, FormClosingEventArgs e) {
+      if (e.CloseReason == CloseReason.UserClosing)
+         this.DialogResult = DialogResult.Cancel;
+   }
+
    private void OK_button_Click(object sender, EventArgs e) {
       DialogResult = DialogResult.OK;
+      Close();
+   }
+
+   private void reroll_button_Click(object sender, EventArgs e) {
+      DialogResult = DialogResult.Retry;
       Close();
    }
 

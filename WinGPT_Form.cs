@@ -7,6 +7,7 @@ using Markdig.SyntaxHighlighting;
 using Microsoft.VisualBasic;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
+using Microsoft.Web.WebView2.Wpf;
 using WinGPT.OpenAI;
 using WinGPT.Taxonomy;
 using Message = WinGPT.OpenAI.Chat.Message;
@@ -139,6 +140,8 @@ public partial class WinGPT_Form : Form {
             conversation_history_treeView
          );
 
+      conversation_history_treeView.ExpandAll();
+
       //TADA should be a user-set default in the Settings
       //select and activate the default tulpa
 
@@ -161,20 +164,21 @@ public partial class WinGPT_Form : Form {
       //we want the last used one
       conversation.Info.TulpaFile = Config.ActiveTulpa.File.Name;
 
-      history_file_name_textBox.Text = conversation.HistoryFile.Name;
-      main_toolTip.SetToolTip(history_file_name_textBox, conversation.Info.Summary ?? "no summary yet");
+      //history_file_name_textBox.Text = conversation.HistoryFile.Name;
+      //main_toolTip.SetToolTip(history_file_name_textBox, conversation.Info.Summary ?? "no summary yet");
 
       if (conversation.taxonomy_required) {
          var updateLocationResult = Taxonomer.taxonomize(conversation);
-         if (updateLocationResult == FileUpdateLocationResult.SuccessWithRename)
-            main_toolStripStatusLabel.Text = Conversation.ErrorMessages[updateLocationResult];
+         show_conversation_info(updateLocationResult);
+         //if (updateLocationResult == FileUpdateLocationResult.SuccessWithRename)
+         //   main_toolStripStatusLabel.Text = Conversation.ErrorMessages[updateLocationResult];
          baseDirectoryWatcherAndTreeViewUpdater.SelectNode(conversation.HistoryFile);
       }
-      else
+      else {
          conversation.Save();
+         show_conversation_info();
+      }
 
-      Conversation.Load(new FileInfo(""));
-      
       Show_markf278down();
 
       Busy(false);
@@ -316,12 +320,12 @@ public partial class WinGPT_Form : Form {
    }
 
    private void ResetUI() {
-      Conversation.Reset();
       prompt_textBox.Clear();
       history_file_name_textBox.Clear();
       response_textBox.Clear();
-      //webView21.NavigateToString(string.Empty);
-      webView21.Source = new Uri("about:blank");
+      //webView21.NavigateToString(string.Empty); //works
+      //webView21.Source = new Uri("about:blank"); //no works
+      webView21.CoreWebView2.Navigate("about:blank"); //works
    }
 
    private void conversation_history_treeView_AfterSelect(object sender, TreeViewEventArgs e) {
@@ -353,28 +357,48 @@ public partial class WinGPT_Form : Form {
          return;
       }
 
-      {
-         void Action() {
-            Taxonomer.taxonomize(Conversation.Active);
+      // Run the task
+      ((Task) Task.Run(() =>
+         Taxonomer.taxonomize(Conversation.Active))).ContinueWith(t => {
+         // Once the task is done, update the UI on the UI thread
+         if (t.IsFaulted) {
+            // Handle exception here
+            // For example, t.Exception.InnerException
          }
-
-         // Run the task
-         Task.Run(Action)
-            .ContinueWith(t => {
-               // Once the task is done, update the UI on the UI thread
-               if (t.IsFaulted) {
-                  // Handle exception here
-                  // For example, t.Exception.InnerException
-               }
-               else if (t.IsCompletedSuccessfully) {
-                  Invoke(() => {
-                     history_file_name_textBox.Text    = Conversation.Active.HistoryFile.Name;
-                     history_file_name_textBox.Enabled = true; // Re-enable the textbox
-                  });
-               }
-            });
-      }
+         else if (t.IsCompletedSuccessfully) {
+            Invoke(show_conversation_info);
+         }
+      });
    }
+
+
+   private void show_conversation_info() {
+      if (Conversation.Active == null)
+         throw new NullReferenceException("Conversation.Active is null");
+
+      history_file_name_textBox.Text = Conversation.Active.HistoryFile.Name;
+      main_toolTip.SetToolTip(history_file_name_textBox, Conversation.Active.Info.Summary ?? "no summary yet");
+      history_file_name_textBox.Enabled = true;
+   }
+
+   private void show_conversation_info(FileUpdateLocationResult result) {
+      var errorMessage = Conversation.ErrorMessages[result];
+
+      switch (result) {
+         case FileUpdateLocationResult.Success:
+         case FileUpdateLocationResult.UserAborted:
+            break;
+         case FileUpdateLocationResult.SuccessWithRename:
+            main_toolStripStatusLabel.Text = errorMessage;
+            break;
+         default:
+            MessageBox.Show(errorMessage, "File Move Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            break;
+      }
+
+      show_conversation_info();
+   }
+
 
    private void prompt_textBox_KeyDown(object sender, KeyEventArgs e) {
       if (e is {Control: true, KeyCode: Keys.Enter}) {
@@ -393,11 +417,14 @@ public partial class WinGPT_Form : Form {
          var conversation = Conversation.Active;
 
          FileUpdateLocationResult renameResult = Conversation.TryRenameFile(newName);
-         history_file_name_textBox.Text = conversation.HistoryFile.Name;
-         if (renameResult == FileUpdateLocationResult.Success)
-            conversation.Save();
-         else
-            Conversation.ShowError(renameResult);
+         show_conversation_info(renameResult);
+         //Conversation.ShowError(renameResult);
+      }
+   }
+
+   private void show_rename_result(FileUpdateLocationResult result) {
+      if (result is not (FileUpdateLocationResult.Success or FileUpdateLocationResult.SuccessWithRename)) {
+         MessageBox.Show(Conversation.ErrorMessages[result], "File Move Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
       }
    }
 

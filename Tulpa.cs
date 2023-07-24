@@ -42,27 +42,6 @@ public class Tulpa : InterTulpa {
       return tulpa;
    }
 
-   /// <summary>
-   /// I think this is wrong. We should not create a new conversation here?
-   /// Placeholder for now.
-   /// Not sure if we want to give the tulpa a chance to do something when it is activated.
-   /// </summary>
-   /// <param name="conversation"></param>
-   public void Activate(Conversation conversation) {
-      //nothing to do here for now.
-      //overwrite in custom InterTulpas
-   }
-
-   [Obsolete("thats not handled by the tulpa anymore")]
-   public Conversation NewConversation() {
-      //string conversation_Filename = AGI.Create_New_Conversation_Filename();
-      //var full_HistoryDirectory = ConversationHistory.GetAbsoluteHistoryDirectory();
-      //we need the absolute path here as a FileInfo
-      //var full_HistoryFile = new FileInfo(Path.Combine(full_HistoryDirectory.FullName, conversation_Filename));
-      //var conversation     = new Conversation(full_HistoryFile);
-      //return conversation;
-      return null;
-   }
 
    /// <summary>
    /// Sends the API call.
@@ -70,7 +49,7 @@ public class Tulpa : InterTulpa {
    /// <param name="user_message">the new user prompt</param>
    /// <param name="conversation">The full conversation so far. Should usually not be mutated.</param>
    /// <returns>the new messages to be added to the conversation</returns>
-   public async Task<List<Message>> SendAsync(Message user_message, Conversation conversation) {
+   public async Task<Message[]> SendAsync(Message user_message, Conversation conversation) {
       List<Message> new_messages = new();
 
       // concatenate the Tulpa_Messages and the conversation messages and the new prompt as a user message.
@@ -97,18 +76,18 @@ public class Tulpa : InterTulpa {
       Response? response = await Completions.POST_Async(request);
       if (response == null) {
          // all error handling is done in the POST_Async method
-         return new_messages;
+         return new_messages.ToArray();
       }
 
       Choice? zeroth_Choice = response.Choices.FirstOrDefault();
       if (zeroth_Choice == null) {
          MessageBox.Show("The API returned an empty response.", "Error", MessageBoxButtons.OK);
-         return new_messages;
+         return new_messages.ToArray();
       }
 
       Message response_message = zeroth_Choice.message;
       new_messages.Add(response_message);
 
-      return new_messages;
+      return new_messages.ToArray();
    }
 }

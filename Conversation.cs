@@ -1,20 +1,18 @@
-﻿using System.Collections.Immutable;
-using System.Diagnostics;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Markdig;
-using Markdig.Prism;
-using WinGPT.OpenAI;
-using WinGPT.OpenAI.Chat;
-using WinGPT.Taxonomy;
+using Newtonsoft.Json;
 
 namespace WinGPT;
 
 using Message = OpenAI.Chat.Message;
 
 public class Conversation {
+   [JsonIgnore]
    public static Conversation? Active { get; private set; }
 
-   public Conversation_Info Info { get; set; } = new();
+   public required Conversation_Info Info { get; set; }
+
+   public required FileInfo HistoryFile { get; set; }
 
    /// <summary>
    /// The messages in the conversation.
@@ -25,15 +23,57 @@ public class Conversation {
    /// <summary>
    /// Make setter private again
    /// </summary>
-   public FileInfo HistoryFile { get; private set; }
-
    public bool useSysMsgHack;
 
-   //DRAGONS set to true again!
    public bool taxonomy_required = true;
 
-   public Conversation(FileInfo historyFile) {
-      HistoryFile = historyFile;
+   private Conversation() {
+   }
+
+   public static void Update_Conversation(Message user_message, Message[] responses) {
+      if (Active is null)
+         throw new Exception("There is no active conversation!");
+
+      Active.Messages.Add(user_message);
+      Active.Messages.AddRange(responses);
+   }
+
+   [MemberNotNull(nameof(Active))]
+   public static void Create_Conversation(Message first_prompt, Tulpa tulpa) {
+      if (Active != null) {
+         Active.Save();
+         Active = null;
+      }
+
+      Active = Save_Preliminary(first_prompt, tulpa);
+   }
+
+   /// <summary>
+   /// This loads the active conversation from the history file.
+   /// Sneaky little side effect: It also saves the existing one.
+   /// </summary>
+   /// <param name="history_file"></param>
+   /// <exception cref="Exception">Throws if a conversation is already active.</exception>
+   [MemberNotNullWhen(true, nameof(Active))]
+   public static bool Load(FileInfo history_file) {
+      if (Active != null) {
+         Active.Save();
+         Active = null;
+      }
+
+      if (!TryParseConversationHistoryFile(history_file, out var conversation)) {
+         return false;
+      }
+
+      Active = conversation;
+      return true;
+   }
+
+   public static void Reset() {
+      if (Active != null)
+         throw new Exception("There is already an active conversation!");
+      Active?.Save();
+      Active = null;
    }
 
    /// <summary>
@@ -86,10 +126,11 @@ public class Conversation {
    /// </summary>
    /// <param name="first_prompt">The first prompt of the conversation, before sending it.</param>
    /// <param name="tulpa">The tulpa that will be used to create the filename.</param>
-   public static Conversation Save_Preliminary(Message first_prompt, Tulpa tulpa) {
+   private static Conversation Save_Preliminary(Message first_prompt, Tulpa tulpa) {
       var preliminary_filename = Create_preliminary_Conversation_filename(tulpa);
       var preliminary_file     = new FileInfo(Path.Join(Config.Preliminary_Conversations_Path.FullName, preliminary_filename));
-      var conversation = new Conversation(preliminary_file) {
+      var conversation = new Conversation() {
+         HistoryFile = preliminary_file,
          Info = new Conversation_Info {
             TulpaFile = tulpa.File.Name,
          }
@@ -97,7 +138,7 @@ public class Conversation {
       var content = conversation.Create_history_file_content(first_prompt);
       //DRAGONS a lot can go wrong here
       //make at least sure the whole directory exists and if not create it
-      if (!preliminary_file.Directory.Exists) {
+      if (!preliminary_file.Directory!.Exists) {
          preliminary_file.Directory.Create();
       }
 
@@ -148,16 +189,20 @@ public class Conversation {
       }
    }
 
-   public FileUpdateLocationResult TryRenameFile(
+   public static FileUpdateLocationResult TryRenameFile(
       string newFilename
    ) {
+      if (Active == null)
+         throw new Exception("There is no active conversation!");
+
+      var history_file = Active.HistoryFile;
       try {
-         if (!HistoryFile.Exists) {
+         if (!history_file.Exists) {
             return FileUpdateLocationResult.FileDoesNotExist;
          }
 
          return create_updated_file_in_new_location_then_delete_the_old_one(
-            HistoryFile.Directory,
+            history_file.Directory!,
             newFilename
          );
       }
@@ -166,14 +211,17 @@ public class Conversation {
       }
    }
 
-   private FileUpdateLocationResult create_updated_file_in_new_location_then_delete_the_old_one(
+   private static FileUpdateLocationResult create_updated_file_in_new_location_then_delete_the_old_one(
       DirectoryInfo destinationDirectory,
       string        new_filename
    ) {
-      if (!HistoryFile.Exists)
+      if (Active == null)
+         throw new Exception("There is no active conversation!");
+
+      if (!Active.HistoryFile.Exists)
          return FileUpdateLocationResult.FileDoesNotExist;
 
-      FileInfo originalFile = HistoryFile;
+      FileInfo originalFile = Active.HistoryFile;
 
       // Create new FileInfo instance for the new file
       FileInfo newFile = new FileInfo(Path.Combine(destinationDirectory.FullName, new_filename));
@@ -188,9 +236,9 @@ public class Conversation {
 
       // Try to create the new file
       try {
-         HistoryFile = newFile;
-         Save(); // Assuming Save() method uses the HistoryFile to know where to save the file.
-         HistoryFile.Refresh();
+         Active.HistoryFile = newFile;
+         Active.Save(); // Assuming Save() method uses the HistoryFile to know where to save the file.
+         Active.HistoryFile.Refresh();
       }
       catch (Exception) {
          // Handle exceptions as you deem appropriate
@@ -198,7 +246,7 @@ public class Conversation {
       }
 
       // If new file has been created, try to delete the original file
-      if (HistoryFile.Exists) {
+      if (Active.HistoryFile.Exists) {
          try {
             originalFile.Delete();
          }
@@ -245,13 +293,13 @@ public class Conversation {
    //   return FileMoveResult.Success;
    //}
 
-   private static string AddTimestampToFilename(string filename) {
-      return Path.GetFileNameWithoutExtension(filename)
-             + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff")
-             + Path.GetExtension(filename);
-   }
+   //private static string AddTimestampToFilename(string filename) {
+   //   return Path.GetFileNameWithoutExtension(filename)
+   //          + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff")
+   //          + Path.GetExtension(filename);
+   //}
 
-   private static readonly Dictionary<FileUpdateLocationResult, string> ErrorMessages = new() {
+   public static readonly Dictionary<FileUpdateLocationResult, string> ErrorMessages = new() {
       {FileUpdateLocationResult.Success, "The file was successfully moved."},
       {FileUpdateLocationResult.SuccessWithRename, "The file was successfully moved, but had to be renamed due to an existing file with the same name."},
       {FileUpdateLocationResult.FileDoesNotExist, "The file you're trying to move does not exist."},
@@ -260,10 +308,80 @@ public class Conversation {
       {FileUpdateLocationResult.UnknownError, "An unknown error occurred while trying to move the file."},
    };
 
-   public static void ShowError(FileUpdateLocationResult result) {
-      string title = result == FileUpdateLocationResult.Success || result == FileUpdateLocationResult.SuccessWithRename
-         ? "File Move Success"
-         : "File Move Error";
-      MessageBox.Show(ErrorMessages[result], title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+   private static bool TryParseConversationHistoryFile(FileInfo historyFile, [NotNullWhen(true)] out Conversation? conversation) {
+      conversation = null;
+
+      if (!historyFile.Exists)
+         return false;
+
+      //read into file_content with try catch
+      string file_content;
+      try {
+         file_content = File.ReadAllText(historyFile.FullName);
+      }
+      catch (Exception) {
+         return false;
+      }
+
+      var memory      = file_content.AsMemory();
+      var currentSpan = memory.Span;
+
+      // Process the ConversationHistory section and get the file name
+      if (!HistoryFileParser.TryParseHistoryHeader(ref currentSpan, out var info)) {
+         return false; // Couldn't parse ConversationHistory
+      }
+
+      var messages = new List<Message>();
+
+      // Continue with the rest of the parsing as before
+      while (!currentSpan.IsEmpty) {
+         int     firstDelimiterIndex = currentSpan.Length;
+         string? delimiterFound      = null;
+
+         foreach (var delimiter in SpecialTokens.To_API_Role.Keys) {
+            int index = currentSpan.IndexOf(delimiter.AsSpan());
+            if (index >= 0 && index < firstDelimiterIndex) {
+               firstDelimiterIndex = index;
+               delimiterFound      = delimiter;
+            }
+         }
+
+         // No delimiter found, break out of the loop
+         if (delimiterFound == null) {
+            break;
+         }
+
+         // Could throw an exception if the slice end index is out of range
+         var afterDelimiter     = currentSpan[(firstDelimiterIndex + delimiterFound.Length)..];
+         var nextDelimiterIndex = afterDelimiter.Length;
+
+         foreach (var delimiter in SpecialTokens.To_API_Role.Keys) {
+            int index = afterDelimiter.IndexOf(delimiter.AsSpan());
+            if (index >= 0 && index < nextDelimiterIndex) {
+               nextDelimiterIndex = index;
+            }
+         }
+
+         // Could throw an exception if the slice end index is out of range
+         var content = afterDelimiter[..nextDelimiterIndex].Trim();
+
+         // Could throw an exception if the Role key doesn't exist in the dictionary
+         messages.Add(new Message {
+            role    = SpecialTokens.To_API_Role[delimiterFound],
+            content = content.ToString()
+         });
+
+         // Could throw an exception if the slice start index is out of range
+         currentSpan = afterDelimiter[nextDelimiterIndex..];
+      }
+
+      conversation = new Conversation {
+         HistoryFile       = historyFile,
+         Info              = info,
+         Messages          = messages,
+         taxonomy_required = false,
+      };
+
+      return true;
    }
 }

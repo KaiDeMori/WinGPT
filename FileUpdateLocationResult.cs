@@ -8,5 +8,7 @@ public enum FileUpdateLocationResult {
    CategoryExistsButShouldNot,
    FileCouldNotBeCreated,
    FileCouldNotBeDeleted,
-   UnknownError
+   FunctionParametersFaulty,
+   UserAborted,
+   UnknownError,
 }

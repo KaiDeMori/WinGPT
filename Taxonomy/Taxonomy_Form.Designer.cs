@@ -38,7 +38,7 @@
             existing_categories_groupBox = new GroupBox();
             existing_categories_comboBox = new ComboBox();
             OK_button = new Button();
-            button2 = new Button();
+            reroll_button = new Button();
             trackBar1 = new TrackBar();
             groupBox5 = new GroupBox();
             illegal_state_label = new Label();
@@ -150,16 +150,17 @@
             OK_button.UseVisualStyleBackColor = true;
             OK_button.Click += OK_button_Click;
             // 
-            // button2
+            // reroll_button
             // 
-            button2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            button2.Enabled = false;
-            button2.Location = new Point(12, 450);
-            button2.Name = "button2";
-            button2.Size = new Size(104, 37);
-            button2.TabIndex = 5;
-            button2.Text = "Re-roll";
-            button2.UseVisualStyleBackColor = true;
+            reroll_button.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            reroll_button.Enabled = false;
+            reroll_button.Location = new Point(12, 450);
+            reroll_button.Name = "reroll_button";
+            reroll_button.Size = new Size(104, 37);
+            reroll_button.TabIndex = 5;
+            reroll_button.Text = "Re-roll";
+            reroll_button.UseVisualStyleBackColor = true;
+            reroll_button.Click += reroll_button_Click;
             // 
             // trackBar1
             // 
@@ -203,7 +204,7 @@
             ClientSize = new Size(338, 499);
             Controls.Add(illegal_state_label);
             Controls.Add(groupBox5);
-            Controls.Add(button2);
+            Controls.Add(reroll_button);
             Controls.Add(OK_button);
             Controls.Add(existing_categories_groupBox);
             Controls.Add(new_category_groupBox);
@@ -236,7 +237,7 @@
         private GroupBox existing_categories_groupBox;
         private ComboBox existing_categories_comboBox;
         private Button OK_button;
-        private Button button2;
+        private Button reroll_button;
         private TrackBar trackBar1;
         private GroupBox groupBox5;
         private Label illegal_state_label;

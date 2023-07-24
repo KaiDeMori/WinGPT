@@ -4,9 +4,11 @@ using Formatting = Newtonsoft.Json.Formatting;
 namespace WinGPT;
 
 internal class Config {
-   public static Config        Active      = new();
-   public static Tulpa         ActiveTulpa = new();
-   public static Conversation? ActiveConversation;
+   public static Config Active      = new();
+   public static Tulpa  ActiveTulpa = new();
+
+   
+   //public static Conversation? ActiveConversation { get; set; }
 
    public bool UseSysMsgHack { get; set; }
 
