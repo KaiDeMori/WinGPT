@@ -133,13 +133,13 @@ public static class Taxonomer {
    /// Error handling?!
    /// </summary>
    /// <param name="conversation"></param>
-   public static void taxonomize(Conversation conversation) {
+   public static FileUpdateLocationResult taxonomize(Conversation conversation) {
       DirectoryInfo[]     directories         = Config.History_Directory.GetDirectories();
       string[]            existing_categories = directories.Select(d => d.Name).ToArray();
       Function_Parmeters? function_parameters = taxonomize(conversation, existing_categories);
       //DRAGONS where should we do the error handling?
       if (function_parameters == null)
-         return;
+         return FileUpdateLocationResult.FunctionParametersFaulty;
 
       // check if function_parameters.filename ends with
       // Config.marf278down_extenstion and if not, add it
@@ -148,8 +148,15 @@ public static class Taxonomer {
 
 
       //show in Taxonomy_Form
-      var taxonomy_form = new Taxonomy_Form(function_parameters);
-      taxonomy_form.ShowDialog();
+      DialogResult taxonomy_result;
+      do {
+         var taxonomy_form = new Taxonomy_Form(function_parameters);
+         taxonomy_result = taxonomy_form.ShowDialog();
+      } while (taxonomy_result == DialogResult.Retry);
+
+      if (taxonomy_result == DialogResult.Cancel)
+         return FileUpdateLocationResult.UserAborted;
+
       string category;
       bool   should_exist;
 
@@ -174,10 +181,9 @@ public static class Taxonomer {
          Config.History_Directory
       );
 
-      if (file_move_result != FileUpdateLocationResult.Success)
-         Conversation.ShowError(file_move_result);
-
       if (file_move_result == FileUpdateLocationResult.Success || file_move_result == FileUpdateLocationResult.SuccessWithRename)
          conversation.taxonomy_required = false;
+
+      return file_move_result;
    }
 }
