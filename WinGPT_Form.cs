@@ -85,7 +85,12 @@ public partial class WinGPT_Form : Form {
       models_ToolStripMenuItem.DropDownItems.Clear();
       foreach (var model in Models.Supported) {
          var item = new ToolStripMenuItem(model);
-         item.Click += (sender, args) => { Config.Active.LanguageModel = model; };
+         item.Click += (sender, args) => {
+            Config.Active.LanguageModel = model;
+            Config.Save();
+            foreach (ToolStripMenuItem oneitem in models_ToolStripMenuItem.DropDownItems)
+               oneitem.Checked = oneitem == item;
+         };
          models_ToolStripMenuItem.DropDownItems.Add(item);
       }
 
@@ -148,28 +153,37 @@ public partial class WinGPT_Form : Form {
       }
    }
 
-   private void ActivateConversation(Conversation conversation) {
-      if (Config.ActiveConversation == null)
-         throw new Exception("Config.ActiveConversation is null");
-      else if (Config.ActiveConversation != conversation)
-         throw new Exception("Config.ActiveConversation is not the same as the conversation we want to activate");
+   private void Update_Conversation() {
+      if (Conversation.Active == null)
+         throw new Exception("No active conversation!");
 
-
+      var conversation = Conversation.Active;
       //we want the last used one
       conversation.Info.TulpaFile = Config.ActiveTulpa.File.Name;
 
       history_file_name_textBox.Text = conversation.HistoryFile.Name;
       main_toolTip.SetToolTip(history_file_name_textBox, conversation.Info.Summary ?? "no summary yet");
 
-
       if (conversation.taxonomy_required) {
-         Taxonomer.taxonomize(conversation);
+         var updateLocationResult = Taxonomer.taxonomize(conversation);
+         if (updateLocationResult == FileUpdateLocationResult.SuccessWithRename)
+            main_toolStripStatusLabel.Text = Conversation.ErrorMessages[updateLocationResult];
          baseDirectoryWatcherAndTreeViewUpdater.SelectNode(conversation.HistoryFile);
       }
       else
          conversation.Save();
 
+      Conversation.Load(new FileInfo(""));
+      
+      Show_markf278down();
 
+      Busy(false);
+   }
+
+   private void Show_markf278down() {
+      if (Conversation.Active == null)
+         throw new Exception("No active conversation!");
+      var conversation = Conversation.Active;
       var markf278down = conversation.Create_markf278down();
       response_textBox.Text = markf278down;
 
@@ -188,42 +202,13 @@ public partial class WinGPT_Form : Form {
 
 
       var html_fragment = Markdown.ToHtml(markf278down, pipeline);
-      //var html          = AGI.CreateFullHtml(html_fragment);
-      //var htmlFromFile = AGI.CreateFullHtml_FromFile(html_fragment);
-      var htmlFromFile = Template_Engine.CreateFullHtml_FromFile(html_fragment);
-
+      var htmlFromFile  = Template_Engine.CreateFullHtml_FromFile(html_fragment);
 
       //DRAGONS be gone!
       if (Debugger.IsAttached)
          File.WriteAllText("PAGE.HTML", htmlFromFile);
 
       webView21.NavigateToString(htmlFromFile);
-
-      statecheck(conversation);
-
-      Busy(false);
-
-      Config.ActiveTulpa.Activate(conversation);
-   }
-
-   /// <summary>
-   /// I'm just curious if this ever happens
-   /// </summary>
-   /// <param name="conversation"></param>
-   /// <returns></returns>
-   /// <exception cref="Exception"></exception>
-   private void statecheck(Conversation conversation) {
-      //Test if the conversation is preliminary
-      //At the moment we have two checks
-      //1. The directory of the history file is the preliminary directory
-      //2. The summary of the conversation is null
-      var historyFileDirectory = conversation.HistoryFile.Directory;
-      var isTmpDir             = historyFileDirectory.FullName == Config.Preliminary_Conversations_Path.FullName;
-      var isSummaryNull        = conversation.Info.Summary     == null;
-      //should only happen if both are true.
-      //let's throw if that doesn't hold
-      if (isTmpDir ^ isSummaryNull)
-         throw new Exception("Invalid conversation state");
    }
 
    //we need a dictionary from Tulpa to RadioButton
@@ -259,9 +244,8 @@ public partial class WinGPT_Form : Form {
       main_toolTip.SetToolTip(character_textBox, tulpa.Configuration.Description);
       //DRAGONS not completely sure what to do here.
       Config.ActiveTulpa = tulpa;
-      if (Config.ActiveConversation is not null) {
-         tulpa.Activate(Config.ActiveConversation);
-         Config.ActiveConversation.Info.TulpaFile = tulpa.File.Name;
+      if (Conversation.Active is not null) {
+         Conversation.Active.Info.TulpaFile = tulpa.File.Name;
       }
    }
 
@@ -292,28 +276,29 @@ public partial class WinGPT_Form : Form {
    private async void send_prompt_button_Click(object sender, EventArgs e) {
       Busy(true);
       string prompt = prompt_textBox.Text;
+
       Message user_message = new() {
          role    = Role.user,
          content = prompt,
       };
 
+      if (Conversation.Active == null) {
+         //We have a new conversation and need to save it prelimiary
+         Conversation.Create_Conversation(user_message, Config.ActiveTulpa);
+      }
 
-      //before we send anything, we need to create a preliminary HistoryFile
-      //and save the conversation
-      Config.ActiveConversation ??= Conversation.Save_Preliminary(user_message, Config.ActiveTulpa);
-
-
-      Config.ActiveConversation.useSysMsgHack = sysmsghack_ToolStripMenuItem.Checked;
-      List<Message> responses = await Config.ActiveTulpa.SendAsync(user_message, Config.ActiveConversation);
-      Config.ActiveConversation.Messages.Add(user_message);
-      Config.ActiveConversation.Messages.AddRange(responses);
-      prompt_textBox.Clear();
-      ActivateConversation(Config.ActiveConversation);
+      Conversation.Active.useSysMsgHack = sysmsghack_ToolStripMenuItem.Checked;
+      var responses = await Config.ActiveTulpa.SendAsync(user_message, Conversation.Active);
+      if (autoclear_checkBox.Checked)
+         prompt_textBox.Clear();
+      Conversation.Update_Conversation(user_message, responses);
+      Update_Conversation();
    }
 
    private void Busy(bool isBusy) {
       main_toolStripProgressBar.Visible = isBusy;
-      main_toolStripStatusLabel.Text    = isBusy ? "Busy" : "Ready";
+      if (main_toolStripStatusLabel.Text.Length < 10)
+         main_toolStripStatusLabel.Text = isBusy ? "Busy" : "Ready";
       //Enabled                           = !isBusy;
       foreach (Control c in this.Controls) {
          c.Enabled = !isBusy;
@@ -327,12 +312,11 @@ public partial class WinGPT_Form : Form {
    /// <param name="sender"></param>
    /// <param name="e"></param>
    private void new_conversation_button_Click(object sender, EventArgs e) {
-      Config.ActiveConversation?.Save();
       ResetUI();
    }
 
    private void ResetUI() {
-      Config.ActiveConversation = null;
+      Conversation.Reset();
       prompt_textBox.Clear();
       history_file_name_textBox.Clear();
       response_textBox.Clear();
@@ -343,14 +327,14 @@ public partial class WinGPT_Form : Form {
    private void conversation_history_treeView_AfterSelect(object sender, TreeViewEventArgs e) {
       if (e.Node?.Tag is not FileInfo selectedFile)
          return;
-
-      if (!HistoryFileParser.TryParseConversationHistoryFile(selectedFile, out Conversation? conversation)) {
-         return;
-      }
-
       //TADA later, we will have to find the tulpa that corresponds to the file in the conversation history
 
-      ActivateConversation(conversation);
+      ResetUI();
+
+      if (Conversation.Load(selectedFile))
+         Update_Conversation();
+      else
+         MessageBox.Show($"Could not load {selectedFile.FullName}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
    }
 
    private void base_directory_toolStripMenuItem_Click(object sender, EventArgs e) {
@@ -365,26 +349,31 @@ public partial class WinGPT_Form : Form {
    private void conversation_name_textBox_MouseDoubleClick(object sender, MouseEventArgs e) {
       // Disable the textbox
       history_file_name_textBox.Enabled = false;
+      if (Conversation.Active == null) {
+         return;
+      }
 
-      void Action() =>
-         //taxonomize
-         Taxonomer.taxonomize(Config.ActiveConversation);
+      {
+         void Action() {
+            Taxonomer.taxonomize(Conversation.Active);
+         }
 
-      // Run the task
-      Task.Run(Action)
-         .ContinueWith(t => {
-            // Once the task is done, update the UI on the UI thread
-            if (t.IsFaulted) {
-               // Handle exception here
-               // For example, t.Exception.InnerException
-            }
-            else if (t.IsCompletedSuccessfully) {
-               Invoke(() => {
-                  history_file_name_textBox.Text    = Config.ActiveConversation.HistoryFile.Name;
-                  history_file_name_textBox.Enabled = true; // Re-enable the textbox
-               });
-            }
-         });
+         // Run the task
+         Task.Run(Action)
+            .ContinueWith(t => {
+               // Once the task is done, update the UI on the UI thread
+               if (t.IsFaulted) {
+                  // Handle exception here
+                  // For example, t.Exception.InnerException
+               }
+               else if (t.IsCompletedSuccessfully) {
+                  Invoke(() => {
+                     history_file_name_textBox.Text    = Conversation.Active.HistoryFile.Name;
+                     history_file_name_textBox.Enabled = true; // Re-enable the textbox
+                  });
+               }
+            });
+      }
    }
 
    private void prompt_textBox_KeyDown(object sender, KeyEventArgs e) {
@@ -399,10 +388,14 @@ public partial class WinGPT_Form : Form {
          e.SuppressKeyPress = true;
          var newName = history_file_name_textBox.Text;
          //try renaming it, if not possible, revert to the old name and show a message
-         FileUpdateLocationResult renameResult = Config.ActiveConversation.TryRenameFile(newName);
-         history_file_name_textBox.Text = Config.ActiveConversation.HistoryFile.Name;
+         if (Conversation.Active == null)
+            return;
+         var conversation = Conversation.Active;
+
+         FileUpdateLocationResult renameResult = Conversation.TryRenameFile(newName);
+         history_file_name_textBox.Text = conversation.HistoryFile.Name;
          if (renameResult == FileUpdateLocationResult.Success)
-            Config.ActiveConversation.Save();
+            conversation.Save();
          else
             Conversation.ShowError(renameResult);
       }
