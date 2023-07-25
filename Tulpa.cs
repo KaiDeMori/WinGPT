@@ -12,7 +12,7 @@ namespace WinGPT;
 /// </summary>
 public class Tulpa : InterTulpa {
    [JsonIgnore]
-   public FileInfo File { get; init; }
+   public FileInfo? File { get; set; }
 
    public TulpaConfiguration Configuration { get; init; } = new();
 
@@ -21,9 +21,6 @@ public class Tulpa : InterTulpa {
    /// </summary>
    public List<Message> Messages { get; init; } = new();
 
-   private const string Tulpa_Code_Token   = "📜Code";
-   private const string Tulpa_Config_Token = "🛠️Configuration";
-
    //TADA should use Either monad here for error msg accumulation
    public static Tulpa? CreateFrom(FileInfo file) {
       if (!file.Exists) {
@@ -31,7 +28,7 @@ public class Tulpa : InterTulpa {
          return null;
       }
 
-      var name   = Path.GetFileNameWithoutExtension(file.Name);
+      //var name   = Path.GetFileNameWithoutExtension(file.Name);
       var text   = System.IO.File.ReadAllText(file.FullName);
       var result = TulpaParser.TryParse(text, file, out var tulpa);
       if (!result) {
