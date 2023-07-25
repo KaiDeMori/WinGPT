@@ -2,19 +2,23 @@ using System.Diagnostics;
 using System.Text;
 using Newtonsoft.Json;
 using Message = WinGPT.OpenAI.Chat.Message;
+
 namespace WinGPT;
 
 internal class QuickTulpaTest {
    public static void run() {
-        // C:\Users\devboese\Documents\_dev\WinGPTTests\TestTulpas
-        var filenames = Directory.GetFiles(@"../../../../WinGPTTests\TestTulpas", "*.md");
-      foreach (var filename in filenames) {
+      var basedir = @"../../../../../WinGPTTests/TestTulpas";
+      var dir     = new DirectoryInfo(basedir);
+      Debug.WriteLine(dir.FullName);
+      var files = dir.GetFiles("*.md").ToList();
+
+      foreach (var file in files) {
+         var filename = file.FullName;
          //var tul    = Tulpa.CreateFrom(filename);
          var allText = File.ReadAllText(filename);
          //var lines   = File.ReadAllLines(filename);
-         var name    = Path.GetFileNameWithoutExtension(filename);
-         var file    = new FileInfo(filename);
-         var result  = TulpaParser.TryParse(allText, file, out var tulpa);
+         var name   = Path.GetFileNameWithoutExtension(filename);
+         var result = TulpaParser.TryParse(allText, file, out var tulpa);
          if (!result) {
             Debugger.Break();
             break;
@@ -23,7 +27,7 @@ internal class QuickTulpaTest {
          //create a json string from the tulpa object
          var json = JsonConvert.SerializeObject(tulpa, Formatting.Indented);
          //write the json string to a file
-         File.WriteAllText($"Characters/{name}.json", json);
+         File.WriteAllText($"{basedir}/{name}.json", json);
       }
 
       //MessageBox.Show("QuickTulpaTest passed!");
@@ -47,7 +51,7 @@ internal class QuickTulpaTest {
       var tulpa_config = new TulpaConfiguration();
 
       // Handle the Configuration part at the beginning.
-      if (contentMemory.Span.StartsWith(SpecialTokens.Configuration)) {
+      if (contentMemory.Span.StartsWith(SpecialTokens.Tulpa_Config_Token)) {
          int configEnd = -1;
          foreach (var specialToken in specialTokens) {
             configEnd = contentMemory.Span.IndexOf(specialToken.Key);

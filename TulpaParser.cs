@@ -1,16 +1,89 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Message = WinGPT.OpenAI.Chat.Message;
+
 namespace WinGPT;
 
 public static class TulpaParser {
-   public static bool TryParse(string content, FileInfo file, [NotNullWhen(true)] out Tulpa? tulpa) {
-      var specialTokens = new Dictionary<string, Role> {
-         {SpecialTokens.System, Role.system},
-         {SpecialTokens.User, Role.user},
-         {SpecialTokens.Assistant, Role.assistant},
-         {SpecialTokens.Function, Role.function},
-      };
+   public static Dictionary<string, Role> specialTokens = new Dictionary<string, Role> {
+      {SpecialTokens.System, Role.system},
+      {SpecialTokens.User, Role.user},
+      {SpecialTokens.Assistant, Role.assistant},
+      {SpecialTokens.Function, Role.function},
+   };
 
+
+   public static bool TryParse(string content, FileInfo file, [NotNullWhen(true)] out Tulpa? tulpa) {
+      // Default configuration.
+      var  tulpa_config       = new TulpaConfiguration();
+      var  messages           = new List<Message>();
+
+      //We need this in order to **NOT** add the system message twice when there is only a system message
+      bool systemMessageAdded = false;
+
+      if (content.StartsWith(SpecialTokens.Tulpa_Config_Token)) {
+         int configEnd                  = content.IndexOf(SpecialTokens.System);
+         if (configEnd == -1) configEnd = content.Length;
+
+         var configContent = content[0..configEnd];
+         if (!TryParseConfiguration(configContent, out tulpa_config)) {
+            tulpa = null;
+            return false;
+         }
+
+         content = content[configEnd..];
+      }
+      else {
+         messages.Add(new Message {role = Role.system, content = content});
+         tulpa_config.Name  = Path.GetFileNameWithoutExtension(file.Name);
+         systemMessageAdded = true;
+      }
+
+      int  newLineLength = Environment.NewLine.Length;
+      int  messageStart  = 0;
+      Role currentRole   = Role.system;
+
+      for (var i = 0; i < content.Length; i++) {
+         foreach (var specialToken in specialTokens) {
+            if (content[i..].StartsWith(specialToken.Key)) {
+               int contentLength                    = i - messageStart - newLineLength;
+               if (contentLength < 0) contentLength = 0;
+
+               string messageContent = content[messageStart..(messageStart + contentLength)];
+               if (!string.IsNullOrWhiteSpace(messageContent)) {
+                  messages.Add(new Message {role = currentRole, content = messageContent});
+               }
+
+               currentRole  =  specialToken.Value;
+               i            += specialToken.Key.Length;
+               messageStart =  i;
+               break;
+            }
+         }
+      }
+
+      var lastMessage = content[messageStart..];
+      if (!string.IsNullOrWhiteSpace(lastMessage) && !systemMessageAdded) {
+         messages.Add(new Message {role = currentRole, content = lastMessage});
+      }
+
+      if (messages.Any()) {
+         var samplePrompt = messages[^1];
+         if (samplePrompt.role == Role.user && string.IsNullOrWhiteSpace(tulpa_config.SamplePrompt)) {
+            tulpa_config.SamplePrompt = samplePrompt.content;
+         }
+      }
+
+
+      tulpa = new Tulpa {
+         Configuration = tulpa_config,
+         Messages      = messages,
+         File          = file
+      };
+      return true;
+   }
+
+
+   public static bool TryParse_weg(string content, FileInfo file, [NotNullWhen(true)] out Tulpa? tulpa) {
       var contentMemory = content.AsMemory();
       var currentRole   = Role.system; // Default role.
       var messageStart  = 0;
@@ -20,7 +93,7 @@ public static class TulpaParser {
       var tulpa_config = new TulpaConfiguration();
 
       // Handle the Configuration part at the beginning.
-      if (contentMemory.Span.StartsWith(SpecialTokens.Configuration)) {
+      if (contentMemory.Span.StartsWith(SpecialTokens.Tulpa_Config_Token)) {
          int configEnd = -1;
          foreach (var specialToken in specialTokens) {
             configEnd = contentMemory.Span.IndexOf(specialToken.Key);
@@ -85,7 +158,6 @@ public static class TulpaParser {
             //If it does, we remove the token from the start of lastMessage.
             lastMessage = lastMessage[matchingToken.Length..];
          }
-         //DRAGONS this is ugly, maybe we should insist on a config when one or more role tokens are used.
 
          messages.Add(new Message {role = currentRole, content = lastMessage});
       }
