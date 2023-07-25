@@ -12,19 +12,26 @@ public static class TulpaParser {
    };
 
 
-   public static bool TryParse(string content, FileInfo file, [NotNullWhen(true)] out Tulpa? tulpa) {
-      // Default configuration.
-      var  tulpa_config       = new TulpaConfiguration();
-      var  messages           = new List<Message>();
-
-      //We need this in order to **NOT** add the system message twice when there is only a system message
-      bool systemMessageAdded = false;
+   public static bool TryParse_weg(string content, FileInfo file, [NotNullWhen(true)] out Tulpa? tulpa) {
+      var tulpa_config = new TulpaConfiguration();
+      var messages     = new List<Message>();
 
       if (content.StartsWith(SpecialTokens.Tulpa_Config_Token)) {
-         int configEnd                  = content.IndexOf(SpecialTokens.System);
-         if (configEnd == -1) configEnd = content.Length;
+         int configEnd = content.IndexOf(SpecialTokens.System);
+
+         if (configEnd == -1) {
+            // Look for the first appearance of any special token if System is not found.
+            configEnd = specialTokens.Keys
+               .Where(token => content.IndexOf(token) != -1)
+               .Select(token => content.IndexOf(token))
+               .Min();
+
+            // If no special tokens are found, consider the whole content as the config.
+            if (configEnd == -1) configEnd = content.Length;
+         }
 
          var configContent = content[0..configEnd];
+
          if (!TryParseConfiguration(configContent, out tulpa_config)) {
             tulpa = null;
             return false;
@@ -34,45 +41,54 @@ public static class TulpaParser {
       }
       else {
          messages.Add(new Message {role = Role.system, content = content});
-         tulpa_config.Name  = Path.GetFileNameWithoutExtension(file.Name);
-         systemMessageAdded = true;
+         tulpa_config.Name = Path.GetFileNameWithoutExtension(file.Name);
       }
 
+      Role currentRole   = Role.system;
       int  newLineLength = Environment.NewLine.Length;
       int  messageStart  = 0;
-      Role currentRole   = Role.system;
 
-      for (var i = 0; i < content.Length; i++) {
+      while (messageStart < content.Length) {
+         KeyValuePair<string, Role>? nextSpecialToken      = null;
+         int?                        nextSpecialTokenIndex = null;
+
+         // Find the next special token
          foreach (var specialToken in specialTokens) {
-            if (content[i..].StartsWith(specialToken.Key)) {
-               int contentLength                    = i - messageStart - newLineLength;
-               if (contentLength < 0) contentLength = 0;
+            int tokenIndex = content.IndexOf(specialToken.Key, messageStart);
 
-               string messageContent = content[messageStart..(messageStart + contentLength)];
-               if (!string.IsNullOrWhiteSpace(messageContent)) {
-                  messages.Add(new Message {role = currentRole, content = messageContent});
-               }
-
-               currentRole  =  specialToken.Value;
-               i            += specialToken.Key.Length;
-               messageStart =  i;
-               break;
+            if (tokenIndex != -1 && (nextSpecialTokenIndex == null || tokenIndex < nextSpecialTokenIndex)) {
+               nextSpecialToken      = specialToken;
+               nextSpecialTokenIndex = tokenIndex;
             }
          }
-      }
 
-      var lastMessage = content[messageStart..];
-      if (!string.IsNullOrWhiteSpace(lastMessage) && !systemMessageAdded) {
-         messages.Add(new Message {role = currentRole, content = lastMessage});
-      }
+         // No more special tokens, add the rest of the content as a message
+         if (nextSpecialToken == null) {
+            var lastMessage = content[messageStart..];
+            if (!string.IsNullOrWhiteSpace(lastMessage)) {
+               messages.Add(new Message {role = currentRole, content = lastMessage});
+            }
 
-      if (messages.Any()) {
-         var samplePrompt = messages[^1];
-         if (samplePrompt.role == Role.user && string.IsNullOrWhiteSpace(tulpa_config.SamplePrompt)) {
-            tulpa_config.SamplePrompt = samplePrompt.content;
+            break;
          }
+
+         // Add the message before the special token
+         string messageContent = content[messageStart..nextSpecialTokenIndex.Value];
+         if (!string.IsNullOrWhiteSpace(messageContent)) {
+            messages.Add(new Message {role = currentRole, content = messageContent});
+         }
+
+         // Move the pointer to after the special token
+         currentRole  = nextSpecialToken.Value.Value;
+         messageStart = nextSpecialTokenIndex.Value + nextSpecialToken.Value.Key.Length;
       }
 
+      //if (messages.Any()) {
+      //   var samplePrompt = messages[^1];
+      //   if (samplePrompt.role == Role.user && string.IsNullOrWhiteSpace(tulpa_config.SamplePrompt)) {
+      //      tulpa_config.SamplePrompt = samplePrompt.content;
+      //   }
+      //}
 
       tulpa = new Tulpa {
          Configuration = tulpa_config,
@@ -83,7 +99,7 @@ public static class TulpaParser {
    }
 
 
-   public static bool TryParse_weg(string content, FileInfo file, [NotNullWhen(true)] out Tulpa? tulpa) {
+   public static bool TryParse(string content, FileInfo file, [NotNullWhen(true)] out Tulpa? tulpa) {
       var contentMemory = content.AsMemory();
       var currentRole   = Role.system; // Default role.
       var messageStart  = 0;
@@ -161,7 +177,6 @@ public static class TulpaParser {
 
          messages.Add(new Message {role = currentRole, content = lastMessage});
       }
-
 
       tulpa = new Tulpa {
          Configuration = tulpa_config,
