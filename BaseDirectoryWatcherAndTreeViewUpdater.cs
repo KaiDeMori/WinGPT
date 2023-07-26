@@ -3,37 +3,23 @@
 namespace WinGPT;
 
 public class BaseDirectoryWatcherAndTreeViewUpdater : IDisposable {
-   private readonly TreeView          treeView;
+   private readonly TreeView          _treeView;
    private readonly DirectoryInfo     baseDirectory;
    private readonly FileSystemWatcher fileSystemWatcher;
-   private readonly HashSet<string>   expandedNodes;
+   public readonly  TreeViewPersistor treeViewPersistor;
 
-   private FileSystemInfo? selectedNode;
    private FileSystemInfo? node_to_select;
 
-   public void SelectNode(FileInfo file) {
-      //we first have to check if the node is already in the treeview and select it if so
-      if (TryFindNodeRecursive(treeView.Nodes, file.FullName, out var node)) {
-         treeView.SelectedNode = node;
-      }
-      else {
-         node_to_select = file;
-      }
-   }
-
-   public void SelectNothing() {
-      selectedNode          = null;
-      treeView.SelectedNode = null;
-   }
-
    public BaseDirectoryWatcherAndTreeViewUpdater(DirectoryInfo base_directory, TreeView treeView) {
-      this.treeView      = treeView;
+      this._treeView     = treeView;
       this.baseDirectory = base_directory;
-      this.expandedNodes = new HashSet<string>();
 
       treeView.Nodes.Clear();
       InitializeTreeView(base_directory);
       this.fileSystemWatcher = InitFileSystemWatcher(base_directory);
+
+      this.treeViewPersistor = new TreeViewPersistor(treeView);
+      treeViewPersistor.Load();
 
       fileSystemWatcher.EnableRaisingEvents = true;
    }
@@ -46,14 +32,51 @@ public class BaseDirectoryWatcherAndTreeViewUpdater : IDisposable {
          IncludeSubdirectories = true
       };
 
-      watcher.Created += OnFileSystemEvent;
-      watcher.Changed += OnFileSystemEvent;
-      watcher.Deleted += OnFileSystemEvent;
+      watcher.Created += OnCreated;
+      watcher.Changed += OnChanged;
+      watcher.Deleted += OnDeleted;
       watcher.Renamed += OnRenamed;
       watcher.Error   += OnError;
 
-
       return watcher;
+   }
+
+   private void OnCreated(object sender, FileSystemEventArgs e) {
+      FileSystemInfo systemfileinfo = CreateFileSystemInfo(e.FullPath);
+
+      var new_node = new FileTreeNode(systemfileinfo);
+      InvokeIfNeeded(() => {
+         GetParentNode(systemfileinfo)?.Nodes.Add(new_node);
+         //_treeView.Refresh();
+         check_if_new_file_should_be_selected(systemfileinfo);
+      });
+   }
+
+   private void OnRenamed(object sender, RenamedEventArgs e) {
+      var old_file = CreateFileSystemInfo(e.OldFullPath);
+      var new_file = CreateFileSystemInfo(e.FullPath);
+
+      InvokeIfNeeded(() => {
+         var node = TreeViewHelper.FindNode(old_file, baseDirectory, _treeView);
+         if (node == null)
+            return;
+
+         node.Text = e.Name;
+         node.Tag  = new_file;
+         treeViewPersistor.SelectNode(node);
+      });
+   }
+
+   private void OnChanged(object sender, FileSystemEventArgs e) {
+      //not sure when this is called exactly
+   }
+
+   private void OnDeleted(object sender, FileSystemEventArgs e) {
+      InvokeIfNeeded(() => {
+         var node = TreeViewHelper.FindNode(e.FullPath, baseDirectory, _treeView);
+
+         node?.Remove();
+      });
    }
 
    private void OnError(object sender, ErrorEventArgs e) {
@@ -61,10 +84,10 @@ public class BaseDirectoryWatcherAndTreeViewUpdater : IDisposable {
    }
 
    private void InitializeTreeView(DirectoryInfo base_directory, TreeNode? parentNode = null) {
-      var directoryNode = new TreeNode(base_directory.Name) {Tag = base_directory};
+      var directoryNode = new FileTreeNode(base_directory);
 
       if (parentNode == null) {
-         treeView.Nodes.Add(directoryNode);
+         _treeView.Nodes.Add(directoryNode);
       }
       else {
          parentNode.Nodes.Add(directoryNode);
@@ -75,134 +98,33 @@ public class BaseDirectoryWatcherAndTreeViewUpdater : IDisposable {
       }
 
       foreach (var file in base_directory.GetFiles(Config.marf278down_filter)) {
-         directoryNode.Nodes.Add(new TreeNode(file.Name) {Tag = file});
+         directoryNode.Nodes.Add(new FileTreeNode(file));
       }
    }
 
+   private TreeNode? GetParentNode(FileSystemInfo systemfileinfo) {
+      var parent_node = systemfileinfo switch {
+         FileInfo file           => TreeViewHelper.FindNode(file.Directory,   baseDirectory, _treeView),
+         DirectoryInfo directory => TreeViewHelper.FindNode(directory.Parent, baseDirectory, _treeView),
+         _                       => null
+      };
 
-   private void OnFileSystemEvent(object sender, FileSystemEventArgs e) {
-      InvokeIfNeeded(() => {
-         SaveTreeViewState();
-         treeView.BeginUpdate();
-
-         if (e.ChangeType == WatcherChangeTypes.Deleted) {
-            if (TryFindNodeRecursive(treeView.Nodes, e.FullPath, out var node)) {
-               expandedNodes.Remove(node.FullPath);
-               node.Remove();
-            }
-            else {
-               RefreshTreeView();
-            }
-         }
-         else {
-            if (TryFindNodeRecursive(treeView.Nodes, e.FullPath, out var node)) {
-               var file = CreateFileSystemInfo(e.FullPath);
-               node.Tag = file;
-               if (e.ChangeType == WatcherChangeTypes.Created) {
-                  check_if_new_file_should_be_selected(file, node);
-               }
-            }
-            else {
-               RefreshTreeView();
-            }
-         }
-
-         treeView.EndUpdate();
-         RestoreTreeViewState();
-      });
+      return parent_node;
    }
 
-   private void check_if_new_file_should_be_selected(FileSystemInfo file, TreeNode node) {
+   private void check_if_new_file_should_be_selected(FileSystemInfo file) {
       if (node_to_select != null && node_to_select.FullName == file.FullName) {
-         treeView.SelectedNode = node;
-         node_to_select        = null;
+         var success = treeViewPersistor.SelectNode(file);
+         if (success)
+            node_to_select = null;
       }
    }
 
-   private void OnRenamed(object sender, RenamedEventArgs e) {
-      InvokeIfNeeded(() => {
-         SaveTreeViewState();
-         treeView.BeginUpdate();
-
-         if (TryFindNodeRecursive(treeView.Nodes, e.OldFullPath, out var node)) {
-            node.Text = e.Name;
-            node.Tag  = CreateFileSystemInfo(e.FullPath);
-
-            var parentPath = Path.GetDirectoryName(e.FullPath);
-            if (parentPath != null && TryFindNodeRecursive(treeView.Nodes, parentPath, out var parentNode)) {
-               parentNode.Nodes.Add(node);
-            }
-         }
-         else {
-            RefreshTreeView();
-         }
-
-         treeView.EndUpdate();
-         RestoreTreeViewState();
-      });
-   }
-
-   private FileSystemInfo CreateFileSystemInfo(string path) =>
-      Directory.Exists(path) ? new DirectoryInfo(path) : new FileInfo(path);
-
-   private bool TryFindNodeRecursive(
-      TreeNodeCollection                nodes,
-      string                            path,
-      [NotNullWhen(true)] out TreeNode? result
-   ) {
-      foreach (TreeNode node in nodes) {
-         if (node.FullPath == path) {
-            result = node;
-            return true;
-         }
-
-         if (TryFindNodeRecursive(node.Nodes, path, out result)) {
-            return true;
-         }
-      }
-
-      result = null;
-      return false;
-   }
-
-
-   private void SaveTreeViewState() {
-      expandedNodes.Clear();
-      SaveExpandedNodes(treeView.Nodes);
-      selectedNode = treeView.SelectedNode?.Tag as FileSystemInfo;
-   }
-
-   private void SaveExpandedNodes(TreeNodeCollection nodes) {
-      foreach (TreeNode node in nodes) {
-         if (node.IsExpanded) {
-            expandedNodes.Add(node.FullPath);
-         }
-
-         SaveExpandedNodes(node.Nodes);
-      }
-   }
-
-   private void RestoreTreeViewState() {
-      RestoreExpandedNodes(treeView.Nodes);
-   }
-
-   private void RestoreExpandedNodes(TreeNodeCollection nodes) {
-      foreach (TreeNode node in nodes) {
-         if (node.Tag is FileSystemInfo info) {
-            if (expandedNodes.Contains(info.FullName)) {
-               node.Expand();
-            }
-            else {
-               node.Collapse();
-            }
-         }
-
-         if ((node.Tag as FileSystemInfo)?.FullName == selectedNode?.FullName) {
-            treeView.SelectedNode = node;
-         }
-
-         RestoreExpandedNodes(node.Nodes);
-      }
+   private FileSystemInfo CreateFileSystemInfo(string path) {
+      var fileAttributes = File.GetAttributes(path);
+      if (fileAttributes.HasFlag(FileAttributes.Directory))
+         return new DirectoryInfo(path);
+      return new FileInfo(path);
    }
 
    public void Dispose() {
@@ -210,16 +132,39 @@ public class BaseDirectoryWatcherAndTreeViewUpdater : IDisposable {
    }
 
    private void InvokeIfNeeded(Action action) {
-      if (treeView.InvokeRequired) {
-         treeView.Invoke((MethodInvoker) delegate { action(); });
+      if (_treeView.InvokeRequired) {
+         _treeView.Invoke((MethodInvoker) delegate { action(); });
       }
       else {
          action();
       }
    }
 
-   private void RefreshTreeView() {
-      treeView.Nodes.Clear();
-      InitializeTreeView(baseDirectory);
+   public void RefreshTreeView() {
+      InvokeIfNeeded(() => {
+         _treeView.BeginUpdate();
+         treeViewPersistor.Save();
+         _treeView.Nodes.Clear();
+         InitializeTreeView(baseDirectory);
+         _treeView.Refresh();
+         treeViewPersistor.Load();
+         _treeView.EndUpdate();
+      });
+   }
+
+   public void SelectNode(FileSystemInfo conversationHistoryFile) {
+      if (!treeViewPersistor.SelectNode(conversationHistoryFile))
+         node_to_select = conversationHistoryFile;
+   }
+}
+
+/// <summary>
+/// seriously? The "Name" is different from setting the "Text" in the constructor. And the docs just talk abou "key" *facepalm*
+/// </summary>
+public class FileTreeNode : TreeNode {
+   public FileTreeNode(FileSystemInfo fileSystemInfo) {
+      Text = fileSystemInfo.Name;
+      Name = fileSystemInfo.Name;
+      Tag  = fileSystemInfo;
    }
 }

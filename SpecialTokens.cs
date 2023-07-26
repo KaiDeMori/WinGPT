@@ -3,9 +3,12 @@
 internal class SpecialTokens {
    public static readonly string nl = Environment.NewLine;
 
-   //WinGPT tokens
-   //public static readonly string Code          = $"📜Code";
-   public static readonly string Configuration       = $"🛠️Configuration{nl}";
+   //Tulpa Tokens
+   public static readonly string Tulpa_Code_Token         = $"🔮Code{nl}";
+   public static readonly string Tulpa_Config_Token       = $"🛠️Configuration{nl}";
+   //public static readonly string Tulpa_SamplePrompt_Token = $"📝SamplePrompt{nl}";
+
+   //Conversation tokens
    public static readonly string ConversationHistory = $"📜ConversationHistory{nl}";
 
    //API roles
@@ -16,16 +19,18 @@ internal class SpecialTokens {
 
 
    // Set of special tokens
-   public static readonly HashSet<string> specialTokensSet = new() {
-      System,
-      User,
-      Assistant,
-      Function,
-      //Code,
-      Configuration
-   };
+   //public static readonly HashSet<string> specialTokensSet = new() {
+   //   System,
+   //   User,
+   //   Assistant,
+   //   Function,
+   //   //Code,
+   //   Configuration
+   //};
 
-   //a Hashmap to map the SpecialTokens to the Role enum
+   /// <summary>
+   /// A Hashmap to map the SpecialTokens to the Role enum
+   /// </summary>
    public static readonly Dictionary<string, Role> To_API_Role = new() {
       {System, Role.system},
       {User, Role.user},

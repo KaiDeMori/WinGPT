@@ -153,7 +153,6 @@
             // reroll_button
             // 
             reroll_button.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            reroll_button.Enabled = false;
             reroll_button.Location = new Point(12, 450);
             reroll_button.Name = "reroll_button";
             reroll_button.Size = new Size(104, 37);
