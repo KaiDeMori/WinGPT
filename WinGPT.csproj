@@ -27,6 +27,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.15" />
     <PackageReference Include="Ookii.Dialogs.WinForms" Version="4.0.0" />
+    <PackageReference Include="Sprache" Version="2.3.1" />
     <PackageReference Include="WebStoating.Markdig.Prism" Version="1.0.0" />
   </ItemGroup>
 

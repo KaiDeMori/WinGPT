@@ -7,7 +7,6 @@ internal class Config {
    public static Config Active      = new();
    public static Tulpa  ActiveTulpa = new();
 
-   
    //public static Conversation? ActiveConversation { get; set; }
 
    public bool UseSysMsgHack { get; set; }
@@ -31,6 +30,7 @@ internal class Config {
    private const  string        WebstuffsPrismFancyJs               = "webstuffs/prism_fancy.js";
    private const  string        WebstuffsMyCss                      = "webstuffs/my.css";
    private const  string        Preliminary_Conversations_Directory = "tmp";
+   public const   string        DefaultAssistant_Filename           = "Default_Assistant.md";
    public static  DirectoryInfo Preliminary_Conversations_Path => new(Path.Join(Active.BaseDirectory, Preliminary_Conversations_Directory));
 
    private static readonly object _lock   = new();
@@ -39,6 +39,7 @@ internal class Config {
    public string? BaseDirectory  { get; set; }
    public string  OpenAI_API_Key { get; set; } = "";
    public string  LanguageModel  { get; set; } = "gpt-4";
+   public string  LastUsedTulpa  { get; set; } = DefaultAssistant_Filename;
 
    public TokenCounter TokenCounter { get; set; } = new();
 

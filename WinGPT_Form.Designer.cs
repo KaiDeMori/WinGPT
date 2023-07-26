@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            TreeNode treeNode6 = new TreeNode("Node2");
-            TreeNode treeNode7 = new TreeNode("Chat1", new TreeNode[] { treeNode6 });
-            TreeNode treeNode8 = new TreeNode("Node3");
-            TreeNode treeNode9 = new TreeNode("Node4");
-            TreeNode treeNode10 = new TreeNode("Conversation History Root", new TreeNode[] { treeNode7, treeNode8, treeNode9 });
+            TreeNode treeNode1 = new TreeNode("Node2");
+            TreeNode treeNode2 = new TreeNode("Chat1", new TreeNode[] { treeNode1 });
+            TreeNode treeNode3 = new TreeNode("Node3");
+            TreeNode treeNode4 = new TreeNode("Node4");
+            TreeNode treeNode5 = new TreeNode("Conversation History Root", new TreeNode[] { treeNode2, treeNode3, treeNode4 });
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WinGPT_Form));
             main_toolTip = new ToolTip(components);
             history_file_name_textBox = new TextBox();
@@ -42,7 +42,7 @@
             text_splitContainer = new SplitContainer();
             prompt_textBox = new TextBox();
             panel2 = new Panel();
-            button1 = new Button();
+            del_button = new Button();
             uploaded_files_comboBox = new ComboBox();
             upload_button = new Button();
             send_prompt_button = new Button();
@@ -52,8 +52,6 @@
             webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
             markf278down_tabPage = new TabPage();
             response_textBox = new TextBox();
-            pretty_tabPage = new TabPage();
-            pretty_htmlPanel = new TheArtOfDev.HtmlRenderer.WinForms.HtmlPanel();
             cef_tabPage = new TabPage();
             cefsharp_chromiumWebBrowser = new CefSharp.WinForms.ChromiumWebBrowser();
             new_conversation_button = new Button();
@@ -111,7 +109,6 @@
             webview2_tabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)webView21).BeginInit();
             markf278down_tabPage.SuspendLayout();
-            pretty_tabPage.SuspendLayout();
             cef_tabPage.SuspendLayout();
             main_menuStrip.SuspendLayout();
             panel1.SuspendLayout();
@@ -191,7 +188,7 @@
             prompt_textBox.Name = "prompt_textBox";
             prompt_textBox.PlaceholderText = "Prompt";
             prompt_textBox.ScrollBars = ScrollBars.Both;
-            prompt_textBox.Size = new Size(336, 247);
+            prompt_textBox.Size = new Size(336, 214);
             prompt_textBox.TabIndex = 0;
             prompt_textBox.KeyDown += prompt_textBox_KeyDown;
             // 
@@ -199,42 +196,45 @@
             // 
             panel2.Controls.Add(autoclear_checkBox);
             panel2.Controls.Add(clear_button);
-            panel2.Controls.Add(button1);
+            panel2.Controls.Add(del_button);
             panel2.Controls.Add(uploaded_files_comboBox);
             panel2.Controls.Add(upload_button);
             panel2.Controls.Add(send_prompt_button);
             panel2.Dock = DockStyle.Bottom;
-            panel2.Location = new Point(12, 282);
+            panel2.Location = new Point(12, 249);
             panel2.Name = "panel2";
-            panel2.Size = new Size(336, 30);
+            panel2.Size = new Size(336, 63);
             panel2.TabIndex = 3;
             // 
-            // button1
+            // del_button
             // 
-            button1.Location = new Point(3, 95);
-            button1.Name = "button1";
-            button1.Size = new Size(33, 24);
-            button1.TabIndex = 4;
-            button1.Text = "del";
-            button1.UseVisualStyleBackColor = true;
+            del_button.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            del_button.Location = new Point(303, 35);
+            del_button.Name = "del_button";
+            del_button.Size = new Size(33, 25);
+            del_button.TabIndex = 4;
+            del_button.Text = "del";
+            del_button.UseVisualStyleBackColor = true;
+            del_button.Click += del_button_Click;
             // 
             // uploaded_files_comboBox
             // 
+            uploaded_files_comboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             uploaded_files_comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             uploaded_files_comboBox.FormattingEnabled = true;
             uploaded_files_comboBox.Items.AddRange(new object[] { "File 1", "File 2", "File 3.md" });
-            uploaded_files_comboBox.Location = new Point(42, 95);
+            uploaded_files_comboBox.Location = new Point(101, 36);
             uploaded_files_comboBox.Name = "uploaded_files_comboBox";
-            uploaded_files_comboBox.Size = new Size(160, 23);
+            uploaded_files_comboBox.Size = new Size(196, 23);
             uploaded_files_comboBox.TabIndex = 3;
             // 
             // upload_button
             // 
             upload_button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             upload_button.FlatStyle = FlatStyle.System;
-            upload_button.Location = new Point(3, 65);
+            upload_button.Location = new Point(0, 35);
             upload_button.Name = "upload_button";
-            upload_button.Size = new Size(127, 24);
+            upload_button.Size = new Size(95, 25);
             upload_button.TabIndex = 2;
             upload_button.Text = "Upload File(s)";
             upload_button.UseVisualStyleBackColor = true;
@@ -267,7 +267,6 @@
             // 
             preview_tabControl.Controls.Add(webview2_tabPage);
             preview_tabControl.Controls.Add(markf278down_tabPage);
-            preview_tabControl.Controls.Add(pretty_tabPage);
             preview_tabControl.Controls.Add(cef_tabPage);
             preview_tabControl.Dock = DockStyle.Fill;
             preview_tabControl.Location = new Point(12, 35);
@@ -323,31 +322,6 @@
             response_textBox.Size = new Size(316, 218);
             response_textBox.TabIndex = 1;
             // 
-            // pretty_tabPage
-            // 
-            pretty_tabPage.Controls.Add(pretty_htmlPanel);
-            pretty_tabPage.Location = new Point(4, 24);
-            pretty_tabPage.Name = "pretty_tabPage";
-            pretty_tabPage.Padding = new Padding(3);
-            pretty_tabPage.Size = new Size(322, 224);
-            pretty_tabPage.TabIndex = 0;
-            pretty_tabPage.Text = "HTMLRenderer";
-            pretty_tabPage.UseVisualStyleBackColor = true;
-            // 
-            // pretty_htmlPanel
-            // 
-            pretty_htmlPanel.AutoScroll = true;
-            pretty_htmlPanel.AutoScrollMinSize = new Size(316, 20);
-            pretty_htmlPanel.BackColor = SystemColors.Window;
-            pretty_htmlPanel.BaseStylesheet = null;
-            pretty_htmlPanel.Dock = DockStyle.Fill;
-            pretty_htmlPanel.Location = new Point(3, 3);
-            pretty_htmlPanel.Name = "pretty_htmlPanel";
-            pretty_htmlPanel.Size = new Size(316, 218);
-            pretty_htmlPanel.TabIndex = 0;
-            pretty_htmlPanel.Text = "TheArtOfDev";
-            pretty_htmlPanel.UseGdiPlusTextRendering = true;
-            // 
             // cef_tabPage
             // 
             cef_tabPage.Controls.Add(cefsharp_chromiumWebBrowser);
@@ -384,19 +358,21 @@
             // conversation_history_treeView
             // 
             conversation_history_treeView.Dock = DockStyle.Left;
+            conversation_history_treeView.HideSelection = false;
+            conversation_history_treeView.Indent = 10;
             conversation_history_treeView.Location = new Point(0, 37);
             conversation_history_treeView.Name = "conversation_history_treeView";
-            treeNode6.Name = "Node2";
-            treeNode6.Text = "Node2";
-            treeNode7.Name = "Node1";
-            treeNode7.Text = "Chat1";
-            treeNode8.Name = "Node3";
-            treeNode8.Text = "Node3";
-            treeNode9.Name = "Node4";
-            treeNode9.Text = "Node4";
-            treeNode10.Name = "RootNode";
-            treeNode10.Text = "Conversation History Root";
-            conversation_history_treeView.Nodes.AddRange(new TreeNode[] { treeNode10 });
+            treeNode1.Name = "Node2";
+            treeNode1.Text = "Node2";
+            treeNode2.Name = "Node1";
+            treeNode2.Text = "Chat1";
+            treeNode3.Name = "Node3";
+            treeNode3.Text = "Node3";
+            treeNode4.Name = "Node4";
+            treeNode4.Text = "Node4";
+            treeNode5.Name = "RootNode";
+            treeNode5.Text = "Conversation History Root";
+            conversation_history_treeView.Nodes.AddRange(new TreeNode[] { treeNode5 });
             conversation_history_treeView.PathSeparator = "/";
             conversation_history_treeView.Size = new Size(161, 324);
             conversation_history_treeView.TabIndex = 0;
@@ -758,7 +734,6 @@
             ((System.ComponentModel.ISupportInitialize)webView21).EndInit();
             markf278down_tabPage.ResumeLayout(false);
             markf278down_tabPage.PerformLayout();
-            pretty_tabPage.ResumeLayout(false);
             cef_tabPage.ResumeLayout(false);
             main_menuStrip.ResumeLayout(false);
             main_menuStrip.PerformLayout();
@@ -833,9 +808,7 @@
         private ToolStripMenuItem sysmsghack_ToolStripMenuItem;
         private ToolStripMenuItem models_ToolStripMenuItem;
         private TabControl preview_tabControl;
-        private TabPage pretty_tabPage;
         private TabPage markf278down_tabPage;
-        private TheArtOfDev.HtmlRenderer.WinForms.HtmlPanel pretty_htmlPanel;
         private TabPage webview2_tabPage;
         private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
         private TabPage cef_tabPage;
@@ -844,7 +817,7 @@
         private Button upload_button;
         private ComboBox uploaded_files_comboBox;
         private Ookii.Dialogs.WinForms.VistaOpenFileDialog upload_vistaOpenFileDialog;
-        private Button button1;
+        private Button del_button;
         private Button clear_button;
         private CheckBox autoclear_checkBox;
         private NumericUpDown numericUpDown1;

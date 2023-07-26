@@ -69,6 +69,11 @@ public class Conversation {
       return true;
    }
 
+   public static void Clear() {
+      Active?.Save();
+      Active = null;
+   }
+
    public static void Reset() {
       if (Active != null)
          throw new Exception("There is already an active conversation!");
@@ -302,6 +307,7 @@ public class Conversation {
    public static readonly Dictionary<FileUpdateLocationResult, string> ErrorMessages = new() {
       {FileUpdateLocationResult.Success, "The file was successfully moved."},
       {FileUpdateLocationResult.SuccessWithRename, "The file was successfully moved, but had to be renamed due to an existing file with the same name."},
+      {FileUpdateLocationResult.UserAborted, "The user aborted the operation."},
       {FileUpdateLocationResult.FileDoesNotExist, "The file you're trying to move does not exist."},
       {FileUpdateLocationResult.CategoryDoesNotExist, "The category you're trying to move the file to does not exist."},
       {FileUpdateLocationResult.CategoryExistsButShouldNot, "The category you're trying to create already exists."},

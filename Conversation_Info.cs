@@ -19,8 +19,6 @@ public class Conversation_Info {
    /// </summary>
    public DateTimeOffset Started { get; set; } = DateTimeOffset.Now;
 
-   public string? SamplePrompt { get; set; } = string.Empty;
-
    //public float Temperature { get; set; } = 0f;
 
    public static Conversation_Info ParseConfig(string[] lines) {
