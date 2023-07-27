@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
@@ -129,4 +128,6 @@ public static class Tools {
          throw new ArgumentException("File path does not start with base directory path.");
       }
    }
+
+   public static readonly string nl = Environment.NewLine;
 }

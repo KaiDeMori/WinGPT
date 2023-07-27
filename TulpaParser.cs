@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using Message = WinGPT.OpenAI.Chat.Message;
 
 namespace WinGPT;
@@ -92,7 +93,7 @@ public static class TulpaParser {
 
       tulpa = new Tulpa {
          Configuration = tulpa_config,
-         Messages      = messages,
+         Messages      = messages.ToImmutableArray(),
          File          = file
       };
       return true;
@@ -180,7 +181,7 @@ public static class TulpaParser {
 
       tulpa = new Tulpa {
          Configuration = tulpa_config,
-         Messages      = messages,
+         Messages      = messages.ToImmutableArray(),
          File          = file
       };
       return true;

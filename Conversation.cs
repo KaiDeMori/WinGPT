@@ -25,7 +25,7 @@ public class Conversation {
    /// </summary>
    public bool useSysMsgHack;
 
-   public bool taxonomy_required = true;
+   public bool taxonomy_required = false;
 
    private Conversation() {
    }
