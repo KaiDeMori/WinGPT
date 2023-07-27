@@ -1,21 +1,19 @@
 ﻿namespace WinGPT;
 
 internal class SpecialTokens {
-   public static readonly string nl = Environment.NewLine;
-
    //Tulpa Tokens
-   public static readonly string Tulpa_Code_Token         = $"🔮Code{nl}";
-   public static readonly string Tulpa_Config_Token       = $"🛠️Configuration{nl}";
+   public static readonly string Tulpa_Code_Token   = $"🔮Code{Tools.nl}";
+   public static readonly string Tulpa_Config_Token = $"🛠️Configuration{Tools.nl}";
    //public static readonly string Tulpa_SamplePrompt_Token = $"📝SamplePrompt{nl}";
 
    //Conversation tokens
-   public static readonly string ConversationHistory = $"📜ConversationHistory{nl}";
+   public static readonly string ConversationHistory = $"📜ConversationHistory{Tools.nl}";
 
    //API roles
-   public static readonly string System    = $"{nl}🎭System{nl}";
-   public static readonly string User      = $"{nl}🦧User{nl}";
-   public static readonly string Assistant = $"{nl}🤖Assistant{nl}";
-   public static readonly string Function  = $"{nl}🧮Function{nl}";
+   public static readonly string System    = $"{Tools.nl}🎭System{Tools.nl}";
+   public static readonly string User      = $"{Tools.nl}🦧User{Tools.nl}";
+   public static readonly string Assistant = $"{Tools.nl}🤖Assistant{Tools.nl}";
+   public static readonly string Function  = $"{Tools.nl}🧮Function{Tools.nl}";
 
 
    // Set of special tokens

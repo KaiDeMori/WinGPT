@@ -11,6 +11,7 @@
     <SignAssembly>False</SignAssembly>
     <Version>0.1.3</Version>
     <Platforms>AnyCPU;x64</Platforms>
+    <StartupObject>WinGPT.WinGPT_Main</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
@@ -56,10 +57,16 @@
 	  <None Update="OpenAI\ErrorCodes.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <None Update="system_message_for_file_upload.md">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="Taxonomy\functions.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="Taxonomy\system_message_template.md">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="webstuffs\custom_prism_plugin.js">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="webstuffs\index_template.html">

@@ -32,6 +32,13 @@ public class Message {
       string text         = specialToken + content + "\r\n";
       return text;
    }
+
+   public Message Clone() {
+      return new Message(role, content) {
+         name          = name,
+         function_call = function_call
+      };
+   }
 }
 
 public class FunctionCall {

@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Text;
 using Newtonsoft.Json;
@@ -90,7 +91,7 @@ internal class QuickTulpaTest {
          messages.Add(new Message {role = currentRole, content = lastMessage});
       }
 
-      return new Tulpa {Configuration = tulpa_config, Messages = messages};
+      return new Tulpa {Configuration = tulpa_config, Messages = messages.ToImmutableArray()};
    }
 
 
