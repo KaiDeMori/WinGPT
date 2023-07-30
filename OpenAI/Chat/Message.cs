@@ -15,7 +15,7 @@ public class Message {
    [JsonConverter(typeof(StringEnumConverter))]
    public Role role { get; init; }
 
-   public string content { get; init; } = null!;
+   public string? content { get; init; } = null!;
 
    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
    public string? name { get; init; } = null!;

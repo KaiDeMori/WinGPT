@@ -14,7 +14,7 @@ public class Completions {
       //   NullValueHandling = NullValueHandling.Ignore,
       //});
       string request_content_json = JsonConvert.SerializeObject(request, Formatting.Indented, new JsonSerializerSettings {
-         TypeNameHandling  = TypeNameHandling.Auto,
+         //TypeNameHandling  = TypeNameHandling.Auto,
          NullValueHandling = NullValueHandling.Ignore,
       });
 
@@ -52,7 +52,9 @@ public class Completions {
          }
          else {
             if (responseMessage.StatusCode == HttpStatusCode.BadRequest) {
-               File.WriteAllText("BAD_REQUEST_" + DateTimeOffset.Now + "_.json", request_content_json);
+               File.WriteAllText("BAD_REQUEST_"
+                                 + DateTimeOffset.Now.ToString("yyyy-MM-dd_HH-mm-ss")
+                                 + "_.json", request_content_json);
             }
 
             handle_Error_Response(responseMessage);

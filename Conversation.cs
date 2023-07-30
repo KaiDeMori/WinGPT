@@ -30,12 +30,12 @@ public class Conversation {
    private Conversation() {
    }
 
-   public static void Update_Conversation(Message user_message, Message[] responses) {
+   public static void Update_Conversation(Message user_message, Message response_message) {
       if (Active is null)
          throw new Exception("There is no active conversation!");
 
       Active.Messages.Add(user_message);
-      Active.Messages.AddRange(responses);
+      Active.Messages.Add(response_message);
    }
 
    [MemberNotNull(nameof(Active))]

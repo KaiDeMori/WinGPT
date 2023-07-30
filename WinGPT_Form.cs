@@ -147,11 +147,11 @@ public partial class WinGPT_Form : Form {
       }
 
       Conversation.Active.useSysMsgHack = sysmsghack_ToolStripMenuItem.Checked;
-      var responses = await Config.ActiveTulpa.SendAsync(user_message, Conversation.Active, Associated_files.ToArray());
+      var response_message = await Config.ActiveTulpa.SendAsync(user_message, Conversation.Active, Associated_files.ToArray());
       if (autoclear_checkBox.Checked)
          prompt_textBox.Clear();
 
-      Conversation.Update_Conversation(user_message, responses);
+      Conversation.Update_Conversation(user_message, response_message);
       Update_Conversation();
    }
 
