@@ -4,16 +4,16 @@ public partial class Taxonomy_Form : Form
 {
     private const string NotApplicable = "<new category>";
 
-    public Taxonomy_Form(Function_Parmeters functionParameters)
+    public Taxonomy_Form(Function_Parameters functionParameters)
     {
         InitializeComponent();
 
         this.FormClosing += Taxonomy_Form_FormClosing;
 
         // Bind TextBox controls to the respective properties of the function parameters
-        summary_textBox.DataBindings.Add("Text", functionParameters, nameof(Function_Parmeters.summary));
-        filename_textBox.DataBindings.Add("Text", functionParameters, nameof(Function_Parmeters.filename));
-        new_category_textBox.DataBindings.Add("Text", functionParameters, nameof(Function_Parmeters.new_category));
+        summary_textBox.DataBindings.Add("Text", functionParameters, nameof(Function_Parameters.summary));
+        filename_textBox.DataBindings.Add("Text", functionParameters, nameof(Function_Parameters.filename));
+        new_category_textBox.DataBindings.Add("Text", functionParameters, nameof(Function_Parameters.new_category));
 
         // Create a new list for the ComboBox, including a NotApplicable option
         var categoriesWithNAOption = new List<string> { NotApplicable };
@@ -27,7 +27,7 @@ public partial class Taxonomy_Form : Form
 
         // Set the DataSource for the ComboBox and bind its selected item to the selected category of the function parameters
         existing_categories_comboBox.DataSource = categoriesWithNAOption;
-        existing_categories_comboBox.DataBindings.Add("SelectedItem", functionParameters, nameof(Function_Parmeters.selected_category));
+        existing_categories_comboBox.DataBindings.Add("SelectedItem", functionParameters, nameof(Function_Parameters.selected_category));
 
         // Prioritize the new category over the selected category
         if (!string.IsNullOrEmpty(functionParameters.new_category))

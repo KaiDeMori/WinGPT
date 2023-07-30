@@ -2,7 +2,7 @@
 
 namespace WinGPT.Taxonomy;
 
-public class Function_Parmeters {
+public class Function_Parameters {
    public string? summary  { get; set; }
    public string? filename { get; set; }
    public string? category { get; set; }

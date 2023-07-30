@@ -11,6 +11,8 @@ internal class Config {
 
    public bool UseSysMsgHack { get; set; }
 
+   public Config_UIable UIable { get; set; } = new();
+
    private const  string Config_filename  = "Config.json";
    internal const string tulpas_directory = "Characters";
 
@@ -30,8 +32,10 @@ internal class Config {
    private const  string        WebstuffsPrismFancyJs               = "webstuffs/prism_fancy.js";
    private const  string        WebstuffsMyCss                      = "webstuffs/my.css";
    private const  string        Preliminary_Conversations_Directory = "tmp";
+   private const  string        AdHoc_Downloads_Directory           = "Downloads";
    public const   string        DefaultAssistant_Filename           = "Default_Assistant.md";
    public static  DirectoryInfo Preliminary_Conversations_Path => new(Path.Join(Active.BaseDirectory, Preliminary_Conversations_Directory));
+   public static  DirectoryInfo AdHoc_Downloads_Path           => new(Path.Join(Active.BaseDirectory, AdHoc_Downloads_Directory));
 
    private static readonly object _lock   = new();
    public static           bool   loading = false;

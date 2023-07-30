@@ -5,13 +5,14 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using WinGPT.OpenAI;
 using WinGPT.OpenAI.Chat;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using Message = WinGPT.OpenAI.Chat.Message;
 
 namespace WinGPT.Taxonomy;
 
 public static class Taxonomer {
    private const           string taxonomy_function_name = "taxonomy";
-   private static readonly string FunctionsJson          = File.ReadAllText("Taxonomy/functions.json");
+   private static readonly string FunctionJson           = File.ReadAllText("Taxonomy/function.json");
 
    private const string example_function_call = @"
 {
@@ -30,13 +31,15 @@ public static class Taxonomer {
    /// <param name="conversation">The conversation to taxonomize.</param>
    /// <param name="existing_categories">An array of already existing categories, i.e. directory names.</param>
    /// <returns></returns>
-   private static Function_Parmeters? taxonomize(Conversation conversation, string[] existing_categories) {
+   private static Function_Parameters? taxonomize(Conversation conversation, string[] existing_categories) {
       //DRAGONS AI function-magic
       string existing_categories_json = JsonConvert.SerializeObject(existing_categories);
       var    sysmsg_template          = File.ReadAllText("Taxonomy/system_message_template.md");
       string sysmsg                   = sysmsg_template.Replace($"{{{{{nameof(existing_categories)}}}}}", existing_categories_json);
 
-      Function[]? functions = JsonConvert.DeserializeObject<Function[]>(FunctionsJson);
+      OpenAI.Chat.Function<TaxonomyParameters>? function = JsonConvert.DeserializeObject<OpenAI.Chat.Function<TaxonomyParameters>>(FunctionJson);
+      if (function is null)
+         return null;
 
       List<Message> all_messages = new() {
          new Message(role: Role.system, content: sysmsg)
@@ -54,7 +57,7 @@ public static class Taxonomer {
       //Let's get the request ready
       var request = new Request() {
          messages      = all_immutable,
-         functions     = functions,
+         functions     = new IFunction[] { function },
          function_call = new FunctionCallSettings("taxonomy"),
          model         = Models.gpt_3_5_turbo_16k,
          temperature   = 0.0
@@ -74,19 +77,19 @@ public static class Taxonomer {
 
       FunctionCall functionCall = response.Choices[0].message.function_call;
 
-      Function_Parmeters function_parmeters = JsonConvert.DeserializeObject<Function_Parmeters>(functionCall.arguments);
+      Function_Parameters functionParameters = JsonConvert.DeserializeObject<Function_Parameters>(functionCall.arguments);
 
-      function_parmeters.existing_categories = existing_categories;
+      functionParameters.existing_categories = existing_categories;
 
-      var is_Existing_Category = existing_categories.Contains(function_parmeters.category);
+      var is_Existing_Category = existing_categories.Contains(functionParameters.category);
       if (is_Existing_Category) {
-         function_parmeters.selected_category = function_parmeters.category;
+         functionParameters.selected_category = functionParameters.category;
       }
       else {
-         function_parmeters.new_category = function_parmeters.category;
+         functionParameters.new_category = functionParameters.category;
       }
 
-      return function_parmeters;
+      return functionParameters;
    }
 
    //we have to do a couple of sanity chekcs on the response before using it.
@@ -111,7 +114,7 @@ public static class Taxonomer {
 
       //let's parse some stuff and see where it goess
       try {
-         var     function_defined = JArray.Parse(FunctionsJson)[0];
+         var     function_defined = JArray.Parse(FunctionJson)[0];
          JSchema schema           = JSchema.Parse(function_defined.ToString());
          //serialize the functionCall to json
          string functionCall_json = JsonConvert.SerializeObject(functionCall);
@@ -134,9 +137,9 @@ public static class Taxonomer {
    /// </summary>
    /// <param name="conversation"></param>
    public static FileUpdateLocationResult taxonomize(Conversation conversation) {
-      DirectoryInfo[]     directories         = Config.History_Directory.GetDirectories();
-      string[]            existing_categories = directories.Select(d => d.Name).ToArray();
-      Function_Parmeters? function_parameters = taxonomize(conversation, existing_categories);
+      DirectoryInfo[]      directories         = Config.History_Directory.GetDirectories();
+      string[]             existing_categories = directories.Select(d => d.Name).ToArray();
+      Function_Parameters? function_parameters = taxonomize(conversation, existing_categories);
       //DRAGONS where should we do the error handling?
       if (function_parameters == null)
          return FileUpdateLocationResult.FunctionParametersFaulty;

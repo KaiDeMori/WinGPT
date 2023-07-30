@@ -54,13 +54,25 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Remove="NewFolder\**" />
+	  <EmbeddedResource Remove="NewFolder\**" />
+	  <None Remove="NewFolder\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Filetransfer\saveFile_Function.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Filetransfer\system_message_for_file_download.md">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="OpenAI\ErrorCodes.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="system_message_for_file_upload.md">
+	  <None Update="Filetransfer\system_message_for_file_upload.md">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="Taxonomy\functions.json">
+	  <None Update="Taxonomy\function.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="Taxonomy\system_message_template.md">

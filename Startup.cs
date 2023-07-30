@@ -30,15 +30,19 @@ internal static class Startup {
    }
 
    private static bool AssertSubdirectories() {
-      var tulpas_directory = Path.Join(Config.Active.BaseDirectory, Config.tulpas_directory);
-      if (!Directory.Exists(tulpas_directory))
-         Directory.CreateDirectory(tulpas_directory);
+      var tulpas_directory = new DirectoryInfo(Path.Join(Config.Active.BaseDirectory, Config.tulpas_directory));
+      CreateDirectoryIfNotExists(tulpas_directory);
 
-      DirectoryInfo history_directory = Config.History_Directory;
-      if (!history_directory.Exists)
-         history_directory.Create();
+      CreateDirectoryIfNotExists(Config.History_Directory);
+      CreateDirectoryIfNotExists(Config.Preliminary_Conversations_Path);
+      CreateDirectoryIfNotExists(Config.AdHoc_Downloads_Path);
 
       return true;
+   }
+
+   private static void CreateDirectoryIfNotExists(DirectoryInfo directory) {
+      if (!directory.Exists)
+         directory.Create();
    }
 
    private static bool AssertOpenAI_API_Key() {
