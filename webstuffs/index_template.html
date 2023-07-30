@@ -19,9 +19,79 @@
 			}
 		}
 
-		window.onload = function () {
+		window.onload = function() {
 			scrollToLastPlaceholder();
 		};
+	</script>
+
+	<script>
+
+		//native interop
+		function sendMessage(message) {
+			if (window.chrome && window.chrome.webview)
+				window.chrome.webview.postMessage(message);
+			else {
+				//TADA here we need the polyfill for CEFSharp
+			}
+		}
+
+		// Header tags we're going to look for.
+		const headerTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+
+		function addClickHandler(header) {
+			header.style.cursor = "pointer";
+			header.title = "Save file to original location";
+
+			// Add onclick event listener to each header.
+			header.addEventListener('click',
+				() => {
+					const codeContent = getCodeContent(header);
+
+					if (codeContent) {
+						// Get the file name and code content.
+						const fileName = header.textContent;
+						const message = {
+							file_name: fileName,
+							code_content: codeContent
+						}
+						// Call the sendMessage function.
+						sendMessage(message);
+					}
+				});
+		}
+
+		function getCodeContent(header) {
+			// Get next sibling and check if it's a <div> element.
+			const nextElement = header.nextElementSibling;
+
+			if (nextElement && nextElement.tagName.toLowerCase() === 'div') {
+				// Inside <div>, look for a single <pre> element.
+				const preElements = nextElement.getElementsByTagName('pre');
+
+				if (preElements.length === 1) {
+					// Inside <pre>, look for the <code> element.
+					const codeElements = preElements[0].getElementsByTagName('code');
+
+					if (codeElements.length === 1) {
+						// Get the code content.
+						return codeElements[0].textContent;
+					}
+				}
+			}
+
+			return null;
+		}
+
+
+		window.onload = function() {
+			headerTags.forEach((tag) => {
+				// Query all header elements with the "external-filename" class.
+				const headers = document.querySelectorAll(`${tag}.external-filename`);
+				headers.forEach(addClickHandler);
+			});
+		}
+
+
 	</script>
 
 	<link rel="stylesheet" href="my.css">

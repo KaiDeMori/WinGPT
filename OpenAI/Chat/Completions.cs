@@ -10,11 +10,15 @@ public class Completions {
       var url = "https://api.openai.com/v1/chat/completions";
 
       // Serialize the request object to JSON
+      //string request_content_json = JsonConvert.SerializeObject(request, Formatting.Indented, new JsonSerializerSettings {
+      //   NullValueHandling = NullValueHandling.Ignore,
+      //});
       string request_content_json = JsonConvert.SerializeObject(request, Formatting.Indented, new JsonSerializerSettings {
+         TypeNameHandling  = TypeNameHandling.Auto,
          NullValueHandling = NullValueHandling.Ignore,
       });
 
-      File.WriteAllText("request.json", request_content_json);
+      File.WriteAllText("_request.json", request_content_json);
 
       //replace all "system" by "System" -> Bad Request
       //jsonRequest = jsonRequest.Replace("\"system\"", "\"System\"");
@@ -33,7 +37,7 @@ public class Completions {
             // If the request was successful, parse the returned data
             string jsonResponse = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            File.WriteAllText("response.json", jsonResponse);
+            File.WriteAllText("_response.json", jsonResponse);
 
             response = JsonConvert.DeserializeObject<Response>(jsonResponse);
 
@@ -47,7 +51,9 @@ public class Completions {
             }
          }
          else {
-            //MessageBox.Show($"Error: {responseMessage.ReasonPhrase}", "Error", MessageBoxButtons.OK);
+            if (responseMessage.StatusCode == HttpStatusCode.BadRequest) {
+               File.WriteAllText("BAD_REQUEST_" + DateTimeOffset.Now + "_.json", request_content_json);
+            }
 
             handle_Error_Response(responseMessage);
          }

@@ -1,4 +1,7 @@
-﻿namespace WinGPT.OpenAI.Chat;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+namespace WinGPT.OpenAI.Chat;
 
 public class Choice {
    public int           index         { get; init; }
@@ -14,6 +17,7 @@ public class Choice {
 /// the model response may include different information.
 /// 🤣
 /// </summary>
+[JsonConverter(typeof(StringEnumConverter))]
 public enum Finish_Reason {
    stop,
    length,
