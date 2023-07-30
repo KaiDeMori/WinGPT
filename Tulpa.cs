@@ -2,9 +2,10 @@
 using System.Diagnostics;
 using System.Text;
 using Newtonsoft.Json;
-using WinGPT.Filetransfer;
 using WinGPT.OpenAI.Chat;
 using Message = WinGPT.OpenAI.Chat.Message;
+
+// ReSharper disable MethodHasAsyncOverload
 
 namespace WinGPT;
 
@@ -14,8 +15,6 @@ namespace WinGPT;
 /// https://en.wikipedia.org/wiki/Tulpa
 /// </summary>
 public class Tulpa : InterTulpa {
-   private string markdown_codeblock;
-
    [JsonIgnore]
    public FileInfo? File { get; set; }
 
@@ -50,30 +49,28 @@ public class Tulpa : InterTulpa {
    /// <param name="user_message">the new user prompt</param>
    /// <param name="conversation">The full conversation so far. Should usually not be mutated.</param>
    /// <param name="associated_files"></param>
-   /// <returns>the new messages to be added to the conversation</returns>
-   public async Task<Message[]> SendAsync(
+   /// <returns>the new message to be added to the conversation</returns>
+   public async Task<Message?> SendAsync(
       Message      user_message,
       Conversation conversation,
       FileInfo[]?  associated_files = null) {
       //  Pre-Production
-      List<Message>  new_messages        = new();
-      List<Message>? tulpa_messages_togo = null;
-
-      //  Post-Production
       /////////////////////////
 
       //create a copy of the messages
-      tulpa_messages_togo = Messages.Select(m => m.Clone()).ToList();
+      List<Message> tulpa_messages_togo =
+         Messages.Select(m => m.Clone()).ToList();
 
       remove_last_user_message(tulpa_messages_togo);
 
-      //DRAGONS not sure of we want to do this always
+      //DRAGONS not sure if we want to do this always
       //get the first system message or create a new one
       Message first_system_message = tulpa_messages_togo.FirstOrDefault(m => m.role == Role.system) ?? new Message {role = Role.system};
 
       //It's a StringBuilder. You can append to it. What do expect?
       //Just don't enumerate it.
       var tuned_up_system_message_content = new StringBuilder();
+
       //add the content of the old system message to the new one
       tuned_up_system_message_content.Append(first_system_message.content);
 
@@ -83,7 +80,10 @@ public class Tulpa : InterTulpa {
       // if the save_function is null, the parameter will just be ignored
       Function<SaveParameters>? save_function = null;
       if (Config.Active.UIable.Use_Save_Function)
-         save_function = Enable_Save_via_Prompt_Function(tuned_up_system_message_content);
+         save_function = Enable_Save_via_Prompt_Function();
+
+      if (Config.Active.UIable.Use_Save_Link)
+         add_save_link(tuned_up_system_message_content);
 
       var new_system_message = new Message {
          role    = Role.system,
@@ -110,11 +110,28 @@ public class Tulpa : InterTulpa {
          functions   = save_function is not null ? new IFunction[] {save_function} : null
       };
 
+      // done with Pre-Production
+      /////////////////////////////
+
       Response? response = await Completions.POST_Async(request);
       if (response == null) {
          // all error handling is done in the POST_Async method
-         return new_messages.ToArray();
+         return null;
       }
+
+      Choice? zeroth_Choice = response.Choices.FirstOrDefault();
+      if (zeroth_Choice == null) {
+         MessageBox.Show("The API returned no choices.", "Error", MessageBoxButtons.OK);
+         return null;
+      }
+
+      Message response_message = new() {
+         role    = Role.assistant,
+         content = zeroth_Choice.message.content
+      };
+
+      //  Post-Production
+      /////////////////////////
 
       //Let's look for a function message
       //var function_messages = response.Choices.Where(c => c.message.role == Role.function).ToList();
@@ -122,33 +139,26 @@ public class Tulpa : InterTulpa {
 
       //So apparently we need to find all messages that have role=assitant, content=None, function_call != null
       //and select the first message in each choice
-      Message[] function_messages = response.Choices
-         .Where(c => c.message is {role: Role.assistant, content: null, function_call: not null})
-         .Select(c => c.message)
-         .ToArray();
+      //Message[] function_call_messages = response.Choices
+      //   .Where(c => c.message is {role: Role.assistant, content: null, function_call: not null})
+      //   .Select(c => c.message)
+      //   .ToArray();
+      //and wrong *again*! *Of course* the AI can answer with a function call **and** content in the same message.
 
+      FunctionCall? function_call = zeroth_Choice.message.function_call;
 
-      //The docs don't really say it,
-      //but for now we assume that the AI will only ever call one function per request.
-      if (function_messages.Length > 1) {
-         MessageBox.Show("The API returned more than one function message.\r\nPlease call me!\r\nThis is potentiall a huge discovery!1!", "SUCCESS!",
-            MessageBoxButtons.CancelTryContinue, MessageBoxIcon.Asterisk);
-         return new_messages.ToArray();
-      }
-
-      var function_message = function_messages.FirstOrDefault();
-      if (function_message?.function_call is not null) {
+      if (function_call is not null) {
          //Also the docs are vague about the finish reason, so let's check that too
-         var finish_reason = response.Choices.FirstOrDefault()?.finish_reason;
+         var finish_reason = zeroth_Choice.finish_reason;
          if (finish_reason != Finish_Reason.function_call) {
             MessageBox.Show($"The API returned a finish reason: {finish_reason}.\r\nWhat's going on here?!", "?!?!?!1?", MessageBoxButtons.YesNoCancel,
                MessageBoxIcon.Question);
          }
 
          //see if function name is "saveFunction"
-         if (function_message.function_call.name == "saveFile") {
+         if (function_call.name == "saveFile") {
             Save_CallArguments? save_CallArguments = JsonConvert.DeserializeObject<Save_CallArguments>(
-               function_message.function_call.arguments);
+               function_call.arguments);
             if (save_CallArguments is null) {
                throw new Exception("The arguments are is null!");
             }
@@ -158,56 +168,62 @@ public class Tulpa : InterTulpa {
             var file_to_save =
                associated_files?.FirstOrDefault(f => f.Name == save_CallArguments.filename)
                ?? new FileInfo(Path.Join(Config.AdHoc_Downloads_Path.FullName, save_CallArguments.filename));
-            //save the file
-            System.IO.File.WriteAllText(file_to_save.FullName, save_CallArguments.text_content);
+            string dummy_assistant_content;
+            try {
+               //save the file
+               System.IO.File.WriteAllText(file_to_save.FullName, save_CallArguments.text_content);
+               dummy_assistant_content = $"File {file_to_save.Name} was saved successfully.";
+            }
+            catch (Exception e) {
+               dummy_assistant_content = $"File {file_to_save.Name} could not be saved.\r\n{e.Message}";
+            }
+
+            //in case we have no content for the user, provide some feedback
+            if (response_message.content is null) {
+               response_message = new Message {
+                  role    = Role.assistant,
+                  content = dummy_assistant_content
+               };
+            }
          }
       }
-
 
       //// done with post
       ///////////////////
 
-
-      Choice? zeroth_Choice = response.Choices.FirstOrDefault();
-      if (zeroth_Choice == null) {
-         MessageBox.Show("The API returned an empty response.", "Error", MessageBoxButtons.OK);
-         return new_messages.ToArray();
-      }
-
-      Message response_message = zeroth_Choice.message;
-      new_messages.Add(response_message);
-
-      return new_messages.ToArray();
+      return response_message;
    }
 
-   private static Function<SaveParameters>? Enable_Save_via_Prompt_Function(StringBuilder tuned_up_system_message_content) {
+   private static Function<SaveParameters>? Enable_Save_via_Prompt_Function() {
       var saveFile_function_json = System.IO.File.ReadAllText("Filetransfer/saveFile_Function.json");
       Function<SaveParameters>? saveFile_function =
          JsonConvert.DeserializeObject<Function<SaveParameters>>(saveFile_function_json);
 
-      var saveFile_function_sysmsg = System.IO.File.ReadAllText("Filetransfer/system_message_for_file_download.md");
-      tuned_up_system_message_content.AppendLine(saveFile_function_sysmsg);
+      //Let's see if we can get away with the function only.
+      //var saveFile_function_sysmsg = System.IO.File.ReadAllText("Filetransfer/saveFile_system_message.md");
+      //tuned_up_system_message_content.AppendLine(saveFile_function_sysmsg);
       return saveFile_function;
    }
 
    private void add_associated_files_to_system_message(FileInfo[]? associated_files, StringBuilder tuned_up_system_message_content) {
       if (associated_files is not null) {
          //add the associated files to the system message
-
-         var sysmsg4code = System.IO.File.ReadAllText("Filetransfer/system_message_for_file_upload.md");
-         tuned_up_system_message_content.AppendLine(Tools.nl);
-         tuned_up_system_message_content.AppendLine(sysmsg4code);
-         tuned_up_system_message_content.AppendLine(Tools.nl);
-         tuned_up_system_message_content.AppendLine("-----");
-
          foreach (var file in associated_files) {
-            markdown_codeblock = create_markdown_code_block(file);
+            var markdown_codeblock = create_markdown_code_block(file);
             tuned_up_system_message_content.AppendLine(Tools.nl);
             tuned_up_system_message_content.AppendLine("-----");
             tuned_up_system_message_content.AppendLine(Tools.nl);
             tuned_up_system_message_content.AppendLine(markdown_codeblock);
          }
       }
+   }
+
+   private static void add_save_link(StringBuilder tuned_up_system_message_content) {
+      var system_message = System.IO.File.ReadAllText("Filetransfer/save_link_system_message.md");
+      tuned_up_system_message_content.AppendLine(Tools.nl);
+      tuned_up_system_message_content.AppendLine(system_message);
+      tuned_up_system_message_content.AppendLine(Tools.nl);
+      tuned_up_system_message_content.AppendLine("-----");
    }
 
    private static void remove_last_user_message(List<Message> tulpa_messages_togo) {

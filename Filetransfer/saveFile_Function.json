@@ -1,7 +1,6 @@
 {
   "name": "saveFile",
-  "description":
-    "Saves the text_content of the file to the given filename. The directory is determined by the host, so only a filename can be given. No directory information must be included.",
+  "description": "Saves the text_content of the file to the given filename. The directory is determined by the host, so only a filename can be given. No directory information must be included. This function is **ONLY** called on **EXPLICIT** user request. Only **complete** files can be saved. *Snippets* and *fragments* can **not** be saved.",
   "parameters": {
     "type": "object",
     "properties": {
@@ -11,10 +10,9 @@
       },
       "text_content": {
         "type": "string",
-        "description":
-          "The content of the file must be complete and self-sufficient. In the context of programming, if the file contains code, it should encapsulate a complete functional entity, equivalent to a 'class' in object-oriented programming."
+        "description": "The content of the file must be complete and self-sufficient. In the context of programming, if the file contains code, it has to encapsulate a complete functional entity, equivalent to a 'class' in object-oriented programming."
       }
     },
-    "required": ["filename", "text_content"]
+    "required": [ "filename", "text_content" ]
   }
 }
