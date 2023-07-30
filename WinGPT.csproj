@@ -9,7 +9,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationIcon>Icons\WinGPT_1.ico</ApplicationIcon>
     <SignAssembly>False</SignAssembly>
-    <Version>0.1.3</Version>
+    <Version>0.1.5</Version>
     <Platforms>AnyCPU;x64</Platforms>
     <StartupObject>WinGPT.WinGPT_Main</StartupObject>
   </PropertyGroup>
@@ -46,12 +46,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
-	<ItemGroup>
-		<Content Include="Characters\**">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
 
 	<ItemGroup>
 	  <Compile Remove="NewFolder\**" />
