@@ -5,6 +5,10 @@
 /Properties/PublishProfiles/*.user
 Icons/crops_ai_etc/*
 Icons/originals/*
-/_RELEASE
+/_RELEASE/*
 /.vscode
-/_shipped demos
+/_shipped demos/*
+/Characters/*
+/pgp_stuff
+/Properties/PublishProfiles
+/WinGPT_TemporaryKey.pfx
