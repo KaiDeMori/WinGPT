@@ -13,8 +13,10 @@ internal class Config {
 
    public Config_UIable UIable { get; set; } = new();
 
-   private const  string Config_filename  = "Config.json";
-   internal const string tulpas_directory = "Characters";
+   private const string Config_filename = "Config.json";
+
+   private const   string        tulpas_directory = "Tulpas";
+   internal static DirectoryInfo Tulpa_Directory => new(Path.Join(Active.BaseDirectory, tulpas_directory));
 
    private const   string        history_directory = "Conversation_History";
    internal static DirectoryInfo History_Directory => new(Path.Join(Active.BaseDirectory, history_directory));
@@ -40,12 +42,17 @@ internal class Config {
    private static readonly object _lock   = new();
    public static           bool   loading = false;
 
+   public TokenCounter TokenCounter { get; set; } = new();
+
    public string? BaseDirectory  { get; set; }
    public string  OpenAI_API_Key { get; set; } = "";
    public string  LanguageModel  { get; set; } = "gpt-4";
    public string  LastUsedTulpa  { get; set; } = DefaultAssistant_Filename;
 
-   public TokenCounter TokenCounter { get; set; } = new();
+   public double            MainSplitter_relative_position { get; set; } = .2;
+   public double            TextSplitter_relative_position { get; set; } = .5;
+   public WindowParameters? WindowParameters               { get; set; }
+
 
    static Config() {
       try {
@@ -83,7 +90,8 @@ internal class Config {
          ObjectCreationHandling = ObjectCreationHandling.Replace,
       };
       Config? loadedConfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText(configfile), settings);
-      if (Tools.HasNullProperties(loadedConfig)) {
+      //if (Tools.HasNullProperties(loadedConfig)) {
+      if (loadedConfig is null) {
          ConfigErrorCase();
       }
       else {
@@ -123,4 +131,12 @@ internal class Config {
       Active = new Config();
       Save();
    }
+}
+
+internal class WindowParameters {
+   public FormStartPosition StartPosition { get; set; } = FormStartPosition.Manual;
+   public FormWindowState WindowState { get; set; }
+
+   public Point Location { get; set; }
+   public Size  Size   { get; set; }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.IO.Compression;
 
 namespace WinGPT;
 
@@ -30,9 +31,7 @@ internal static class Startup {
    }
 
    private static bool AssertSubdirectories() {
-      var tulpas_directory = new DirectoryInfo(Path.Join(Config.Active.BaseDirectory, Config.tulpas_directory));
-      CreateDirectoryIfNotExists(tulpas_directory);
-
+      CreateDirectoryIfNotExists(Config.Tulpa_Directory);
       CreateDirectoryIfNotExists(Config.History_Directory);
       CreateDirectoryIfNotExists(Config.Preliminary_Conversations_Path);
       CreateDirectoryIfNotExists(Config.AdHoc_Downloads_Path);
@@ -102,6 +101,7 @@ internal static class Startup {
          if (dialogResult == DialogResult.Yes) {
             // If user confirms, update the BaseDirectory
             Config.Active.BaseDirectory = selectedDirectory;
+            AssertSubdirectories();
          }
          else {
             DialogResult openExplorerResult =
@@ -119,8 +119,23 @@ internal static class Startup {
          }
       }
       else {
-         // If directory is empty, just update the BaseDirectory
          Config.Active.BaseDirectory = selectedDirectory;
+         AssertSubdirectories();
+      }
+
+      //create default Tulpas from resources
+      var tulpas_zipped = WinGPT.Properties.Resources.Tulpas;
+
+      using MemoryStream zipStream = new MemoryStream(tulpas_zipped);
+      using ZipArchive   archive   = new ZipArchive(zipStream, ZipArchiveMode.Read);
+      foreach (ZipArchiveEntry entry in archive.Entries) {
+         string fullname = Path.Join(Config.Tulpa_Directory.FullName, entry.FullName);
+         try {
+            entry.ExtractToFile(fullname, false);
+         }
+         catch {
+            // ignored
+         }
       }
 
       // Save the updated configuration
@@ -131,8 +146,7 @@ internal static class Startup {
 
    public static List<Tulpa> CreateAllTulpas() {
       //read all *.md files in the tulpas directory
-      var directory = new DirectoryInfo(Path.Join(Config.Active.BaseDirectory, Config.tulpas_directory));
-      var files     = directory.GetFiles(Config.marf278down_filter);
+      var files = Config.Tulpa_Directory.GetFiles(Config.marf278down_filter);
 
       //I think this is a buhg in LINQ, as there should be a way to do this without the null assertion
       //List<Tulpa> tulpas = files

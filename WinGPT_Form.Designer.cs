@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            TreeNode treeNode6 = new TreeNode("Node2");
-            TreeNode treeNode7 = new TreeNode("Chat1", new TreeNode[] { treeNode6 });
-            TreeNode treeNode8 = new TreeNode("Node3");
-            TreeNode treeNode9 = new TreeNode("Node4");
-            TreeNode treeNode10 = new TreeNode("Conversation History Root", new TreeNode[] { treeNode7, treeNode8, treeNode9 });
+            TreeNode treeNode1 = new TreeNode("Node2");
+            TreeNode treeNode2 = new TreeNode("Chat1", new TreeNode[] { treeNode1 });
+            TreeNode treeNode3 = new TreeNode("Node3");
+            TreeNode treeNode4 = new TreeNode("Node4");
+            TreeNode treeNode5 = new TreeNode("Conversation History Root", new TreeNode[] { treeNode2, treeNode3, treeNode4 });
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WinGPT_Form));
             main_toolTip = new ToolTip(components);
             history_file_name_textBox = new TextBox();
@@ -52,13 +52,12 @@
             webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
             markf278down_tabPage = new TabPage();
             response_textBox = new TextBox();
-            cef_tabPage = new TabPage();
-            cefsharp_chromiumWebBrowser = new CefSharp.WinForms.ChromiumWebBrowser();
             new_conversation_button = new Button();
             conversation_history_treeView = new TreeView();
-            splitter1 = new Splitter();
+            main_splitter = new Splitter();
             main_menuStrip = new MenuStrip();
             base_directory_toolStripMenuItem = new ToolStripMenuItem();
+            settings_ToolStripMenuItem = new ToolStripMenuItem();
             toolsToolStripMenuItem = new ToolStripMenuItem();
             openai_api_key_toolStripMenuItem = new ToolStripMenuItem();
             tokenCounterToolStripMenuItem = new ToolStripMenuItem();
@@ -66,7 +65,7 @@
             models_ToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem1 = new ToolStripMenuItem();
-            panel1 = new Panel();
+            main_panel = new Panel();
             characters_tableLayoutPanel = new TableLayoutPanel();
             characters_flowLayoutPanel = new FlowLayoutPanel();
             placeholder_radioButton = new RadioButton();
@@ -109,9 +108,8 @@
             webview2_tabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)webView21).BeginInit();
             markf278down_tabPage.SuspendLayout();
-            cef_tabPage.SuspendLayout();
             main_menuStrip.SuspendLayout();
-            panel1.SuspendLayout();
+            main_panel.SuspendLayout();
             characters_tableLayoutPanel.SuspendLayout();
             characters_flowLayoutPanel.SuspendLayout();
             main_statusStrip.SuspendLayout();
@@ -267,7 +265,6 @@
             // 
             preview_tabControl.Controls.Add(webview2_tabPage);
             preview_tabControl.Controls.Add(markf278down_tabPage);
-            preview_tabControl.Controls.Add(cef_tabPage);
             preview_tabControl.Dock = DockStyle.Fill;
             preview_tabControl.Location = new Point(12, 35);
             preview_tabControl.Multiline = true;
@@ -322,26 +319,6 @@
             response_textBox.Size = new Size(316, 218);
             response_textBox.TabIndex = 1;
             // 
-            // cef_tabPage
-            // 
-            cef_tabPage.Controls.Add(cefsharp_chromiumWebBrowser);
-            cef_tabPage.Location = new Point(4, 24);
-            cef_tabPage.Name = "cef_tabPage";
-            cef_tabPage.Padding = new Padding(3);
-            cef_tabPage.Size = new Size(322, 224);
-            cef_tabPage.TabIndex = 3;
-            cef_tabPage.Text = "CEFSharp";
-            cef_tabPage.UseVisualStyleBackColor = true;
-            // 
-            // cefsharp_chromiumWebBrowser
-            // 
-            cefsharp_chromiumWebBrowser.ActivateBrowserOnCreation = false;
-            cefsharp_chromiumWebBrowser.Dock = DockStyle.Fill;
-            cefsharp_chromiumWebBrowser.Location = new Point(3, 3);
-            cefsharp_chromiumWebBrowser.Name = "cefsharp_chromiumWebBrowser";
-            cefsharp_chromiumWebBrowser.Size = new Size(316, 218);
-            cefsharp_chromiumWebBrowser.TabIndex = 0;
-            // 
             // new_conversation_button
             // 
             new_conversation_button.AutoSize = true;
@@ -362,17 +339,17 @@
             conversation_history_treeView.Indent = 10;
             conversation_history_treeView.Location = new Point(0, 37);
             conversation_history_treeView.Name = "conversation_history_treeView";
-            treeNode6.Name = "Node2";
-            treeNode6.Text = "Node2";
-            treeNode7.Name = "Node1";
-            treeNode7.Text = "Chat1";
-            treeNode8.Name = "Node3";
-            treeNode8.Text = "Node3";
-            treeNode9.Name = "Node4";
-            treeNode9.Text = "Node4";
-            treeNode10.Name = "RootNode";
-            treeNode10.Text = "Conversation History Root";
-            conversation_history_treeView.Nodes.AddRange(new TreeNode[] { treeNode10 });
+            treeNode1.Name = "Node2";
+            treeNode1.Text = "Node2";
+            treeNode2.Name = "Node1";
+            treeNode2.Text = "Chat1";
+            treeNode3.Name = "Node3";
+            treeNode3.Text = "Node3";
+            treeNode4.Name = "Node4";
+            treeNode4.Text = "Node4";
+            treeNode5.Name = "RootNode";
+            treeNode5.Text = "Conversation History Root";
+            conversation_history_treeView.Nodes.AddRange(new TreeNode[] { treeNode5 });
             conversation_history_treeView.PathSeparator = "/";
             conversation_history_treeView.Size = new Size(161, 324);
             conversation_history_treeView.TabIndex = 0;
@@ -380,17 +357,17 @@
             conversation_history_treeView.AfterSelect += conversation_history_treeView_AfterSelect;
             conversation_history_treeView.NodeMouseDoubleClick += conversation_history_treeView_NodeMouseDoubleClick;
             // 
-            // splitter1
+            // main_splitter
             // 
-            splitter1.Location = new Point(161, 37);
-            splitter1.Name = "splitter1";
-            splitter1.Size = new Size(3, 324);
-            splitter1.TabIndex = 1;
-            splitter1.TabStop = false;
+            main_splitter.Location = new Point(161, 37);
+            main_splitter.Name = "main_splitter";
+            main_splitter.Size = new Size(3, 324);
+            main_splitter.TabIndex = 1;
+            main_splitter.TabStop = false;
             // 
             // main_menuStrip
             // 
-            main_menuStrip.Items.AddRange(new ToolStripItem[] { base_directory_toolStripMenuItem, toolsToolStripMenuItem, helpToolStripMenuItem });
+            main_menuStrip.Items.AddRange(new ToolStripItem[] { base_directory_toolStripMenuItem, settings_ToolStripMenuItem, toolsToolStripMenuItem, helpToolStripMenuItem });
             main_menuStrip.Location = new Point(0, 0);
             main_menuStrip.Name = "main_menuStrip";
             main_menuStrip.ShowItemToolTips = true;
@@ -405,6 +382,13 @@
             base_directory_toolStripMenuItem.Text = "&Base Directory";
             base_directory_toolStripMenuItem.ToolTipText = "Specify the base directory.";
             base_directory_toolStripMenuItem.Click += base_directory_toolStripMenuItem_Click;
+            // 
+            // settings_ToolStripMenuItem
+            // 
+            settings_ToolStripMenuItem.Name = "settings_ToolStripMenuItem";
+            settings_ToolStripMenuItem.Size = new Size(61, 20);
+            settings_ToolStripMenuItem.Text = "Settings";
+            settings_ToolStripMenuItem.Click += settings_ToolStripMenuItem_Click;
             // 
             // toolsToolStripMenuItem
             // 
@@ -460,17 +444,17 @@
             aboutToolStripMenuItem1.Text = "&About...";
             aboutToolStripMenuItem1.Click += about_ToolStripMenuItem_Click;
             // 
-            // panel1
+            // main_panel
             // 
-            panel1.Controls.Add(splitter1);
-            panel1.Controls.Add(text_splitContainer);
-            panel1.Controls.Add(conversation_history_treeView);
-            panel1.Controls.Add(characters_tableLayoutPanel);
-            panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(0, 24);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(882, 361);
-            panel1.TabIndex = 2;
+            main_panel.Controls.Add(main_splitter);
+            main_panel.Controls.Add(text_splitContainer);
+            main_panel.Controls.Add(conversation_history_treeView);
+            main_panel.Controls.Add(characters_tableLayoutPanel);
+            main_panel.Dock = DockStyle.Fill;
+            main_panel.Location = new Point(0, 24);
+            main_panel.Name = "main_panel";
+            main_panel.Size = new Size(882, 361);
+            main_panel.TabIndex = 2;
             // 
             // characters_tableLayoutPanel
             // 
@@ -717,12 +701,13 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(882, 407);
-            Controls.Add(panel1);
+            Controls.Add(main_panel);
             Controls.Add(main_menuStrip);
             Controls.Add(main_statusStrip);
             Icon = (Icon)resources.GetObject("$this.Icon");
             MainMenuStrip = main_menuStrip;
             Name = "WinGPT_Form";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "WinGPT";
             text_splitContainer.Panel1.ResumeLayout(false);
             text_splitContainer.Panel1.PerformLayout();
@@ -737,11 +722,10 @@
             ((System.ComponentModel.ISupportInitialize)webView21).EndInit();
             markf278down_tabPage.ResumeLayout(false);
             markf278down_tabPage.PerformLayout();
-            cef_tabPage.ResumeLayout(false);
             main_menuStrip.ResumeLayout(false);
             main_menuStrip.PerformLayout();
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
+            main_panel.ResumeLayout(false);
+            main_panel.PerformLayout();
             characters_tableLayoutPanel.ResumeLayout(false);
             characters_tableLayoutPanel.PerformLayout();
             characters_flowLayoutPanel.ResumeLayout(false);
@@ -758,10 +742,10 @@
         private TreeView conversation_history_treeView;
         private TextBox prompt_textBox;
         private TextBox response_textBox;
-        private Splitter splitter1;
+        private Splitter main_splitter;
         private MenuStrip main_menuStrip;
         private Button send_prompt_button;
-        private Panel panel1;
+        private Panel main_panel;
         private Button new_conversation_button;
         private ToolStripMenuItem contentsToolStripMenuItem;
         private ToolStripMenuItem indexToolStripMenuItem;
@@ -797,11 +781,7 @@
         private TextBox character_textBox;
         private TableLayoutPanel characters_tableLayoutPanel;
         private FlowLayoutPanel characters_flowLayoutPanel;
-        private RadioButton radioButton1;
-        private RadioButton radioButton2;
-        private RadioButton radioButton4;
         private RadioButton placeholder_radioButton;
-        private RadioButton radioButton5;
         private StatusStrip main_statusStrip;
         private ToolStripStatusLabel main_toolStripStatusLabel;
         private ToolStripProgressBar main_toolStripProgressBar;
@@ -814,8 +794,6 @@
         private TabPage markf278down_tabPage;
         private TabPage webview2_tabPage;
         private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
-        private TabPage cef_tabPage;
-        private CefSharp.WinForms.ChromiumWebBrowser cefsharp_chromiumWebBrowser;
         private Panel panel2;
         private Button upload_button;
         private ComboBox uploaded_files_comboBox;
@@ -823,6 +801,6 @@
         private Button del_button;
         private Button clear_button;
         private CheckBox autoclear_checkBox;
-        private NumericUpDown numericUpDown1;
+        private ToolStripMenuItem settings_ToolStripMenuItem;
     }
 }

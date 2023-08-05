@@ -38,6 +38,20 @@ public partial class WinGPT_Form : Form {
       uploaded_files_comboBox.DisplayMember = "Name";
       uploaded_files_comboBox.ValueMember   = "FullName";
       //Maybe we should put more init stuff here, instead of Load and Shown 
+      prompt_textBox.Font = Config.Active.UIable.Prompt_Font;
+
+      if (Config.Active.WindowParameters is not null) {
+         //restore window size and position
+         this.StartPosition = Config.Active.WindowParameters.StartPosition;
+         this.WindowState   = Config.Active.WindowParameters.WindowState;
+         if (Config.Active.WindowParameters.WindowState == FormWindowState.Normal) {
+            this.Location = Config.Active.WindowParameters.Location;
+            this.Size     = Config.Active.WindowParameters.Size;
+         }
+      }
+
+      //I think we should set the splitters here, so all sizes are availabel
+      set_splitter_state();
    }
 
    #region stay in Form
@@ -107,10 +121,6 @@ public partial class WinGPT_Form : Form {
       //TADA should be a user-set default in the Settings
       //select and activate the default tulpa
 
-
-      text_splitContainer.SplitterDistance = text_splitContainer.Width / 2;
-
-
       //check if we are in debug mode
       if (Debugger.IsAttached) {
          prompt_textBox.Text = "What is bigger than a town?";
@@ -123,6 +133,15 @@ public partial class WinGPT_Form : Form {
          Config.Active.LastUsedTulpa = Config.ActiveTulpa.File.Name;
 
       baseDirectoryWatcherAndTreeViewUpdater.treeViewPersistor.Save();
+
+      save_splitter_state();
+
+      Config.Active.WindowParameters = new WindowParameters {
+         StartPosition = this.StartPosition,
+         WindowState   = this.WindowState,
+         Location      = this.Location,
+         Size          = this.Size,
+      };
 
       //this seems redundant, but better "Save" than sorry :P
       Config.Save();
@@ -177,6 +196,14 @@ public partial class WinGPT_Form : Form {
    #endregion
 
    #region All the clickys
+
+   private void settings_ToolStripMenuItem_Click(object sender, EventArgs e) {
+      var uiconfig = new Config_UI(Config.Active.UIable);
+      uiconfig.ShowDialog();
+      //set the font
+      prompt_textBox.Font = Config.Active.UIable.Prompt_Font;
+      Config.Save();
+   }
 
    private void about_ToolStripMenuItem_Click(object sender, EventArgs e) {
       new AboutBox().ShowDialog();
@@ -254,7 +281,7 @@ public partial class WinGPT_Form : Form {
       //example filter:
       // "Text files (*.txt)|*.txt|Images (*.png, *.jpg)|*.png;*.jpg|All files (*.*)|*.*"
       upload_vistaOpenFileDialog.Filter =
-         "Markdown files (*.md)|*.md|Code|*.cs;*.json;*.py";
+         "All|*.*|Markdown files (*.md)|*.md|Code|*.cs;*.json;*.py";
 
       DialogResult result = upload_vistaOpenFileDialog.ShowDialog(this);
 
@@ -494,6 +521,34 @@ public partial class WinGPT_Form : Form {
             item.Checked = true;
          }
       }
+   }
+
+   /// <summary>
+   /// This saves the relative position of the splitters.
+   /// </summary>
+   private void save_splitter_state() {
+      var main_panel_absolute_width = main_panel.Width;
+      var treeview_absolute_width   = conversation_history_treeView.Width;
+      var treeview_relative_width   = (double) treeview_absolute_width / main_panel_absolute_width;
+      Config.Active.MainSplitter_relative_position = treeview_relative_width;
+
+      var text_splitter_total_width  = text_splitContainer.Width;
+      var text_splitter_abs_position = text_splitContainer.SplitterDistance;
+      var text_splitter_rel_position = (double) text_splitter_abs_position / text_splitter_total_width;
+      Config.Active.TextSplitter_relative_position = text_splitter_rel_position;
+   }
+
+   /// <summary>
+   /// This sets the relative position of the splitters.
+   /// </summary>
+   private void set_splitter_state() {
+      var main_panel_absolute_width = main_panel.Width;
+      var treeview_absolute_width   = (int) (main_panel_absolute_width * Config.Active.MainSplitter_relative_position);
+      conversation_history_treeView.Width = treeview_absolute_width;
+
+      var text_splitter_total_width  = text_splitContainer.Width;
+      var text_splitter_abs_position = (int) (text_splitter_total_width * Config.Active.TextSplitter_relative_position);
+      text_splitContainer.SplitterDistance = text_splitter_abs_position;
    }
 
    #endregion

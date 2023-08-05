@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup Label="Globals">
+    <WebView2LoaderPreference>Static</WebView2LoaderPreference>
+  </PropertyGroup>
+
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net7.0-windows</TargetFramework>
@@ -12,16 +16,46 @@
     <Version>0.1.5</Version>
     <Platforms>AnyCPU;x64</Platforms>
     <StartupObject>WinGPT.WinGPT_Main</StartupObject>
+    <Company>the finest</Company>
+    <Authors>Kai De–Mori</Authors>
+    <PackageIcon>WinGPT_128x128_.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Filetransfer\saveFile_Function.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Filetransfer\saveFile_system_message.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Filetransfer\save_link_system_message.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Icons\WinGPT_1.ico" />
+    <Content Include="Taxonomy\function.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Taxonomy\system_message_template.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="webstuffs\custom_prism_plugin.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="webstuffs\index_template.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="webstuffs\my.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="webstuffs\prism_fancy.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="webstuffs\prism_fancy.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CefSharp.WinForms.NETCore" Version="114.2.120" />
-    <PackageReference Include="HtmlRenderer.Core" Version="1.5.1-beta1" />
-    <PackageReference Include="HtmlRenderer.WinForms" Version="1.5.1-beta1" />
     <PackageReference Include="Markdig" Version="0.31.0" />
     <PackageReference Include="Markdig.SyntaxHighlighting" Version="1.1.7" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1823.32" />
@@ -54,37 +88,24 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="Filetransfer\saveFile_Function.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Filetransfer\saveFile_system_message.md">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  <None Remove="Filetransfer\saveFile_Function.json" />
+	  <None Remove="Filetransfer\saveFile_system_message.md" />
+	  <None Remove="Filetransfer\save_link_system_message.md" />
+	  <None Remove="Taxonomy\function.json" />
+	  <None Remove="Taxonomy\system_message_template.md" />
+	  <None Remove="webstuffs\custom_prism_plugin.js" />
+	  <None Remove="webstuffs\index_template.html" />
+	  <None Remove="webstuffs\my.css" />
+	  <None Remove="webstuffs\prism_fancy.css" />
+	  <None Remove="webstuffs\prism_fancy.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Icons\WinGPT_128x128_.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
 	  </None>
 	  <None Update="OpenAI\ErrorCodes.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Filetransfer\save_link_system_message.md">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Taxonomy\function.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Taxonomy\system_message_template.md">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="webstuffs\custom_prism_plugin.js">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="webstuffs\index_template.html">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="webstuffs\my.css">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="webstuffs\prism_fancy.css">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="webstuffs\prism_fancy.js">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
