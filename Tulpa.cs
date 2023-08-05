@@ -74,6 +74,9 @@ public class Tulpa : InterTulpa {
       //add the content of the old system message to the new one
       tuned_up_system_message_content.Append(first_system_message.content);
 
+      if (Config.Active.UIable.Use_Save_Link)
+         add_save_link(tuned_up_system_message_content);
+
       // "Upload"
       add_associated_files_to_system_message(associated_files, tuned_up_system_message_content);
 
@@ -81,9 +84,6 @@ public class Tulpa : InterTulpa {
       Function<SaveParameters>? save_function = null;
       if (Config.Active.UIable.Use_Save_Function)
          save_function = Enable_Save_via_Prompt_Function();
-
-      if (Config.Active.UIable.Use_Save_Link)
-         add_save_link(tuned_up_system_message_content);
 
       var new_system_message = new Message {
          role    = Role.system,

@@ -19,9 +19,6 @@
 			}
 		}
 
-		window.onload = function() {
-			scrollToLastPlaceholder();
-		};
 	</script>
 
 	<script>
@@ -89,6 +86,7 @@
 				const headers = document.querySelectorAll(`${tag}.external-filename`);
 				headers.forEach(addClickHandler);
 			});
+			scrollToLastPlaceholder();
 		}
 
 
