@@ -57,7 +57,7 @@ public static class Taxonomer {
       //Let's get the request ready
       var request = new Request() {
          messages      = all_immutable,
-         functions     = new IFunction[] { function },
+         functions     = new IFunction[] {function},
          function_call = new FunctionCallSettings("taxonomy"),
          model         = Models.gpt_3_5_turbo_16k,
          temperature   = 0.0
@@ -170,9 +170,15 @@ public static class Taxonomer {
          category     = function_parameters.new_category;
          should_exist = false;
       }
-      else {
+      else if (function_parameters.selected_category is not null) {
          //get the selected category
          category     = function_parameters.selected_category;
+         should_exist = true;
+      }
+      else {
+         //this should never happen
+         //but if it does, we'll just use the first category
+         category     = existing_categories[0];
          should_exist = true;
       }
 

@@ -17,6 +17,7 @@ public partial class WinGPT_Form : Form {
    public readonly Dictionary<Tulpa, RadioButton> Tulpa_to_RadioButton = new();
 
    private BaseDirectoryWatcherAndTreeViewUpdater baseDirectoryWatcherAndTreeViewUpdater;
+   private TulpaDirectoryWatcher                  tulpaDirectoryWatcher;
 
    private readonly TaskCompletionSource<bool> stupid_edge_mumble_mumble = new TaskCompletionSource<bool>();
 
@@ -25,10 +26,19 @@ public partial class WinGPT_Form : Form {
    public WinGPT_Form() {
       Config.Load();
       InitializeComponent();
+
+      if (Config.Active.WindowParameters != null) {
+         this.StartPosition = Config.Active.WindowParameters.StartPosition;
+         this.Location      = Config.Active.WindowParameters.Location;
+         this.Size          = Config.Active.WindowParameters.Size;
+      }
+
       Enabled =  false;
       Load    += WinGPT_Form_Load;
       Shown   += WinGPT_Form_Shown;
       Closing += WinGPT_Form_Closing;
+      //HandleCreated += (sender, args) => 
+      //   set_splitter_state();
 
       Text += $" v{Assembly.GetExecutingAssembly().GetName().Version} PRE-ALPHA";
 
@@ -39,20 +49,20 @@ public partial class WinGPT_Form : Form {
       uploaded_files_comboBox.ValueMember   = "FullName";
       //Maybe we should put more init stuff here, instead of Load and Shown 
       prompt_textBox.Font = Config.Active.UIable.Prompt_Font;
-
-      if (Config.Active.WindowParameters is not null) {
-         //restore window size and position
-         this.StartPosition = Config.Active.WindowParameters.StartPosition;
-         this.WindowState   = Config.Active.WindowParameters.WindowState;
-         if (Config.Active.WindowParameters.WindowState == FormWindowState.Normal) {
-            this.Location = Config.Active.WindowParameters.Location;
-            this.Size     = Config.Active.WindowParameters.Size;
-         }
-      }
-
-      //I think we should set the splitters here, so all sizes are availabel
-      set_splitter_state();
    }
+
+   protected override CreateParams CreateParams {
+      get {
+         CreateParams cp = base.CreateParams;
+
+         if (Config.Active.WindowParameters?.WindowState == FormWindowState.Maximized) {
+            cp.Style |= 0x01000000; // WS_MAXIMIZE
+         }
+
+         return cp;
+      }
+   }
+
 
    #region stay in Form
 
@@ -68,6 +78,8 @@ public partial class WinGPT_Form : Form {
    }
 
    private async void WinGPT_Form_Shown(object? sender, EventArgs e) {
+      set_splitter_state();
+
       Startup.AssertPrerequisitesOrFail(PromptUserForBaseDirectory);
       Template_Engine.Init();
       //AGI.Init();
@@ -75,26 +87,6 @@ public partial class WinGPT_Form : Form {
       Config.Active.TokenCounter.LimitReached = () => MessageBox.Show("Token limit reached.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
       sysmsghack_ToolStripMenuItem.Checked = Config.Active.UseSysMsgHack;
-
-      var tulpas = Startup.CreateAllTulpas();
-      if (tulpas.Count == 0) {
-         MessageBox.Show("No tulpas found!\r\nPlease select a valid base directory!", "Error", MessageBoxButtons.OK);
-         //Application.Exit();
-      }
-      else {
-         CreateCharacterButtons(tulpas);
-         //var selected_tulpa =
-         //   tulpas.FirstOrDefault(tulpa => tulpa.File.Name == "Default_Assistant.md")
-         //   ?? tulpas[0];
-
-         Tulpa selected_tulpa = tulpas.FirstOrDefault(tulpa =>
-                                   tulpa.File.Name == Config.Active.LastUsedTulpa ||
-                                   tulpa.File.Name == Config.DefaultAssistant_Filename)
-                                ?? tulpas.First();
-
-         Tulpa_to_RadioButton[selected_tulpa].Checked = true;
-         ActivateTulpa(selected_tulpa);
-      }
 
       //var success = stupid_edge_mumble_mumble.WaitOne(TimeSpan.FromSeconds(10));
       //if (!success) {
@@ -105,8 +97,7 @@ public partial class WinGPT_Form : Form {
       await stupid_edge_mumble_mumble.Task;
       Enabled = true;
 
-      //TADA can that go?
-      //ConversationHistoryTraverser.StartWatching(Config.History_Directory, conversation_history_treeView);
+      tulpaDirectoryWatcher = new TulpaDirectoryWatcher(CreateTulpaButtons_safe);
 
       //baseDirectoryWatcher = new BaseDirectoryWatcher(Config.History_Directory, conversation_history_treeView);
       //baseDirectoryWatcher.InitializeTree();
@@ -116,12 +107,12 @@ public partial class WinGPT_Form : Form {
             conversation_history_treeView
          );
 
+
       Busy(false);
 
       //TADA should be a user-set default in the Settings
       //select and activate the default tulpa
 
-      //check if we are in debug mode
       if (Debugger.IsAttached) {
          prompt_textBox.Text = "What is bigger than a town?";
       }
@@ -167,6 +158,13 @@ public partial class WinGPT_Form : Form {
 
       Conversation.Active.useSysMsgHack = sysmsghack_ToolStripMenuItem.Checked;
       var response_message = await Config.ActiveTulpa.SendAsync(user_message, Conversation.Active, Associated_files.ToArray());
+
+      if (response_message is null) {
+         //we got an error.
+         Busy(false);
+         return;
+      }
+
       if (autoclear_checkBox.Checked)
          prompt_textBox.Clear();
 
@@ -481,8 +479,28 @@ public partial class WinGPT_Form : Form {
 
    #region Init et al.
 
-   private void CreateCharacterButtons(List<Tulpa> tulpas) {
-      characters_flowLayoutPanel.Controls.Clear();
+   public void CreateTulpaButtons_safe(List<Tulpa> tulpas, Tulpa? selected_tulpa) {
+      if (tulpas_flowLayoutPanel.InvokeRequired) {
+         tulpas_flowLayoutPanel.Invoke(() => CreateTulpaButtons(tulpas, selected_tulpa));
+      }
+      else {
+         CreateTulpaButtons(tulpas, selected_tulpa);
+      }
+   }
+
+   private void CreateTulpaButtons(List<Tulpa> tulpas, Tulpa? selected_tulpa) {
+      if (tulpas.Count == 0) {
+         MessageBox.Show("No tulpas found!\r\nPlease select a valid base directory!", "Error", MessageBoxButtons.OK);
+         //Application.Exit();
+         return;
+      }
+
+      selected_tulpa ??= Config.ActiveTulpa;
+
+      ////////////////////////
+      tulpas_flowLayoutPanel.SuspendLayout();
+
+      tulpas_flowLayoutPanel.Controls.Clear();
       Tulpa_to_RadioButton.Clear();
 
       foreach (var tulpa in tulpas) {
@@ -497,9 +515,16 @@ public partial class WinGPT_Form : Form {
          //add a click event that receives the button and the tulpa
          button.Click += (sender, args) => { ActivateTulpa(tulpa); };
 
-         characters_flowLayoutPanel.Controls.Add(button);
+         tulpas_flowLayoutPanel.Controls.Add(button);
          Tulpa_to_RadioButton.Add(tulpa, button);
       }
+
+      Tulpa_to_RadioButton[selected_tulpa].Checked = true;
+
+      tulpas_flowLayoutPanel.ResumeLayout();
+      ////////////////////////
+
+      ActivateTulpa(selected_tulpa);
    }
 
    private void Initialize_Models_MenuItems() {
@@ -542,6 +567,16 @@ public partial class WinGPT_Form : Form {
    /// This sets the relative position of the splitters.
    /// </summary>
    private void set_splitter_state() {
+      //check if Config.Active.MainSplitter_relative_position is between 0 and 1
+      //if not, set it to 0.2
+      if (Config.Active.MainSplitter_relative_position < 0 || Config.Active.MainSplitter_relative_position > 1)
+         Config.Active.MainSplitter_relative_position = 0.2;
+
+      //check if Config.Active.TextSplitter_relative_position is between 0 and 1
+      //if not, set it to 0.5
+      if (Config.Active.TextSplitter_relative_position < 0 || Config.Active.TextSplitter_relative_position > 1)
+         Config.Active.TextSplitter_relative_position = 0.5;
+
       var main_panel_absolute_width = main_panel.Width;
       var treeview_absolute_width   = (int) (main_panel_absolute_width * Config.Active.MainSplitter_relative_position);
       conversation_history_treeView.Width = treeview_absolute_width;
@@ -566,8 +601,8 @@ public partial class WinGPT_Form : Form {
 
    private void WebView_CoreWebView2InitializationCompleted(object? sender, CoreWebView2InitializationCompletedEventArgs e) {
       var settings = webView21.CoreWebView2.Settings;
-      //settings.AreDefaultContextMenusEnabled = false;
-      //settings.AreDevToolsEnabled            = false;
+      settings.AreDefaultContextMenusEnabled    = false;
+      settings.AreDevToolsEnabled               = false;
       settings.IsStatusBarEnabled               = false;
       settings.AreBrowserAcceleratorKeysEnabled = false;
       settings.IsBuiltInErrorPageEnabled        = false;

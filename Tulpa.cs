@@ -33,7 +33,10 @@ public class Tulpa : InterTulpa {
       }
 
       //var name   = Path.GetFileNameWithoutExtension(file.Name);
-      var text   = System.IO.File.ReadAllText(file.FullName);
+      using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+      using var reader = new StreamReader(stream);
+      var       text   = reader.ReadToEnd();
+
       var result = TulpaParser.TryParse(text, file, out var tulpa);
       if (!result) {
          MessageBox.Show($"The file {file} could not be parsed.", "Error", MessageBoxButtons.OK);

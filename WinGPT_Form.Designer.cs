@@ -67,7 +67,7 @@
             aboutToolStripMenuItem1 = new ToolStripMenuItem();
             main_panel = new Panel();
             characters_tableLayoutPanel = new TableLayoutPanel();
-            characters_flowLayoutPanel = new FlowLayoutPanel();
+            tulpas_flowLayoutPanel = new FlowLayoutPanel();
             placeholder_radioButton = new RadioButton();
             contentsToolStripMenuItem = new ToolStripMenuItem();
             indexToolStripMenuItem = new ToolStripMenuItem();
@@ -111,7 +111,7 @@
             main_menuStrip.SuspendLayout();
             main_panel.SuspendLayout();
             characters_tableLayoutPanel.SuspendLayout();
-            characters_flowLayoutPanel.SuspendLayout();
+            tulpas_flowLayoutPanel.SuspendLayout();
             main_statusStrip.SuspendLayout();
             SuspendLayout();
             // 
@@ -461,7 +461,7 @@
             characters_tableLayoutPanel.AutoSize = true;
             characters_tableLayoutPanel.ColumnCount = 1;
             characters_tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            characters_tableLayoutPanel.Controls.Add(characters_flowLayoutPanel, 0, 0);
+            characters_tableLayoutPanel.Controls.Add(tulpas_flowLayoutPanel, 0, 0);
             characters_tableLayoutPanel.Dock = DockStyle.Top;
             characters_tableLayoutPanel.Location = new Point(0, 0);
             characters_tableLayoutPanel.Name = "characters_tableLayoutPanel";
@@ -473,14 +473,14 @@
             // 
             // characters_flowLayoutPanel
             // 
-            characters_flowLayoutPanel.Anchor = AnchorStyles.Top;
-            characters_flowLayoutPanel.AutoSize = true;
-            characters_flowLayoutPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            characters_flowLayoutPanel.Controls.Add(placeholder_radioButton);
-            characters_flowLayoutPanel.Location = new Point(365, 3);
-            characters_flowLayoutPanel.Name = "characters_flowLayoutPanel";
-            characters_flowLayoutPanel.Size = new Size(152, 31);
-            characters_flowLayoutPanel.TabIndex = 2;
+            tulpas_flowLayoutPanel.Anchor = AnchorStyles.Top;
+            tulpas_flowLayoutPanel.AutoSize = true;
+            tulpas_flowLayoutPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            tulpas_flowLayoutPanel.Controls.Add(placeholder_radioButton);
+            tulpas_flowLayoutPanel.Location = new Point(365, 3);
+            tulpas_flowLayoutPanel.Name = "tulpas_flowLayoutPanel";
+            tulpas_flowLayoutPanel.Size = new Size(152, 31);
+            tulpas_flowLayoutPanel.TabIndex = 2;
             // 
             // placeholder_radioButton
             // 
@@ -728,8 +728,8 @@
             main_panel.PerformLayout();
             characters_tableLayoutPanel.ResumeLayout(false);
             characters_tableLayoutPanel.PerformLayout();
-            characters_flowLayoutPanel.ResumeLayout(false);
-            characters_flowLayoutPanel.PerformLayout();
+            tulpas_flowLayoutPanel.ResumeLayout(false);
+            tulpas_flowLayoutPanel.PerformLayout();
             main_statusStrip.ResumeLayout(false);
             main_statusStrip.PerformLayout();
             ResumeLayout(false);
@@ -780,7 +780,7 @@
         private TextBox history_file_name_textBox;
         private TextBox character_textBox;
         private TableLayoutPanel characters_tableLayoutPanel;
-        private FlowLayoutPanel characters_flowLayoutPanel;
+        private FlowLayoutPanel tulpas_flowLayoutPanel;
         private RadioButton placeholder_radioButton;
         private StatusStrip main_statusStrip;
         private ToolStripStatusLabel main_toolStripStatusLabel;

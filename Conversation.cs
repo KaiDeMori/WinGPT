@@ -98,7 +98,8 @@ public class Conversation {
 
       if (temporary_prompt is null) {
          foreach (var message in Messages) {
-            sb.AppendLine(message.ToString());
+            if (message is not null) //DRAGONS this should never be null, but when the API errors out, it is!
+               sb.AppendLine(message.ToString());
          }
       }
       else {

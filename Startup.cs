@@ -143,20 +143,4 @@ internal static class Startup {
 
       return true;
    }
-
-   public static List<Tulpa> CreateAllTulpas() {
-      //read all *.md files in the tulpas directory
-      var files = Config.Tulpa_Directory.GetFiles(Config.marf278down_filter);
-
-      //I think this is a buhg in LINQ, as there should be a way to do this without the null assertion
-      //List<Tulpa> tulpas = files
-      //   .Select(Tulpa.CreateFrom)
-      //   .Where(t => t != null)
-      //   .Select(t => t!) // This line asserts that the elements aren't null.
-      //   .ToList();
-
-      var tulpas = files.Select(Tulpa.CreateFrom).NotNull().ToList();
-
-      return tulpas;
-   }
 }
