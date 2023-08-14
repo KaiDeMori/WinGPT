@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using Message = WinGPT.OpenAI.Chat.Message;
 
 namespace WinGPT;
@@ -11,94 +12,6 @@ public static class TulpaParser {
       {SpecialTokens.Assistant, Role.assistant},
       {SpecialTokens.Function, Role.function},
    };
-
-
-   public static bool TryParse_weg(string content, FileInfo file, [NotNullWhen(true)] out Tulpa? tulpa) {
-      var tulpa_config = new TulpaConfiguration();
-      var messages     = new List<Message>();
-
-      if (content.StartsWith(SpecialTokens.Tulpa_Config_Token)) {
-         int configEnd = content.IndexOf(SpecialTokens.System);
-
-         if (configEnd == -1) {
-            // Look for the first appearance of any special token if System is not found.
-            configEnd = specialTokens.Keys
-               .Where(token => content.IndexOf(token) != -1)
-               .Select(token => content.IndexOf(token))
-               .Min();
-
-            // If no special tokens are found, consider the whole content as the config.
-            if (configEnd == -1) configEnd = content.Length;
-         }
-
-         var configContent = content[0..configEnd];
-
-         if (!TryParseConfiguration(configContent, out tulpa_config)) {
-            tulpa = null;
-            return false;
-         }
-
-         content = content[configEnd..];
-      }
-      else {
-         messages.Add(new Message {role = Role.system, content = content});
-         tulpa_config.Name = Path.GetFileNameWithoutExtension(file.Name);
-      }
-
-      Role currentRole   = Role.system;
-      int  newLineLength = Environment.NewLine.Length;
-      int  messageStart  = 0;
-
-      while (messageStart < content.Length) {
-         KeyValuePair<string, Role>? nextSpecialToken      = null;
-         int?                        nextSpecialTokenIndex = null;
-
-         // Find the next special token
-         foreach (var specialToken in specialTokens) {
-            int tokenIndex = content.IndexOf(specialToken.Key, messageStart);
-
-            if (tokenIndex != -1 && (nextSpecialTokenIndex == null || tokenIndex < nextSpecialTokenIndex)) {
-               nextSpecialToken      = specialToken;
-               nextSpecialTokenIndex = tokenIndex;
-            }
-         }
-
-         // No more special tokens, add the rest of the content as a message
-         if (nextSpecialToken == null) {
-            var lastMessage = content[messageStart..];
-            if (!string.IsNullOrWhiteSpace(lastMessage)) {
-               messages.Add(new Message {role = currentRole, content = lastMessage});
-            }
-
-            break;
-         }
-
-         // Add the message before the special token
-         string messageContent = content[messageStart..nextSpecialTokenIndex.Value];
-         if (!string.IsNullOrWhiteSpace(messageContent)) {
-            messages.Add(new Message {role = currentRole, content = messageContent});
-         }
-
-         // Move the pointer to after the special token
-         currentRole  = nextSpecialToken.Value.Value;
-         messageStart = nextSpecialTokenIndex.Value + nextSpecialToken.Value.Key.Length;
-      }
-
-      //if (messages.Any()) {
-      //   var samplePrompt = messages[^1];
-      //   if (samplePrompt.role == Role.user && string.IsNullOrWhiteSpace(tulpa_config.SamplePrompt)) {
-      //      tulpa_config.SamplePrompt = samplePrompt.content;
-      //   }
-      //}
-
-      tulpa = new Tulpa {
-         Configuration = tulpa_config,
-         Messages      = messages.ToImmutableArray(),
-         File          = file
-      };
-      return true;
-   }
-
 
    public static bool TryParse(string content, FileInfo file, [NotNullWhen(true)] out Tulpa? tulpa) {
       var contentMemory = content.AsMemory();
@@ -116,6 +29,9 @@ public static class TulpaParser {
             configEnd = contentMemory.Span.IndexOf(specialToken.Key);
             if (configEnd != -1) break;
          }
+
+         if (configEnd == -1)
+            configEnd = contentMemory.Length;
 
          if (configEnd != -1) {
             var configContent = contentMemory.Slice(messageStart, configEnd - messageStart).ToString();
@@ -135,7 +51,6 @@ public static class TulpaParser {
       if (string.IsNullOrWhiteSpace(tulpa_config.Name)) {
          tulpa_config.Name = Path.GetFileNameWithoutExtension(file.Name);
       }
-
 
       int newLineLength = Environment.NewLine.Length;
 
@@ -198,7 +113,7 @@ public static class TulpaParser {
             if (line.StartsWith(propertyName)) {
                string valueString = line.Substring(propertyName.Length).Trim();
                if (property.PropertyType == typeof(float)) {
-                  if (!float.TryParse(valueString, out float value)) {
+                  if (!float.TryParse(valueString, NumberStyles.Float, CultureInfo.InvariantCulture, out float value)) {
                      config = null;
                      return false;
                   }

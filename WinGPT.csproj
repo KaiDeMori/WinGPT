@@ -13,12 +13,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationIcon>Icons\WinGPT_1.ico</ApplicationIcon>
     <SignAssembly>False</SignAssembly>
-    <Version>0.1.5</Version>
+    <Version>0.1.8</Version>
     <Platforms>AnyCPU;x64</Platforms>
     <StartupObject>WinGPT.WinGPT_Main</StartupObject>
     <Company>the finest</Company>
     <Authors>Kai De–Mori</Authors>
     <PackageIcon>WinGPT_128x128_.png</PackageIcon>
+    <AssemblyOriginatorKeyFile>WinGPT_certificate.pfx</AssemblyOriginatorKeyFile>
+    <DelaySign>False</DelaySign>
   </PropertyGroup>
 
   <ItemGroup>

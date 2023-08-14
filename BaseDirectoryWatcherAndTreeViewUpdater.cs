@@ -26,8 +26,8 @@ public class BaseDirectoryWatcherAndTreeViewUpdater : IDisposable {
 
    private FileSystemWatcher InitFileSystemWatcher(DirectoryInfo base_directory) {
       var watcher = new FileSystemWatcher {
-         Path                  = base_directory.FullName,
-         Filter                = Config.marf278down_filter,
+         Path = base_directory.FullName,
+         //Filter                = Config.marf278down_filter,
          NotifyFilter          = NotifyFilters.FileName | NotifyFilters.DirectoryName,
          IncludeSubdirectories = true
       };
@@ -44,20 +44,37 @@ public class BaseDirectoryWatcherAndTreeViewUpdater : IDisposable {
    private void OnCreated(object sender, FileSystemEventArgs e) {
       FileSystemInfo systemfileinfo = CreateFileSystemInfo(e.FullPath);
 
-      var new_node = new FileTreeNode(systemfileinfo);
+      var intermediateDirs = Tools.GetRelativeDirectories(baseDirectory, systemfileinfo);
       InvokeIfNeeded(() => {
-         GetParentNode(systemfileinfo)?.Nodes.Add(new_node);
-         //_treeView.Refresh();
+         //create all necessary subdirectories if they don't exist yet
+         var rootNode    = _treeView.Nodes[0];
+         var currentNode = rootNode;
+         foreach (var dir in intermediateDirs) {
+            var node = currentNode.Nodes.Find(dir.Name, false).FirstOrDefault();
+            if (node == null) {
+               node = new FileTreeNode(dir);
+               currentNode.Nodes.Add(node);
+            }
+
+            currentNode = node;
+         }
+
+         //if the filesysteminfo is a fileinfo, we need to add it to the treeview
+         //but only if its a markf278down file
+         if (systemfileinfo is FileInfo file && file.Name.EndsWith(Config.marf278down_extenstion)) {
+            currentNode.Nodes.Add(new FileTreeNode(file));
+         }
+
          check_if_new_file_should_be_selected(systemfileinfo);
       });
    }
 
    private void OnRenamed(object sender, RenamedEventArgs e) {
-      var old_file = CreateFileSystemInfo(e.OldFullPath);
+      //var old_file = CreateFileSystemInfo(e.OldFullPath);
       var new_file = CreateFileSystemInfo(e.FullPath);
 
       InvokeIfNeeded(() => {
-         var node = TreeViewHelper.FindNode(old_file, baseDirectory, _treeView);
+         var node = TreeViewHelper.FindNode(e.OldFullPath, baseDirectory, _treeView);
          if (node == null)
             return;
 

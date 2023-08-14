@@ -130,4 +130,27 @@ public static class Tools {
    }
 
    public static readonly string nl = Environment.NewLine;
+
+
+   public static DirectoryInfo[] GetRelativeDirectories(DirectoryInfo baseDirectory, FileSystemInfo fileSystemInfo) {
+      List<DirectoryInfo> intermediateDirectories = new();
+
+      DirectoryInfo? currentDirectory;
+      if (fileSystemInfo is FileInfo fileInfo) {
+         currentDirectory = fileInfo.Directory;
+      }
+      else {
+         currentDirectory = fileSystemInfo as DirectoryInfo;
+      }
+
+      while (currentDirectory != null && baseDirectory.FullName.Length < currentDirectory.FullName.Length) {
+         if (currentDirectory.FullName.StartsWith(baseDirectory.FullName, StringComparison.OrdinalIgnoreCase)) {
+            intermediateDirectories.Insert(0, currentDirectory); // Insert at the beginning to maintain order.
+         }
+
+         currentDirectory = currentDirectory.Parent;
+      }
+
+      return intermediateDirectories.ToArray();
+   }
 }

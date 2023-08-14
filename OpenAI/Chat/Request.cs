@@ -10,11 +10,11 @@ public class Request {
    [JsonProperty("functions", NullValueHandling = NullValueHandling.Ignore)]
    public IFunction[]? functions { get; init; }
 
-    /// <summary>
-    /// "none", "auto" or your function name like this
-    /// {"name":\ "my_function"}
-    /// </summary>
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+   /// <summary>
+   /// "none", "auto" or your function name like this
+   /// {"name":\ "my_function"}
+   /// </summary>
+   [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
    public FunctionCallSettings? function_call { get; init; }
 
    public double temperature { get; init; }
