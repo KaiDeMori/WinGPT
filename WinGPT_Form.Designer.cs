@@ -117,6 +117,7 @@
             // 
             // history_file_name_textBox
             // 
+            history_file_name_textBox.BackColor = SystemColors.Info;
             history_file_name_textBox.Dock = DockStyle.Top;
             history_file_name_textBox.Location = new Point(12, 12);
             history_file_name_textBox.Name = "history_file_name_textBox";
@@ -471,7 +472,7 @@
             characters_tableLayoutPanel.Size = new Size(882, 37);
             characters_tableLayoutPanel.TabIndex = 3;
             // 
-            // characters_flowLayoutPanel
+            // tulpas_flowLayoutPanel
             // 
             tulpas_flowLayoutPanel.Anchor = AnchorStyles.Top;
             tulpas_flowLayoutPanel.AutoSize = true;
