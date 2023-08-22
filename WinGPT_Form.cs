@@ -48,7 +48,7 @@ public partial class WinGPT_Form : Form {
       uploaded_files_comboBox.DisplayMember = "Name";
       uploaded_files_comboBox.ValueMember   = "FullName";
       //Maybe we should put more init stuff here, instead of Load and Shown 
-      prompt_textBox.Font = Config.Active.UIable.Prompt_Font;
+      apply_UIable();
    }
 
    protected override CreateParams CreateParams {
@@ -198,8 +198,7 @@ public partial class WinGPT_Form : Form {
    private void settings_ToolStripMenuItem_Click(object sender, EventArgs e) {
       var uiconfig = new Config_UI(Config.Active.UIable);
       uiconfig.ShowDialog();
-      //set the font
-      prompt_textBox.Font = Config.Active.UIable.Prompt_Font;
+      apply_UIable();
       Config.Save();
    }
 
@@ -473,6 +472,12 @@ public partial class WinGPT_Form : Form {
       }
 
       show_conversation_info();
+   }
+
+   private void apply_UIable() {
+      prompt_textBox.Font       = Config.Active.UIable.Prompt_Font;
+      response_textBox.Font     = Config.Active.UIable.markf278down_Font;
+      response_textBox.ReadOnly = Config.Active.UIable.markf278down_readonly;
    }
 
    #endregion

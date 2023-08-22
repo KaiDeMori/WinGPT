@@ -19,6 +19,7 @@ public class Request {
 
    public double temperature { get; init; }
 
+   [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
    public int? max_tokens { get; init; } = Config.Active.UIable.Max_Tokens;
 }
 
