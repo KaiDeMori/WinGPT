@@ -48,6 +48,7 @@ public partial class WinGPT_Form : Form {
       uploaded_files_comboBox.DataSource    = Associated_files;
       uploaded_files_comboBox.DisplayMember = "Name";
       uploaded_files_comboBox.ValueMember   = "FullName";
+      submit_edits_button.Visible           = false;
       //Maybe we should put more init stuff here, instead of Load and Shown 
       apply_UIable();
    }
@@ -189,6 +190,7 @@ public partial class WinGPT_Form : Form {
    }
 
    private void new_conversation_button_Click(object sender, EventArgs e) {
+      Debug.WriteLine("new_conversation_button_Click");
       conversation_history_treeView.SelectedNode = null;
       Conversation.Clear();
       ResetUI();
@@ -389,7 +391,10 @@ public partial class WinGPT_Form : Form {
       //.UseTypographer()
       //.Configure("typographer")
 
-      var html_fragment = Markdown.ToHtml(markf278down, pipeline);
+      //double all line endings in the markdown
+      var markf278down_doubled = markf278down.Replace("\r\n", "\r\n\r\n");
+
+      var html_fragment = Markdown.ToHtml(markf278down_doubled, pipeline);
       var htmlFromFile  = Template_Engine.CreateFullHtml_FromFile(html_fragment);
 
       //DRAGONS be gone!
@@ -668,4 +673,32 @@ public partial class WinGPT_Form : Form {
    }
 
    #endregion
+
+   private void response_textBox_Leave(object sender, EventArgs e) {
+      submit_edits();
+      response_textBox.TextChanged -= response_textBox_TextChanged;
+   }
+
+   private void response_textBox_TextChanged(object sender, EventArgs e) {
+      Conversation.Active.dirty   = true;
+      submit_edits_button.Visible = true;
+   }
+
+   private void response_textBox_Enter(object sender, EventArgs e) {
+      response_textBox.TextChanged += response_textBox_TextChanged;
+   }
+
+   private void submit_edit_button_Click(object sender, EventArgs e) {
+      submit_edits();
+   }
+
+   private void submit_edits() {
+      if (!Conversation.Active.dirty)
+         return;
+
+      Conversation.Active.update_message_from_string(response_textBox.Text);
+      Conversation.Active.dirty   = false;
+      submit_edits_button.Visible = false;
+      Update_Conversation();
+   }
 }

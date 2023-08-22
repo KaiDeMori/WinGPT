@@ -52,6 +52,7 @@
             webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
             markf278down_tabPage = new TabPage();
             response_textBox = new TextBox();
+            submit_edits_button = new Button();
             new_conversation_button = new Button();
             conversation_history_treeView = new TreeView();
             main_splitter = new Splitter();
@@ -300,6 +301,7 @@
             // markf278down_tabPage
             // 
             markf278down_tabPage.Controls.Add(response_textBox);
+            markf278down_tabPage.Controls.Add(submit_edits_button);
             markf278down_tabPage.Location = new Point(4, 24);
             markf278down_tabPage.Name = "markf278down_tabPage";
             markf278down_tabPage.Padding = new Padding(3);
@@ -311,14 +313,27 @@
             // response_textBox
             // 
             response_textBox.Dock = DockStyle.Fill;
-            response_textBox.Location = new Point(3, 3);
+            response_textBox.Location = new Point(3, 26);
             response_textBox.Multiline = true;
             response_textBox.Name = "response_textBox";
             response_textBox.PlaceholderText = "Conversation";
             response_textBox.ReadOnly = true;
             response_textBox.ScrollBars = ScrollBars.Both;
-            response_textBox.Size = new Size(316, 218);
+            response_textBox.Size = new Size(316, 195);
             response_textBox.TabIndex = 1;
+            response_textBox.Enter += response_textBox_Enter;
+            response_textBox.Leave += response_textBox_Leave;
+            // 
+            // save_edit_button
+            // 
+            submit_edits_button.Dock = DockStyle.Top;
+            submit_edits_button.Location = new Point(3, 3);
+            submit_edits_button.Name = "submit_edits_button";
+            submit_edits_button.Size = new Size(316, 23);
+            submit_edits_button.TabIndex = 2;
+            submit_edits_button.Text = "Submit Edits";
+            submit_edits_button.UseVisualStyleBackColor = true;
+            submit_edits_button.Click += submit_edit_button_Click;
             // 
             // new_conversation_button
             // 
@@ -803,5 +818,6 @@
         private Button clear_button;
         private CheckBox autoclear_checkBox;
         private ToolStripMenuItem settings_ToolStripMenuItem;
+        private Button submit_edits_button;
     }
 }
