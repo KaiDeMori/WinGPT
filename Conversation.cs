@@ -27,6 +27,8 @@ public class Conversation {
 
    public bool taxonomy_required = false;
 
+   public bool dirty = false;
+
    private Conversation() {
    }
 
@@ -111,7 +113,19 @@ public class Conversation {
 
    public string Create_markf278down() {
       //we also need to replace the default newline /n with the system newline /r/n
-      string messages = string.Join("", Messages.Select(m => m.ToString().Replace("\n", Environment.NewLine)));
+      //string messages = string.Join("", Messages.Select(m => m.ToString().Replace("\n", Environment.NewLine)));
+      string messages = string.Join("", Messages.Select(m => m.ToString()));
+      //messages = messages.ReplaceLineEndings();
+      int index = 0;
+      while ((index = messages.IndexOf('\n', index)) != -1) {
+         if (index == 0 || messages[index - 1] != '\r') {
+            messages = messages[..index] + "\r" + messages[index..];
+         }
+
+         index++;
+      }
+
+
       return messages;
    }
 
@@ -405,5 +419,64 @@ public class Conversation {
       };
 
       return true;
+   }
+
+   public void update_message_from_string(string messages_string) {
+      var memory      = messages_string.AsMemory();
+      var currentSpan = memory.Span;
+      var messages    = new List<Message>();
+
+      // Continue with the rest of the parsing as before
+      while (!currentSpan.IsEmpty) {
+         int     firstDelimiterIndex = currentSpan.Length;
+         string? delimiterFound      = null;
+
+         foreach (var delimiter in SpecialTokens.To_API_Role.Keys) {
+            int index = currentSpan.IndexOf(delimiter.AsSpan());
+            if (index >= 0 && index < firstDelimiterIndex) {
+               firstDelimiterIndex = index;
+               delimiterFound      = delimiter;
+            }
+         }
+
+         // No delimiter found, break out of the loop
+         if (delimiterFound == null) {
+            break;
+         }
+
+         // Could throw an exception if the slice end index is out of range
+         var afterDelimiter     = currentSpan[(firstDelimiterIndex + delimiterFound.Length)..];
+         var nextDelimiterIndex = afterDelimiter.Length;
+
+         foreach (var delimiter in SpecialTokens.To_API_Role.Keys) {
+            int index = afterDelimiter.IndexOf(delimiter.AsSpan());
+            if (index >= 0 && index < nextDelimiterIndex) {
+               nextDelimiterIndex = index;
+            }
+         }
+
+         // Could throw an exception if the slice end index is out of range
+         var content = afterDelimiter[..nextDelimiterIndex].Trim();
+
+         // Could throw an exception if the Role key doesn't exist in the dictionary
+         messages.Add(new Message {
+            role    = SpecialTokens.To_API_Role[delimiterFound],
+            content = content.ToString()
+         });
+
+         // Could throw an exception if the slice start index is out of range
+         currentSpan = afterDelimiter[nextDelimiterIndex..];
+      }
+
+      Messages = messages;
+
+      var old_file_name = Conversation.Active.HistoryFile.Name;
+      var directory     = Conversation.Active.HistoryFile.DirectoryName;
+      var old_file_name_without_extension
+         = Path.GetFileNameWithoutExtension(old_file_name);
+      var new_file_name = $"{old_file_name_without_extension}-EDIT-{DateTime.Now:yyyy-MM-dd HH-mm-ss}{Config.marf278down_extenstion}";
+      var new_file      = new FileInfo(Path.Join(directory, new_file_name));
+
+      HistoryFile = new_file;
    }
 }
