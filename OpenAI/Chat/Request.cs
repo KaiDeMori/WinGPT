@@ -18,6 +18,8 @@ public class Request {
    public FunctionCallSettings? function_call { get; init; }
 
    public double temperature { get; init; }
+
+   public int? max_tokens { get; init; } = Config.Active.UIable.Max_Tokens;
 }
 
 public class FunctionCallSettings {
