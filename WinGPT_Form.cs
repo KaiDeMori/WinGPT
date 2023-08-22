@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Markdig;
 using Markdig.Prism;
+using Markdig.Renderers;
 using Markdig.SyntaxHighlighting;
 using Microsoft.Web.WebView2.Core;
 using Newtonsoft.Json.Linq;
@@ -374,17 +375,19 @@ public partial class WinGPT_Form : Form {
 
       //now we want to use markdig to transform the messages to html
       var pipeline = new MarkdownPipelineBuilder()
-         //.Configure("typographer")
          .UseAdvancedExtensions()
          .UseEmojiAndSmiley()
          .UseEmphasisExtras()
-         //.UseSyntaxHighlighting()
          .UseSmartyPants()
-         //.UseTaskLists()
-         //.UseTypographer()
-         .UsePrism()
+         //.Use<AngleBracketEscapeExtension>()
+         .DisableHtml()
+         //.UsePrism()
+         //.UseCodeBlockTextReplace()
          .Build();
-
+      //.UseSyntaxHighlighting()
+      //.UseTaskLists()
+      //.UseTypographer()
+      //.Configure("typographer")
 
       var html_fragment = Markdown.ToHtml(markf278down, pipeline);
       var htmlFromFile  = Template_Engine.CreateFullHtml_FromFile(html_fragment);
