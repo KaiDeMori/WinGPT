@@ -179,8 +179,10 @@ public partial class WinGPT_Form : Form {
 
       ResetUI();
 
-      if (Conversation.Load(selectedFile))
+      if (Conversation.Load(selectedFile)) {
          Update_Conversation();
+         history_file_name_textBox.BackColor = SystemColors.Window;
+      }
       else
          MessageBox.Show($"Could not load {selectedFile.FullName}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
    }
@@ -263,7 +265,6 @@ public partial class WinGPT_Form : Form {
          //try renaming it, if not possible, revert to the old name and show a message
          if (Conversation.Active == null)
             return;
-         var conversation = Conversation.Active;
 
          FileUpdateLocationResult renameResult = Conversation.TryRenameFile(newName);
          show_conversation_info(renameResult);
@@ -439,6 +440,7 @@ public partial class WinGPT_Form : Form {
       //webView21.NavigateToString(string.Empty); //works
       //webView21.Source = new Uri("about:blank"); //no works
       webView21.CoreWebView2.Navigate("about:blank"); //works
+      history_file_name_textBox.BackColor = SystemColors.Info;
       prompt_textBox.Focus();
    }
 
