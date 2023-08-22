@@ -110,7 +110,8 @@ public class Tulpa : InterTulpa {
          messages    = all_immutable,
          model       = Config.Active.LanguageModel,
          temperature = Configuration.Temperature,
-         functions   = save_function is not null ? new IFunction[] {save_function} : null
+         functions   = save_function is not null ? new IFunction[] {save_function} : null,
+         max_tokens  = Config.Active.UIable.Max_Tokens
       };
 
       // done with Pre-Production
