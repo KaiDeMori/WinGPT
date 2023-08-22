@@ -3,6 +3,8 @@
 namespace WinGPT;
 
 public class Config_UIable {
+   public int? Max_Tokens { get; set; }
+
    /// <summary>
    /// This controls the function that enables saving via prompt.
    /// </summary>
