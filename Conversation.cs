@@ -344,7 +344,7 @@ public class Conversation {
       {FileUpdateLocationResult.UnknownError, "An unknown error occurred while trying to move the file."},
    };
 
-   private static bool TryParseConversationHistoryFile(FileInfo historyFile, [NotNullWhen(true)] out Conversation? conversation) {
+   internal static bool TryParseConversationHistoryFile(FileInfo historyFile, [NotNullWhen(true)] out Conversation? conversation) {
       conversation = null;
 
       if (!historyFile.Exists)
@@ -363,7 +363,7 @@ public class Conversation {
       var currentSpan = memory.Span;
 
       // Process the ConversationHistory section and get the file name
-      if (!HistoryFileParser.TryParseHistoryHeader(ref currentSpan, out var info)) {
+      if (!HistoryFileParser.TryParseConversationInfo(ref currentSpan, out var info)) {
          return false; // Couldn't parse ConversationHistory
       }
 

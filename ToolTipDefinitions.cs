@@ -1,33 +1,22 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
+﻿namespace WinGPT;
 
 class ToolTipDefinitions {
-   private ToolTip toolTip;
+   private static WinGPT_Form _form;
 
-   public ToolTipDefinitions(Form form, Dictionary<string, string> tooltips) {
-      toolTip = new ToolTip();
-
-      foreach (KeyValuePair<string, string> pair in tooltips) {
-         var control = FindControl(form, pair.Key);
-         if (control != null) {
-            toolTip.SetToolTip(control, pair.Value);
-         }
-      }
+   public static void SetToolTips(WinGPT_Form form) {
+      _form = form;
+      stt(form.autoclear_checkBox,
+         "Automatically clear the prompt text after sending the prompt.");
+      stt(form.clear_button,
+         "Clears the prompt text.");
+      stt(form.history_file_name_textBox,
+         "The name of the file to save the history to.\r\n" +
+         "Double click to start Taxonoy!");
+      stt(form.remove_file_button,
+         "Removes the selected file from the list.");
    }
 
-   private Control FindControl(Control container, string name) {
-      if (container.Name == name) {
-         return container;
-      }
-
-      foreach (Control child in container.Controls) {
-         var result = FindControl(child, name);
-         if (result != null) {
-            return result;
-         }
-      }
-
-      return null;
+   private static void stt(Control control, string toolTipText) {
+      _form.main_toolTip.SetToolTip(control, toolTipText);
    }
 }

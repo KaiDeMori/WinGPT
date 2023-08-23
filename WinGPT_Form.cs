@@ -51,6 +51,7 @@ public partial class WinGPT_Form : Form {
       submit_edits_button.Visible           = false;
       //Maybe we should put more init stuff here, instead of Load and Shown 
       apply_UIable();
+      ToolTipDefinitions.SetToolTips(this);
    }
 
    protected override CreateParams CreateParams {
@@ -261,7 +262,7 @@ public partial class WinGPT_Form : Form {
       }
    }
 
-   private void conversation_name_textBox_KeyDown(object sender, KeyEventArgs e) {
+   private void history_file_name_textBox_KeyDown(object sender, KeyEventArgs e) {
       if (e is {Shift: false, Control: false, KeyCode: Keys.Enter}) {
          e.SuppressKeyPress = true;
          var newName = history_file_name_textBox.Text;
@@ -457,7 +458,7 @@ public partial class WinGPT_Form : Form {
          throw new NullReferenceException("Conversation.Active is null");
 
       history_file_name_textBox.Text = Conversation.Active.HistoryFile.Name;
-      main_toolTip.SetToolTip(history_file_name_textBox, Conversation.Active.Info.Summary ?? "no summary yet");
+      //main_toolTip.SetToolTip(history_file_name_textBox, Conversation.Active.Info.Summary ?? "no summary yet");
       history_file_name_textBox.Enabled = true;
 
       //DRAGONS maybe this is the right place to update the treeview?
@@ -674,6 +675,8 @@ public partial class WinGPT_Form : Form {
 
    #endregion
 
+   #region chaos starts here
+
    private void response_textBox_Leave(object sender, EventArgs e) {
       submit_edits();
       response_textBox.TextChanged -= response_textBox_TextChanged;
@@ -701,4 +704,6 @@ public partial class WinGPT_Form : Form {
       submit_edits_button.Visible = false;
       Update_Conversation();
    }
+
+   #endregion
 }

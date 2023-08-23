@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
 
 namespace WinGPT;
 
@@ -15,6 +15,7 @@ public class BaseDirectoryWatcherAndTreeViewUpdater : IDisposable {
       this.baseDirectory = base_directory;
 
       treeView.Nodes.Clear();
+      treeView.ShowNodeToolTips = true;
       InitializeTreeView(base_directory);
       this.fileSystemWatcher = InitFileSystemWatcher(base_directory);
 
@@ -180,6 +181,11 @@ public class BaseDirectoryWatcherAndTreeViewUpdater : IDisposable {
 /// </summary>
 public class FileTreeNode : TreeNode {
    public FileTreeNode(FileSystemInfo fileSystemInfo) {
+      if (fileSystemInfo is FileInfo file) {
+         if (Conversation.TryParseConversationHistoryFile(file, out var conversation))
+            ToolTipText = conversation.Info.Summary ?? "";
+      }
+
       Text = fileSystemInfo.Name;
       Name = fileSystemInfo.Name;
       Tag  = fileSystemInfo;

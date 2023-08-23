@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Collections.Specialized;
+using System.Reflection;
+using System.Text;
 
 namespace WinGPT;
 
@@ -28,16 +30,24 @@ public class Conversation_Info {
 
       var info = new Conversation_Info();
 
+      PropertyInfo last_property = null;
       foreach (var line in lines) {
          var configKey = configMap.Keys.FirstOrDefault(key => line.StartsWith(key, StringComparison.InvariantCultureIgnoreCase));
-         if (configKey == null)
+         if (configKey == null) {
+            if (last_property.Name == nameof(Conversation_Info.Summary)) {
+               string value = last_property.GetValue(info) as string;
+               value = value + "\r\n" + line;
+               last_property.SetValue(info, value);
+            }
+
             continue;
+         }
 
          var valueString = line[configKey.Length..].Trim();
-         var property    = configMap[configKey];
+         last_property = configMap[configKey];
 
-         var parsedValue = ParseValue(property.PropertyType, valueString);
-         property.SetValue(info, parsedValue);
+         var parsedValue = ParseValue(last_property.PropertyType, valueString);
+         last_property.SetValue(info, parsedValue);
       }
 
       return info;
