@@ -72,6 +72,15 @@ public partial class Taxonomy_Form : Form
         };
     }
 
+    private void Submit_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.KeyCode == Keys.Enter)
+        {
+            e.SuppressKeyPress = true;
+            OK_button_Click(sender, e);
+        }
+    }
+
     private void Taxonomy_Form_FormClosing(object? sender, FormClosingEventArgs e)
     {
         if (DialogResult == DialogResult.OK)

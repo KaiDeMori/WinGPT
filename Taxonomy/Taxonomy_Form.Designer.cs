@@ -94,6 +94,7 @@
             filename_textBox.Size = new Size(302, 23);
             filename_textBox.TabIndex = 0;
             filename_textBox.Text = "Some filename.md";
+            filename_textBox.KeyDown += Submit_KeyDown;
             // 
             // new_category_groupBox
             // 
@@ -115,6 +116,7 @@
             new_category_textBox.ScrollBars = ScrollBars.Both;
             new_category_textBox.Size = new Size(302, 23);
             new_category_textBox.TabIndex = 0;
+            new_category_textBox.KeyDown += Submit_KeyDown;
             // 
             // existing_categories_groupBox
             // 
@@ -137,6 +139,7 @@
             existing_categories_comboBox.Name = "existing_categories_comboBox";
             existing_categories_comboBox.Size = new Size(302, 23);
             existing_categories_comboBox.TabIndex = 0;
+            existing_categories_comboBox.KeyDown += Submit_KeyDown;
             // 
             // OK_button
             // 
