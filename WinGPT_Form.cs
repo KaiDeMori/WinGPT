@@ -385,6 +385,7 @@ public partial class WinGPT_Form : Form {
          //.Use<AngleBracketEscapeExtension>()
          .DisableHtml()
          //.UsePrism()
+         .UseSoftlineBreakAsHardlineBreak()
          //.UseCodeBlockTextReplace()
          .Build();
       //.UseSyntaxHighlighting()
@@ -393,9 +394,9 @@ public partial class WinGPT_Form : Form {
       //.Configure("typographer")
 
       //double all line endings in the markdown
-      var markf278down_doubled = markf278down.Replace("\r\n", "\r\n\r\n");
+      //var markf278down_doubled = markf278down.Replace("\r\n", "\r\n\r\n");
 
-      var html_fragment = Markdown.ToHtml(markf278down_doubled, pipeline);
+      var html_fragment = Markdown.ToHtml(markf278down, pipeline);
       var htmlFromFile  = Template_Engine.CreateFullHtml_FromFile(html_fragment);
 
       //DRAGONS be gone!
@@ -617,8 +618,8 @@ public partial class WinGPT_Form : Form {
 
    private void WebView_CoreWebView2InitializationCompleted(object? sender, CoreWebView2InitializationCompletedEventArgs e) {
       var settings = webView21.CoreWebView2.Settings;
-      settings.AreDefaultContextMenusEnabled    = false;
-      settings.AreDevToolsEnabled               = false;
+      settings.AreDefaultContextMenusEnabled    = Debugger.IsAttached;
+      settings.AreDevToolsEnabled               = Debugger.IsAttached;
       settings.IsStatusBarEnabled               = false;
       settings.AreBrowserAcceleratorKeysEnabled = false;
       settings.IsBuiltInErrorPageEnabled        = false;
@@ -706,4 +707,8 @@ public partial class WinGPT_Form : Form {
    }
 
    #endregion
+
+   private void history_file_name_textBox_Leave(object sender, EventArgs e) {
+      history_file_name_textBox.Text = Conversation.Active.HistoryFile.Name;
+   }
 }

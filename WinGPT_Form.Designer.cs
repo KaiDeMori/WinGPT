@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            TreeNode treeNode6 = new TreeNode("Node2");
-            TreeNode treeNode7 = new TreeNode("Chat1", new TreeNode[] { treeNode6 });
-            TreeNode treeNode8 = new TreeNode("Node3");
-            TreeNode treeNode9 = new TreeNode("Node4");
-            TreeNode treeNode10 = new TreeNode("Conversation History Root", new TreeNode[] { treeNode7, treeNode8, treeNode9 });
+            TreeNode treeNode1 = new TreeNode("Node2");
+            TreeNode treeNode2 = new TreeNode("Chat1", new TreeNode[] { treeNode1 });
+            TreeNode treeNode3 = new TreeNode("Node3");
+            TreeNode treeNode4 = new TreeNode("Node4");
+            TreeNode treeNode5 = new TreeNode("Conversation History Root", new TreeNode[] { treeNode2, treeNode3, treeNode4 });
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WinGPT_Form));
             main_toolTip = new ToolTip(components);
             history_file_name_textBox = new TextBox();
@@ -126,6 +126,7 @@
             history_file_name_textBox.Size = new Size(330, 23);
             history_file_name_textBox.TabIndex = 3;
             history_file_name_textBox.KeyDown += history_file_name_textBox_KeyDown;
+            history_file_name_textBox.Leave += history_file_name_textBox_Leave;
             history_file_name_textBox.MouseDoubleClick += conversation_name_textBox_MouseDoubleClick;
             // 
             // autoclear_checkBox
@@ -352,17 +353,17 @@
             conversation_history_treeView.Indent = 10;
             conversation_history_treeView.Location = new Point(0, 37);
             conversation_history_treeView.Name = "conversation_history_treeView";
-            treeNode6.Name = "Node2";
-            treeNode6.Text = "Node2";
-            treeNode7.Name = "Node1";
-            treeNode7.Text = "Chat1";
-            treeNode8.Name = "Node3";
-            treeNode8.Text = "Node3";
-            treeNode9.Name = "Node4";
-            treeNode9.Text = "Node4";
-            treeNode10.Name = "RootNode";
-            treeNode10.Text = "Conversation History Root";
-            conversation_history_treeView.Nodes.AddRange(new TreeNode[] { treeNode10 });
+            treeNode1.Name = "Node2";
+            treeNode1.Text = "Node2";
+            treeNode2.Name = "Node1";
+            treeNode2.Text = "Chat1";
+            treeNode3.Name = "Node3";
+            treeNode3.Text = "Node3";
+            treeNode4.Name = "Node4";
+            treeNode4.Text = "Node4";
+            treeNode5.Name = "RootNode";
+            treeNode5.Text = "Conversation History Root";
+            conversation_history_treeView.Nodes.AddRange(new TreeNode[] { treeNode5 });
             conversation_history_treeView.PathSeparator = "/";
             conversation_history_treeView.Size = new Size(161, 324);
             conversation_history_treeView.TabIndex = 0;
