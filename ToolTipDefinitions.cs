@@ -11,7 +11,10 @@ class ToolTipDefinitions {
          "Clears the prompt text.");
       stt(form.history_file_name_textBox,
          "The name of the file to save the history to.\r\n" +
-         "Double click to start Taxonoy!");
+         "Double click to start Taxonoy!\r\n"               +
+         //we also need to mention the manual renaming functionality
+         "Manually edit to rename the file, confirm with Enter.");
+         
       stt(form.remove_file_button,
          "Removes the selected file from the list.");
    }
