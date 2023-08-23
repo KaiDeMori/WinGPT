@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            TreeNode treeNode1 = new TreeNode("Node2");
-            TreeNode treeNode2 = new TreeNode("Chat1", new TreeNode[] { treeNode1 });
-            TreeNode treeNode3 = new TreeNode("Node3");
-            TreeNode treeNode4 = new TreeNode("Node4");
-            TreeNode treeNode5 = new TreeNode("Conversation History Root", new TreeNode[] { treeNode2, treeNode3, treeNode4 });
+            TreeNode treeNode6 = new TreeNode("Node2");
+            TreeNode treeNode7 = new TreeNode("Chat1", new TreeNode[] { treeNode6 });
+            TreeNode treeNode8 = new TreeNode("Node3");
+            TreeNode treeNode9 = new TreeNode("Node4");
+            TreeNode treeNode10 = new TreeNode("Conversation History Root", new TreeNode[] { treeNode7, treeNode8, treeNode9 });
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WinGPT_Form));
             main_toolTip = new ToolTip(components);
             history_file_name_textBox = new TextBox();
@@ -42,7 +42,7 @@
             text_splitContainer = new SplitContainer();
             prompt_textBox = new TextBox();
             panel2 = new Panel();
-            del_button = new Button();
+            remove_file_button = new Button();
             uploaded_files_comboBox = new ComboBox();
             upload_button = new Button();
             send_prompt_button = new Button();
@@ -125,8 +125,7 @@
             history_file_name_textBox.PlaceholderText = "Filename";
             history_file_name_textBox.Size = new Size(330, 23);
             history_file_name_textBox.TabIndex = 3;
-            main_toolTip.SetToolTip(history_file_name_textBox, "Summary");
-            history_file_name_textBox.KeyDown += conversation_name_textBox_KeyDown;
+            history_file_name_textBox.KeyDown += history_file_name_textBox_KeyDown;
             history_file_name_textBox.MouseDoubleClick += conversation_name_textBox_MouseDoubleClick;
             // 
             // autoclear_checkBox
@@ -139,7 +138,6 @@
             autoclear_checkBox.Size = new Size(78, 19);
             autoclear_checkBox.TabIndex = 6;
             autoclear_checkBox.Text = "auto clear";
-            main_toolTip.SetToolTip(autoclear_checkBox, "Automatically clear the prompt text after sending the prompt.");
             autoclear_checkBox.UseVisualStyleBackColor = true;
             // 
             // clear_button
@@ -149,7 +147,6 @@
             clear_button.Size = new Size(75, 24);
             clear_button.TabIndex = 5;
             clear_button.Text = "Clear";
-            main_toolTip.SetToolTip(clear_button, "Clears the prompt text.");
             clear_button.UseVisualStyleBackColor = true;
             clear_button.Click += clear_button_Click;
             // 
@@ -196,7 +193,7 @@
             // 
             panel2.Controls.Add(autoclear_checkBox);
             panel2.Controls.Add(clear_button);
-            panel2.Controls.Add(del_button);
+            panel2.Controls.Add(remove_file_button);
             panel2.Controls.Add(uploaded_files_comboBox);
             panel2.Controls.Add(upload_button);
             panel2.Controls.Add(send_prompt_button);
@@ -206,16 +203,16 @@
             panel2.Size = new Size(336, 63);
             panel2.TabIndex = 3;
             // 
-            // del_button
+            // remove_file_button
             // 
-            del_button.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            del_button.Location = new Point(303, 35);
-            del_button.Name = "del_button";
-            del_button.Size = new Size(33, 25);
-            del_button.TabIndex = 4;
-            del_button.Text = "del";
-            del_button.UseVisualStyleBackColor = true;
-            del_button.Click += del_button_Click;
+            remove_file_button.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            remove_file_button.Location = new Point(269, 35);
+            remove_file_button.Name = "remove_file_button";
+            remove_file_button.Size = new Size(67, 25);
+            remove_file_button.TabIndex = 4;
+            remove_file_button.Text = "remove";
+            remove_file_button.UseVisualStyleBackColor = true;
+            remove_file_button.Click += del_button_Click;
             // 
             // uploaded_files_comboBox
             // 
@@ -225,7 +222,7 @@
             uploaded_files_comboBox.Items.AddRange(new object[] { "File 1", "File 2", "File 3.md" });
             uploaded_files_comboBox.Location = new Point(101, 36);
             uploaded_files_comboBox.Name = "uploaded_files_comboBox";
-            uploaded_files_comboBox.Size = new Size(196, 23);
+            uploaded_files_comboBox.Size = new Size(162, 23);
             uploaded_files_comboBox.TabIndex = 3;
             // 
             // upload_button
@@ -324,7 +321,7 @@
             response_textBox.Enter += response_textBox_Enter;
             response_textBox.Leave += response_textBox_Leave;
             // 
-            // save_edit_button
+            // submit_edits_button
             // 
             submit_edits_button.Dock = DockStyle.Top;
             submit_edits_button.Location = new Point(3, 3);
@@ -355,17 +352,17 @@
             conversation_history_treeView.Indent = 10;
             conversation_history_treeView.Location = new Point(0, 37);
             conversation_history_treeView.Name = "conversation_history_treeView";
-            treeNode1.Name = "Node2";
-            treeNode1.Text = "Node2";
-            treeNode2.Name = "Node1";
-            treeNode2.Text = "Chat1";
-            treeNode3.Name = "Node3";
-            treeNode3.Text = "Node3";
-            treeNode4.Name = "Node4";
-            treeNode4.Text = "Node4";
-            treeNode5.Name = "RootNode";
-            treeNode5.Text = "Conversation History Root";
-            conversation_history_treeView.Nodes.AddRange(new TreeNode[] { treeNode5 });
+            treeNode6.Name = "Node2";
+            treeNode6.Text = "Node2";
+            treeNode7.Name = "Node1";
+            treeNode7.Text = "Chat1";
+            treeNode8.Name = "Node3";
+            treeNode8.Text = "Node3";
+            treeNode9.Name = "Node4";
+            treeNode9.Text = "Node4";
+            treeNode10.Name = "RootNode";
+            treeNode10.Text = "Conversation History Root";
+            conversation_history_treeView.Nodes.AddRange(new TreeNode[] { treeNode10 });
             conversation_history_treeView.PathSeparator = "/";
             conversation_history_treeView.Size = new Size(161, 324);
             conversation_history_treeView.TabIndex = 0;
@@ -793,7 +790,7 @@
         private ToolStripMenuItem openai_api_key_toolStripMenuItem;
         private ToolStripMenuItem helpToolStripMenuItem;
         private ToolStripMenuItem aboutToolStripMenuItem1;
-        private TextBox history_file_name_textBox;
+        internal TextBox history_file_name_textBox;
         private TextBox character_textBox;
         private TableLayoutPanel characters_tableLayoutPanel;
         private FlowLayoutPanel tulpas_flowLayoutPanel;
@@ -802,7 +799,7 @@
         private ToolStripStatusLabel main_toolStripStatusLabel;
         private ToolStripProgressBar main_toolStripProgressBar;
         private Ookii.Dialogs.WinForms.VistaFolderBrowserDialog base_directory_vistaFolderBrowserDialog;
-        private ToolTip main_toolTip;
+        internal ToolTip main_toolTip;
         private ToolStripMenuItem tokenCounterToolStripMenuItem;
         private ToolStripMenuItem sysmsghack_ToolStripMenuItem;
         private ToolStripMenuItem models_ToolStripMenuItem;
@@ -814,10 +811,10 @@
         private Button upload_button;
         private ComboBox uploaded_files_comboBox;
         private Ookii.Dialogs.WinForms.VistaOpenFileDialog upload_vistaOpenFileDialog;
-        private Button del_button;
-        private Button clear_button;
-        private CheckBox autoclear_checkBox;
+        internal Button clear_button;
+        internal CheckBox autoclear_checkBox;
         private ToolStripMenuItem settings_ToolStripMenuItem;
         private Button submit_edits_button;
+        internal Button remove_file_button;
     }
 }
