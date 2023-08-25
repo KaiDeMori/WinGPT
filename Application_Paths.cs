@@ -9,8 +9,8 @@ internal static class Application_Paths {
    /// <summary>
    /// If the app was installed via MSI or OneClick, this file is present.
    /// If this file is present, WinGPT will use %LocalAppData% to store the configuration files.
-   /// If it is absent (in which case you would probably not read this),
-   /// WinGPT will store the configuration files in the same directory as the executable.
+   /// %LocalAppData% is also used if the app_directory is not writeable!
+   /// If it is absent WinGPT will store the configuration files in the same directory as the executable.
    /// </summary>
    private const string installed_marker_filename = "installed.marker";
 
@@ -20,7 +20,6 @@ internal static class Application_Paths {
    public const string Uninstall_Parameter = "/Uninstall";
 
    private const string Install_Parameter = "/Install";
-   private const string POTP_directory    = "People_of_the_Prompt";
 
    public static readonly App_Modes APP_MODE;
 
@@ -28,6 +27,8 @@ internal static class Application_Paths {
       Installed,
       Portable
    }
+
+   private const string POTP_directory = "People_of_the_Prompt";
 
    public static readonly DirectoryInfo Config_Directory;
 
@@ -38,17 +39,19 @@ internal static class Application_Paths {
    public static readonly FileInfo Treestate_File;
 
    static Application_Paths() {
-      DirectoryInfo app_directory = new DirectoryInfo(Application.StartupPath);
-      if (!File.Exists(installed_marker_filename) &&
+      DirectoryInfo app_directory = new(Application.StartupPath);
+      if (!File.Exists(installed_marker_filename)
+          &&
           IsDirectoryWriteable(app_directory)) {
          APP_MODE         = App_Modes.Portable;
          Config_Directory = app_directory;
       }
       else {
          APP_MODE = App_Modes.Installed;
-         Config_Directory = new DirectoryInfo(
+         Config_Directory = new(
             Path.Join(
-               Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+               Environment.GetFolderPath(
+                  Environment.SpecialFolder.LocalApplicationData),
                POTP_directory,
                AppName
             )
