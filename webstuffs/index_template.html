@@ -90,7 +90,7 @@
                 const headers = document.querySelectorAll(`${tag}.external-filename`);
                 headers.forEach(addClickHandler);
             });
-            if (auto_scroll)
+            if (typeof auto_scroll !== 'undefined' && auto_scroll)
                 scrollToLastPlaceholder();
         }
 
