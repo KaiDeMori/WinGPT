@@ -61,8 +61,6 @@ internal static class WinGPT_Main {
    }
 
    private static bool CustomAction_Uninstall_Check(string[] args) {
-      MessageBox.Show(string.Join(" ", args), "", MessageBoxButtons.OK, MessageBoxIcon.Hand, MessageBoxDefaultButton.Button1,
-         MessageBoxOptions.ServiceNotification);
       if (args.Contains(Uninstall_Parameter)) {
          if (!Config_File.Exists)
             return true;
