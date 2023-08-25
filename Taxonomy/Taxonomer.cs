@@ -5,7 +5,6 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using WinGPT.OpenAI;
 using WinGPT.OpenAI.Chat;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using Message = WinGPT.OpenAI.Chat.Message;
 
 namespace WinGPT.Taxonomy;

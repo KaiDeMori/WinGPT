@@ -2,8 +2,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using Markdig;
-using Markdig.Prism;
-using Markdig.Renderers;
 //using Markdig.SyntaxHighlighting;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;

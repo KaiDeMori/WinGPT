@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace WinGPT;
+﻿namespace WinGPT;
 
 public class BaseDirectoryWatcherAndTreeViewUpdater : IDisposable {
    private readonly TreeView          _treeView;

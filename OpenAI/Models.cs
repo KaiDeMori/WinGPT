@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WinGPT.OpenAI;
+﻿namespace WinGPT.OpenAI;
 
 public class Models {
    public static readonly string[] Supported = {
