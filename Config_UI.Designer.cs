@@ -36,7 +36,7 @@
             config_ui_propertyGrid.Dock = DockStyle.Fill;
             config_ui_propertyGrid.Location = new Point(0, 0);
             config_ui_propertyGrid.Name = "config_ui_propertyGrid";
-            config_ui_propertyGrid.PropertySort = PropertySort.NoSort;
+            config_ui_propertyGrid.PropertySort = PropertySort.Categorized;
             config_ui_propertyGrid.Size = new Size(397, 299);
             config_ui_propertyGrid.TabIndex = 0;
             // 
