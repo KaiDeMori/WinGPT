@@ -42,7 +42,7 @@ public partial class WinGPT_Form : Form {
       //HandleCreated += (sender, args) => 
       //   set_splitter_state();
 
-      Text += $" v{Assembly.GetExecutingAssembly().GetName().Version} PRE-ALPHA";
+      Text += $" v{Assembly.GetExecutingAssembly().GetName().Version} PRE-ALPHA — {Application_Paths.APP_MODE}";
 
       Set_status_bar(true, "Initializing available models.");
       Initialize_Models_MenuItems();
