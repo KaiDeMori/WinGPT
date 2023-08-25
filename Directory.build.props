@@ -1,6 +1,5 @@
 ﻿<Project>
 	<PropertyGroup>
-		<Version>0.0.7</Version>
 		<Title>WinGPT</Title>
 		<Authors>Xan-Kun Clark-Davis</Authors>
 		<Description>A simple Windows Froms Interface for OpenAI GPT-4&#13;&#10;a.k.a.&#13;&#10;Ancient meets Sci-Fi&#13;&#10;a.k.a.&#13;&#10;The Last WinForms Application</Description>

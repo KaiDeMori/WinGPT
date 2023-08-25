@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinGPTTests", "..\WinGPTTes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JSON_Schema_Trials", "..\JSON_Schema_Trials\JSON_Schema_Trials.csproj", "{58B62319-9FAD-48B5-AF9D-3E6D91E3E948}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "WinGPT_Setup", "..\WinGPT_Setup\WinGPT_Setup.vdproj", "{0BC531A6-8ADC-4F2F-ACA0-FF21FA135519}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "WinGPT_Setup", "..\WinGPT_Setup\WinGPT_Setup.vdproj", "{1920FF3C-47BB-4779-B0D4-6945771DBEE7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,16 +71,14 @@ Global
 		{58B62319-9FAD-48B5-AF9D-3E6D91E3E948}.Release|x64.Build.0 = Release|Any CPU
 		{58B62319-9FAD-48B5-AF9D-3E6D91E3E948}.Release|x86.ActiveCfg = Release|Any CPU
 		{58B62319-9FAD-48B5-AF9D-3E6D91E3E948}.Release|x86.Build.0 = Release|Any CPU
-		{0BC531A6-8ADC-4F2F-ACA0-FF21FA135519}.Debug|Any CPU.ActiveCfg = Debug
-		{0BC531A6-8ADC-4F2F-ACA0-FF21FA135519}.Debug|ARM64.ActiveCfg = Debug
-		{0BC531A6-8ADC-4F2F-ACA0-FF21FA135519}.Debug|ARM64.Build.0 = Debug
-		{0BC531A6-8ADC-4F2F-ACA0-FF21FA135519}.Debug|x64.ActiveCfg = Debug
-		{0BC531A6-8ADC-4F2F-ACA0-FF21FA135519}.Debug|x86.ActiveCfg = Debug
-		{0BC531A6-8ADC-4F2F-ACA0-FF21FA135519}.Release|Any CPU.ActiveCfg = Release
-		{0BC531A6-8ADC-4F2F-ACA0-FF21FA135519}.Release|ARM64.ActiveCfg = Release
-		{0BC531A6-8ADC-4F2F-ACA0-FF21FA135519}.Release|ARM64.Build.0 = Release
-		{0BC531A6-8ADC-4F2F-ACA0-FF21FA135519}.Release|x64.ActiveCfg = Release
-		{0BC531A6-8ADC-4F2F-ACA0-FF21FA135519}.Release|x86.ActiveCfg = Release
+		{1920FF3C-47BB-4779-B0D4-6945771DBEE7}.Debug|Any CPU.ActiveCfg = Debug
+		{1920FF3C-47BB-4779-B0D4-6945771DBEE7}.Debug|ARM64.ActiveCfg = Debug
+		{1920FF3C-47BB-4779-B0D4-6945771DBEE7}.Debug|x64.ActiveCfg = Debug
+		{1920FF3C-47BB-4779-B0D4-6945771DBEE7}.Debug|x86.ActiveCfg = Debug
+		{1920FF3C-47BB-4779-B0D4-6945771DBEE7}.Release|Any CPU.ActiveCfg = Release
+		{1920FF3C-47BB-4779-B0D4-6945771DBEE7}.Release|ARM64.ActiveCfg = Release
+		{1920FF3C-47BB-4779-B0D4-6945771DBEE7}.Release|x64.ActiveCfg = Release
+		{1920FF3C-47BB-4779-B0D4-6945771DBEE7}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
