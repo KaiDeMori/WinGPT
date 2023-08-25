@@ -4,8 +4,9 @@ using System.Reflection;
 using Markdig;
 using Markdig.Prism;
 using Markdig.Renderers;
-using Markdig.SyntaxHighlighting;
+//using Markdig.SyntaxHighlighting;
 using Microsoft.Web.WebView2.Core;
+using Microsoft.Web.WebView2.WinForms;
 using Newtonsoft.Json.Linq;
 using WinGPT.OpenAI;
 using WinGPT.Taxonomy;
@@ -43,6 +44,7 @@ public partial class WinGPT_Form : Form {
 
       Text += $" v{Assembly.GetExecutingAssembly().GetName().Version} PRE-ALPHA";
 
+      Set_status_bar(true, "Initializing available models.");
       Initialize_Models_MenuItems();
       uploaded_files_comboBox.Items.Clear();
       uploaded_files_comboBox.DataSource    = Associated_files;
@@ -70,6 +72,13 @@ public partial class WinGPT_Form : Form {
    #region stay in Form
 
    private void WinGPT_Form_Load(object? sender, EventArgs e) {
+      Set_status_bar(true, "Initializing WebView2.");
+
+      string userTempFolder = Path.Combine(Path.GetTempPath(), WinGPT_Main.AppName);
+      webView21.CreationProperties = new CoreWebView2CreationProperties() {
+         UserDataFolder = userTempFolder
+      };
+
       webView21.CoreWebView2InitializationCompleted +=
          WebView_CoreWebView2InitializationCompleted;
       webView21.NavigationStarting += CoreWebView2_NavigationStarting;
@@ -83,6 +92,7 @@ public partial class WinGPT_Form : Form {
    private async void WinGPT_Form_Shown(object? sender, EventArgs e) {
       set_splitter_state();
 
+      Set_status_bar(true, "Asserting prerequisties…");
       Startup.AssertPrerequisitesOrFail(PromptUserForBaseDirectory);
       Template_Engine.Init();
       //AGI.Init();
@@ -97,13 +107,15 @@ public partial class WinGPT_Form : Form {
       //   Application.Exit();
       //}
 
+      Set_status_bar(true, "Waiting for Godot.");
       await stupid_edge_mumble_mumble.Task;
-      Enabled = true;
 
+      Set_status_bar(true, "Watch the Tulpas!");
       tulpaDirectoryWatcher = new TulpaDirectoryWatcher(CreateTulpaButtons_safe);
 
       //baseDirectoryWatcher = new BaseDirectoryWatcher(Config.History_Directory, conversation_history_treeView);
       //baseDirectoryWatcher.InitializeTree();
+      Set_status_bar(true, "Watch the base!");
       baseDirectoryWatcherAndTreeViewUpdater =
          new BaseDirectoryWatcherAndTreeViewUpdater(
             Config.History_Directory,
@@ -111,7 +123,8 @@ public partial class WinGPT_Form : Form {
          );
 
 
-      Busy(false);
+      Enabled = true;
+      Set_status_bar(false, "Let's go!");
 
       //TADA should be a user-set default in the Settings
       //select and activate the default tulpa
@@ -146,7 +159,7 @@ public partial class WinGPT_Form : Form {
    #region Top Billing
 
    private async void send_prompt_button_Click(object sender, EventArgs e) {
-      Busy(true);
+      Set_status_bar(true);
       string prompt = prompt_textBox.Text;
 
       Message user_message = new() {
@@ -164,7 +177,7 @@ public partial class WinGPT_Form : Form {
 
       if (response_message is null) {
          //we got an error.
-         Busy(false);
+         Set_status_bar(false);
          return;
       }
 
@@ -359,7 +372,7 @@ public partial class WinGPT_Form : Form {
 
       Show_markf278down();
 
-      Busy(false);
+      Set_status_bar(false);
 
       prompt_textBox.Focus();
    }
@@ -433,10 +446,10 @@ public partial class WinGPT_Form : Form {
       }
    }
 
-   private void Busy(bool isBusy) {
+   private void Set_status_bar(bool isBusy, string? message = null) {
       main_toolStripProgressBar.Visible = isBusy;
-      if (main_toolStripStatusLabel.Text.Length < 10)
-         main_toolStripStatusLabel.Text = isBusy ? "Busy" : "Ready";
+      //if (main_toolStripStatusLabel.Text.Length < 10)
+      main_toolStripStatusLabel.Text = message ?? (isBusy ? "Busy" : "Ready");
       //Enabled                           = !isBusy;
       foreach (Control c in this.Controls) {
          c.Enabled = !isBusy;
@@ -697,7 +710,7 @@ public partial class WinGPT_Form : Form {
    }
 
    private void submit_edits() {
-      if (!Conversation.Active.dirty)
+      if (Conversation.Active is null || !Conversation.Active.dirty)
          return;
 
       Conversation.Active.update_message_from_string(response_textBox.Text);

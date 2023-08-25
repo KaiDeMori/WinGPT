@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "WinGPT": {
+      "commandName": "Project"
+    },
+    "uninstall": {
+      "commandName": "Project",
+      "commandLineArgs": "/Uninstall"
+    }
+  }
+}

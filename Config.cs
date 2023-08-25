@@ -13,8 +13,6 @@ internal class Config {
 
    public Config_UIable UIable { get; set; } = new();
 
-   private const string Config_filename = "Config.json";
-
    private const   string        tulpas_directory = "Tulpas";
    internal static DirectoryInfo Tulpa_Directory => new(Path.Join(Active.BaseDirectory, tulpas_directory));
 
@@ -55,6 +53,8 @@ internal class Config {
 
 
    static Config() {
+      WinGPT_Main.Config_File.Directory.Create();
+
       try {
          prism_css = File.ReadAllText(WebstuffsPrismFancyCss);
          prism_js  = File.ReadAllText(WebstuffsPrismFancyJs);
@@ -78,9 +78,7 @@ internal class Config {
          loading = true;
       }
 
-      var configfile = Path.Join(Application.StartupPath, Config_filename);
-
-      if (!File.Exists(configfile)) {
+      if (!WinGPT_Main.Config_File.Exists) {
          ConfigErrorCase(false);
          loading = false;
          return;
@@ -89,7 +87,7 @@ internal class Config {
       JsonSerializerSettings settings = new() {
          ObjectCreationHandling = ObjectCreationHandling.Replace,
       };
-      Config? loadedConfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText(configfile), settings);
+      Config? loadedConfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText(WinGPT_Main.Config_File.FullName), settings);
       //if (Tools.HasNullProperties(loadedConfig)) {
       if (loadedConfig is null) {
          ConfigErrorCase();
@@ -113,10 +111,9 @@ internal class Config {
       if (string.IsNullOrWhiteSpace(Active.OpenAI_API_Key))
          throw new Exception("OpenAI API Key is empty.");
 
-      var configfile = Path.Join(Application.StartupPath, Config_filename);
       try {
          var contents = JsonConvert.SerializeObject(Active, Formatting.Indented);
-         File.WriteAllText(configfile, contents);
+         File.WriteAllText(WinGPT_Main.Config_File.FullName, contents);
       }
       catch (Exception e) {
          MessageBox.Show($"Error while saving configuration file: {e.Message}", "Error", MessageBoxButtons.OK,
@@ -135,8 +132,8 @@ internal class Config {
 
 internal class WindowParameters {
    public FormStartPosition StartPosition { get; set; } = FormStartPosition.Manual;
-   public FormWindowState WindowState { get; set; }
+   public FormWindowState   WindowState   { get; set; }
 
    public Point Location { get; set; }
-   public Size  Size   { get; set; }
+   public Size  Size     { get; set; }
 }
