@@ -1,8 +1,4 @@
 using System.Diagnostics;
-using System.Reflection.Metadata.Ecma335;
-using System.Windows.Forms;
-using WinGPT.OpenAI.Chat;
-using WinGPT.Taxonomy;
 
 namespace WinGPT;
 
@@ -50,7 +46,7 @@ internal static class WinGPT_Main {
          var proc   = Process.GetProcessesByName("msiexec").FirstOrDefault(p => p.MainWindowTitle  == Application_Paths.AppName);
          var proc_e = Process.GetProcessesByName("explorer").FirstOrDefault(p => p.MainWindowTitle == Application_Paths.AppName);
          proc ??= proc_e;
-            
+
          var form = new CustomAction_Uninstall_ConfigDeletion();
 
          DialogResult deleteConfig = DialogResult.No;

@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace WinGPT;
@@ -47,7 +46,7 @@ public static class AGI {
          string file = match.Groups["file"].Value;
          fileCache[file] = File.ReadAllText(webroot + file);
       }
-    }
+   }
 
    public static string CreateFullHtml_FromFile(string HTML_fragment) {
       var    webroot       = "webstuffs/";

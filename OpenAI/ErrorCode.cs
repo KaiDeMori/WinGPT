@@ -1,6 +1,4 @@
-﻿using System.Windows.Forms.VisualStyles;
-
-#pragma warning disable CS8618
+﻿#pragma warning disable CS8618
 
 namespace WinGPT.OpenAI;
 
