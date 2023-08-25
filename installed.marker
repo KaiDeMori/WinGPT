@@ -1,0 +1,4 @@
+﻿If this file is present, WinGPT will use %LocalAppData% to store 
+the configuration files.
+If it is absent (in which case you would probably not read this),
+WinGPT will store the configuration files in the same directory as the executable.

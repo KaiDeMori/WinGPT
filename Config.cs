@@ -53,7 +53,7 @@ internal class Config {
 
 
    static Config() {
-      WinGPT_Main.Config_File.Directory.Create();
+      Application_Paths.Config_File.Directory.Create();
 
       try {
          prism_css = File.ReadAllText(WebstuffsPrismFancyCss);
@@ -78,7 +78,7 @@ internal class Config {
          loading = true;
       }
 
-      if (!WinGPT_Main.Config_File.Exists) {
+      if (!Application_Paths.Config_File.Exists) {
          ConfigErrorCase(false);
          loading = false;
          return;
@@ -87,7 +87,7 @@ internal class Config {
       JsonSerializerSettings settings = new() {
          ObjectCreationHandling = ObjectCreationHandling.Replace,
       };
-      Config? loadedConfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText(WinGPT_Main.Config_File.FullName), settings);
+      Config? loadedConfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Application_Paths.Config_File.FullName), settings);
       //if (Tools.HasNullProperties(loadedConfig)) {
       if (loadedConfig is null) {
          ConfigErrorCase();
@@ -113,7 +113,7 @@ internal class Config {
 
       try {
          var contents = JsonConvert.SerializeObject(Active, Formatting.Indented);
-         File.WriteAllText(WinGPT_Main.Config_File.FullName, contents);
+         File.WriteAllText(Application_Paths.Config_File.FullName, contents);
       }
       catch (Exception e) {
          MessageBox.Show($"Error while saving configuration file: {e.Message}", "Error", MessageBoxButtons.OK,

@@ -3,7 +3,6 @@
 namespace WinGPT;
 
 public class TreeViewPersistor {
-   private const    string        Filename = "treestate.json";
    private readonly TreeView      _treeView;
    private readonly DirectoryInfo baseDirectory;
 
@@ -25,7 +24,7 @@ public class TreeViewPersistor {
 
       var json = JsonConvert.SerializeObject(state);
 
-      File.WriteAllText(Filename, json);
+      File.WriteAllText(Application_Paths.Treestate_File.FullName, json);
    }
 
    private void SaveNodeState(TreeNodeCollection nodes, List<NodeAndState> state) {
@@ -40,16 +39,16 @@ public class TreeViewPersistor {
    }
 
    public void Load() {
-      if (!File.Exists(Filename)) return;
+      if (!Application_Paths.Treestate_File.Exists) return;
 
       TreeViewState? state;
       try {
-         var json = File.ReadAllText(Filename);
+         var json = File.ReadAllText(Application_Paths.Treestate_File.FullName);
          state = JsonConvert.DeserializeObject<TreeViewState>(json);
       }
       catch {
          // just delete for now
-         File.Delete(Filename);
+         Application_Paths.Treestate_File.Delete();
          return;
       }
 

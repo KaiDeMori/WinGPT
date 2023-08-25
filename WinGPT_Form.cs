@@ -74,7 +74,7 @@ public partial class WinGPT_Form : Form {
    private void WinGPT_Form_Load(object? sender, EventArgs e) {
       Set_status_bar(true, "Initializing WebView2.");
 
-      string userTempFolder = Path.Combine(Path.GetTempPath(), WinGPT_Main.AppName);
+      string userTempFolder = Path.Combine(Path.GetTempPath(), Application_Paths.AppName);
       webView21.CreationProperties = new CoreWebView2CreationProperties() {
          UserDataFolder = userTempFolder
       };
@@ -317,12 +317,16 @@ public partial class WinGPT_Form : Form {
    private void conversation_history_treeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e) {
       // Check if the clicked node is the root node
       if (e.Node == conversation_history_treeView.TopNode && e.Node.Tag is DirectoryInfo directoryInfo) {
-         var psi = new System.Diagnostics.ProcessStartInfo() {
-            FileName        = directoryInfo.FullName,
-            UseShellExecute = true
-         };
-         System.Diagnostics.Process.Start(psi);
+         Open_in_Explorer(directoryInfo);
       }
+   }
+
+   private static void Open_in_Explorer(DirectoryInfo directoryInfo) {
+      var psi = new System.Diagnostics.ProcessStartInfo() {
+         FileName        = directoryInfo.FullName,
+         UseShellExecute = true
+      };
+      System.Diagnostics.Process.Start(psi);
    }
 
    private void conversation_history_treeView_BeforeCollapse(object sender, TreeViewCancelEventArgs e) {
@@ -723,5 +727,9 @@ public partial class WinGPT_Form : Form {
 
    private void history_file_name_textBox_Leave(object sender, EventArgs e) {
       history_file_name_textBox.Text = Conversation.Active.HistoryFile.Name;
+   }
+
+   private void openConfigDirectoryToolStripMenuItem_Click(object sender, EventArgs e) {
+      Open_in_Explorer(Application_Paths.Config_File.Directory);
    }
 }

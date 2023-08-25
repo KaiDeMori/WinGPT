@@ -8,25 +8,6 @@ namespace WinGPT;
 
 internal static class WinGPT_Main {
    /// <summary>
-   /// The name of the application.
-   /// </summary>
-   public static readonly string AppName = AppDomain.CurrentDomain.FriendlyName; //"WinGPT";
-
-   /// <summary>
-   /// The parameter provided when the application is run to uninstall the application. :-)
-   /// </summary>
-   private const string Uninstall_Parameter = "/Uninstall";
-
-   private const string Install_Parameter = "/Install";
-
-   private const string Config_filename = "Config.json";
-   private const string POTP_directory  = "People_of_the_Prompt";
-
-   internal static FileInfo Config_File => new(Path.Join(
-      Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), POTP_directory, AppName, Config_filename));
-
-
-   /// <summary>
    ///  The main entry point for the application.
    /// </summary>
    [STAThread]
@@ -61,13 +42,13 @@ internal static class WinGPT_Main {
    }
 
    private static bool CustomAction_Uninstall_Check(string[] args) {
-      if (args.Contains(Uninstall_Parameter)) {
-         if (!Config_File.Exists)
+      if (args.Contains(Application_Paths.Uninstall_Parameter)) {
+         if (!Application_Paths.Config_File.Exists)
             return true;
 
          //maybe just search through all the windows and see if any of them are the installer window?
-         var proc = Process.GetProcessesByName("msiexec").FirstOrDefault(p => p.MainWindowTitle == AppName);
-         var proc_e = Process.GetProcessesByName("explorer").FirstOrDefault(p => p.MainWindowTitle == AppName);
+         var proc   = Process.GetProcessesByName("msiexec").FirstOrDefault(p => p.MainWindowTitle  == Application_Paths.AppName);
+         var proc_e = Process.GetProcessesByName("explorer").FirstOrDefault(p => p.MainWindowTitle == Application_Paths.AppName);
          proc ??= proc_e;
             
          var form = new CustomAction_Uninstall_ConfigDeletion();
@@ -86,8 +67,7 @@ internal static class WinGPT_Main {
 
          if (deleteConfig == DialogResult.Yes) {
             //delete the config file
-            if (Config_File.Exists)
-               Config_File.Delete();
+            if (Application_Paths.Config_File.Exists) Application_Paths.Config_File.Delete();
          }
 
          return true;

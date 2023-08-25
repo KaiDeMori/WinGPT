@@ -100,6 +100,7 @@
             main_toolStripProgressBar = new ToolStripProgressBar();
             base_directory_vistaFolderBrowserDialog = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog();
             upload_vistaOpenFileDialog = new Ookii.Dialogs.WinForms.VistaOpenFileDialog();
+            openConfigDirectoryToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)text_splitContainer).BeginInit();
             text_splitContainer.Panel1.SuspendLayout();
             text_splitContainer.Panel2.SuspendLayout();
@@ -406,7 +407,7 @@
             // 
             // toolsToolStripMenuItem
             // 
-            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openai_api_key_toolStripMenuItem, tokenCounterToolStripMenuItem, sysmsghack_ToolStripMenuItem, models_ToolStripMenuItem });
+            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openai_api_key_toolStripMenuItem, tokenCounterToolStripMenuItem, sysmsghack_ToolStripMenuItem, models_ToolStripMenuItem, openConfigDirectoryToolStripMenuItem });
             toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             toolsToolStripMenuItem.Size = new Size(46, 20);
             toolsToolStripMenuItem.Text = "&Tools";
@@ -415,7 +416,7 @@
             // 
             openai_api_key_toolStripMenuItem.Image = (Image)resources.GetObject("openai_api_key_toolStripMenuItem.Image");
             openai_api_key_toolStripMenuItem.Name = "openai_api_key_toolStripMenuItem";
-            openai_api_key_toolStripMenuItem.Size = new Size(168, 22);
+            openai_api_key_toolStripMenuItem.Size = new Size(193, 22);
             openai_api_key_toolStripMenuItem.Text = "OpenAI API Key";
             openai_api_key_toolStripMenuItem.Click += openai_api_key_toolStripMenuItem_Click;
             // 
@@ -423,7 +424,7 @@
             // 
             tokenCounterToolStripMenuItem.Image = Properties.Resources.TokenCounter;
             tokenCounterToolStripMenuItem.Name = "tokenCounterToolStripMenuItem";
-            tokenCounterToolStripMenuItem.Size = new Size(168, 22);
+            tokenCounterToolStripMenuItem.Size = new Size(193, 22);
             tokenCounterToolStripMenuItem.Text = "Token Counter";
             tokenCounterToolStripMenuItem.Click += tokenCounterToolStripMenuItem_Click;
             // 
@@ -432,7 +433,7 @@
             sysmsghack_ToolStripMenuItem.CheckOnClick = true;
             sysmsghack_ToolStripMenuItem.Image = Properties.Resources.AddField;
             sysmsghack_ToolStripMenuItem.Name = "sysmsghack_ToolStripMenuItem";
-            sysmsghack_ToolStripMenuItem.Size = new Size(168, 22);
+            sysmsghack_ToolStripMenuItem.Size = new Size(193, 22);
             sysmsghack_ToolStripMenuItem.Text = "GPT4 sysmsghack";
             sysmsghack_ToolStripMenuItem.Click += sysmsghack_ToolStripMenuItem_Click;
             // 
@@ -440,7 +441,7 @@
             // 
             models_ToolStripMenuItem.Image = Properties.Resources.ColumnGroup;
             models_ToolStripMenuItem.Name = "models_ToolStripMenuItem";
-            models_ToolStripMenuItem.Size = new Size(168, 22);
+            models_ToolStripMenuItem.Size = new Size(193, 22);
             models_ToolStripMenuItem.Text = "Models";
             // 
             // helpToolStripMenuItem
@@ -710,6 +711,13 @@
             upload_vistaOpenFileDialog.SupportMultiDottedExtensions = true;
             upload_vistaOpenFileDialog.Title = "Choose wisely!";
             // 
+            // openConfigDirectoryToolStripMenuItem
+            // 
+            openConfigDirectoryToolStripMenuItem.Name = "openConfigDirectoryToolStripMenuItem";
+            openConfigDirectoryToolStripMenuItem.Size = new Size(193, 22);
+            openConfigDirectoryToolStripMenuItem.Text = "Open Config Directory";
+            openConfigDirectoryToolStripMenuItem.Click += openConfigDirectoryToolStripMenuItem_Click;
+            // 
             // WinGPT_Form
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -817,5 +825,6 @@
         private ToolStripMenuItem settings_ToolStripMenuItem;
         private Button submit_edits_button;
         internal Button remove_file_button;
+        private ToolStripMenuItem openConfigDirectoryToolStripMenuItem;
     }
 }

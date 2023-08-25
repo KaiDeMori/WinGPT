@@ -26,6 +26,7 @@
 
 	<ItemGroup>
 		<Content Include="Icons\WinGPT_1.ico" />
+		<Content Include="installed.marker" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -56,6 +57,10 @@
 		<Compile Remove="NewFolder\**" />
 		<EmbeddedResource Remove="NewFolder\**" />
 		<None Remove="NewFolder\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="installed.marker" />
 	</ItemGroup>
 
 	<ItemGroup>
