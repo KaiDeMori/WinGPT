@@ -25,8 +25,7 @@ internal class Config {
    internal static readonly string prism_css;
    internal static readonly string my_css;
    internal static readonly string prism_js;
-
-
+    
    internal const string        conversation_title_prompt           = "Generate an ultra short title for this conversation.";
    private const  string        WebstuffsPrismFancyCss              = "webstuffs/prism_fancy.css";
    private const  string        WebstuffsPrismFancyJs               = "webstuffs/prism_fancy.js";

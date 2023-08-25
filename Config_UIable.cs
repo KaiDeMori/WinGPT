@@ -6,6 +6,13 @@ public class Config_UIable {
    public int? Max_Tokens { get; set; }
 
    /// <summary>
+   /// This controls the auto-scrolling of the markf278down text-box.
+   /// </summary>
+   [DisplayName("Auto-Scroll markf278down")]
+   [Description("This controls the auto-scrolling of the markf278down text-box.")]
+   public bool Auto_Scroll { get; set; } = true;
+
+   /// <summary>
    /// This controls the function that enables saving via prompt.
    /// </summary>
    [DisplayName("Use Save via Prompt Function")]
