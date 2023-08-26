@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup Label="Globals">
-	  <WebView2LoaderPreference>Dynamic</WebView2LoaderPreference>
+		<WebView2LoaderPreference>Dynamic</WebView2LoaderPreference>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -23,6 +23,70 @@
 		<PackageProjectUrl>https://www.peopleoftheprompt.org</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/KaiDeMori/WinGPT</RepositoryUrl>
 	</PropertyGroup>
+
+
+
+	<Target Name="GetDirectories" AfterTargets="Build">
+		<Message Text="#################################" Importance="High" />
+		<ItemGroup>
+			<!-- Get all directories in the output directory -->
+			<tmp_dirs Include="$(MSBuildProjectDirectory)\*" />
+		</ItemGroup>
+
+		<ItemGroup>
+			<Folders Include="$([System.IO.Directory]::GetDirectories(`$(MSBuildProjectDirectory)`))" />
+		</ItemGroup>
+
+		<!-- Print the directories -->
+		<Message Text="Directories: $(MSBuildProjectDirectory)"  Importance="high" />
+		<Message Text="Directories: @(tmp_dirs)"  Importance="high" />
+		<Message Text="Folders: @(Folders)"  Importance="high" />
+		<Message Text="Platform: $(Platform)"  Importance="high" />
+	</Target>
+
+
+	<Target Name="PostPublishActions" AfterTargets="Publish">
+
+		<Message Text="PublishProfile: $(PublishProfile)" Importance="high" />
+		<Message Text="ConfigurationName: $(ConfigurationName)" Importance="high" />
+		<Message Text="PublishProfileName: $(ConfigurationName)$(PublishProfile)" Importance="high" />
+
+		<!-- Define properties for the temporary and output directories -->
+		<PropertyGroup>
+			<TempDir>$(MSBuildProjectDirectory)\WinGPT</TempDir>
+			<ZipFileName>WinGPT_$(Platform).zip</ZipFileName>
+		</PropertyGroup>
+
+		<!-- Convert PublishDir to an absolute path -->
+		<ConvertToAbsolutePath Paths="$(PublishDir)">
+			<Output TaskParameter="AbsolutePaths" PropertyName="OutputDir" />
+		</ConvertToAbsolutePath>
+
+		<!-- Delete the existing ZIP file if it exists -->
+		<Exec Command="powershell.exe -nologo -noprofile -command &quot;if (Test-Path '$(OutputDir)\$(ZipFileName)') { Remove-Item '$(OutputDir)\$(ZipFileName)' }&quot;" />
+
+		<!-- Copy published files to the temporary directory -->
+		<ItemGroup>
+			<PublishedFiles Include="$(OutputDir)**\*.*" />
+		</ItemGroup>
+		<Copy SourceFiles="@(PublishedFiles)" DestinationFolder="$(TempDir)\%(RecursiveDir)" />
+
+
+		<!-- Create a ZIP file from the temporary directory -->
+		<Exec Command="powershell.exe -nologo -noprofile -command &quot;Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('$(TempDir)', '$(OutputDir)\$(ZipFileName)')&quot;" />
+		<!-- Delete the temporary directory -->
+		<RemoveDir Directories="$(TempDir)" />
+
+		<!-- Clean up the publish directory -->
+		<ItemGroup>
+			<FilesToDelete Include="$(OutputDir)*.*" Exclude="$(OutputDir)\$(ZipFileName)" />
+			<DirsToDelete Include="$([System.IO.Directory]::GetDirectories(`$(OutputDir)`))" />
+		</ItemGroup>
+		<Message Text="Directories to delete: @(DirsToDelete)" Importance="high" />
+		<Delete Files="@(FilesToDelete)" />
+		<RemoveDir Directories="@(DirsToDelete)" />
+	</Target>
+
 
 	<ItemGroup>
 		<Content Include="Icons\WinGPT_1.ico" />
@@ -60,7 +124,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="installed.marker" />
+		<None Remove="installed.marker" />
 	</ItemGroup>
 
 	<ItemGroup>
