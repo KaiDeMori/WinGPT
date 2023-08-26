@@ -13,7 +13,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<ApplicationIcon>Icons\WinGPT_1.ico</ApplicationIcon>
 		<SignAssembly>False</SignAssembly>
-		<Platforms>AnyCPU;x64</Platforms>
+		<Platforms>AnyCPU;x64;x86</Platforms>
 		<StartupObject>WinGPT.WinGPT_Main</StartupObject>
 		<GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
 		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
@@ -38,10 +38,10 @@
 		</ItemGroup>
 
 		<!-- Print the directories -->
-		<Message Text="Directories: $(MSBuildProjectDirectory)"  Importance="high" />
-		<Message Text="Directories: @(tmp_dirs)"  Importance="high" />
-		<Message Text="Folders: @(Folders)"  Importance="high" />
-		<Message Text="Platform: $(Platform)"  Importance="high" />
+		<Message Text="Directories: $(MSBuildProjectDirectory)" Importance="high" />
+		<Message Text="Directories: @(tmp_dirs)" Importance="high" />
+		<Message Text="Folders: @(Folders)" Importance="high" />
+		<Message Text="Platform: $(Platform)" Importance="high" />
 	</Target>
 
 
