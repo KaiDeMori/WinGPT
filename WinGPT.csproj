@@ -63,7 +63,7 @@
 		</ConvertToAbsolutePath>
 
 		<!-- Delete the existing ZIP file if it exists -->
-		<Exec Command="powershell.exe -nologo -noprofile -command &quot;if (Test-Path '$(OutputDir)\$(ZipFileName)') { Remove-Item '$(OutputDir)\$(ZipFileName)' }&quot;" />
+		<Delete Files="$(OutputDir)\$(ZipFileName)" />
 
 		<!-- Copy published files to the temporary directory -->
 		<ItemGroup>
@@ -71,9 +71,12 @@
 		</ItemGroup>
 		<Copy SourceFiles="@(PublishedFiles)" DestinationFolder="$(TempDir)\%(RecursiveDir)" />
 
-
 		<!-- Create a ZIP file from the temporary directory -->
-		<Exec Command="powershell.exe -nologo -noprofile -command &quot;Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('$(TempDir)', '$(OutputDir)\$(ZipFileName)')&quot;" />
+		<ZipDirectory
+			SourceDirectory="$(TempDir)"
+			DestinationFile="$(OutputDir)\$(ZipFileName)"
+			Overwrite="true" />
+
 		<!-- Delete the temporary directory -->
 		<RemoveDir Directories="$(TempDir)" />
 
