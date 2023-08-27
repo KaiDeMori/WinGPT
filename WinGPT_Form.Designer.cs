@@ -64,6 +64,7 @@
             tokenCounterToolStripMenuItem = new ToolStripMenuItem();
             sysmsghack_ToolStripMenuItem = new ToolStripMenuItem();
             models_ToolStripMenuItem = new ToolStripMenuItem();
+            openConfigDirectoryToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem1 = new ToolStripMenuItem();
             main_panel = new Panel();
@@ -100,7 +101,6 @@
             main_toolStripProgressBar = new ToolStripProgressBar();
             base_directory_vistaFolderBrowserDialog = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog();
             upload_vistaOpenFileDialog = new Ookii.Dialogs.WinForms.VistaOpenFileDialog();
-            openConfigDirectoryToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)text_splitContainer).BeginInit();
             text_splitContainer.Panel1.SuspendLayout();
             text_splitContainer.Panel2.SuspendLayout();
@@ -135,7 +135,7 @@
             autoclear_checkBox.AutoSize = true;
             autoclear_checkBox.Checked = true;
             autoclear_checkBox.CheckState = CheckState.Checked;
-            autoclear_checkBox.Location = new Point(81, 9);
+            autoclear_checkBox.Location = new Point(81, 10);
             autoclear_checkBox.Name = "autoclear_checkBox";
             autoclear_checkBox.Size = new Size(78, 19);
             autoclear_checkBox.TabIndex = 6;
@@ -144,9 +144,9 @@
             // 
             // clear_button
             // 
-            clear_button.Location = new Point(0, 5);
+            clear_button.Location = new Point(0, 6);
             clear_button.Name = "clear_button";
-            clear_button.Size = new Size(75, 24);
+            clear_button.Size = new Size(75, 25);
             clear_button.TabIndex = 5;
             clear_button.Text = "Clear";
             clear_button.UseVisualStyleBackColor = true;
@@ -208,7 +208,7 @@
             // remove_file_button
             // 
             remove_file_button.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            remove_file_button.Location = new Point(269, 35);
+            remove_file_button.Location = new Point(269, 38);
             remove_file_button.Name = "remove_file_button";
             remove_file_button.Size = new Size(67, 25);
             remove_file_button.TabIndex = 4;
@@ -222,7 +222,7 @@
             uploaded_files_comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             uploaded_files_comboBox.FormattingEnabled = true;
             uploaded_files_comboBox.Items.AddRange(new object[] { "File 1", "File 2", "File 3.md" });
-            uploaded_files_comboBox.Location = new Point(101, 36);
+            uploaded_files_comboBox.Location = new Point(101, 39);
             uploaded_files_comboBox.Name = "uploaded_files_comboBox";
             uploaded_files_comboBox.Size = new Size(162, 23);
             uploaded_files_comboBox.TabIndex = 3;
@@ -231,7 +231,7 @@
             // 
             upload_button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             upload_button.FlatStyle = FlatStyle.System;
-            upload_button.Location = new Point(0, 35);
+            upload_button.Location = new Point(0, 38);
             upload_button.Name = "upload_button";
             upload_button.Size = new Size(95, 25);
             upload_button.TabIndex = 2;
@@ -244,7 +244,7 @@
             send_prompt_button.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             send_prompt_button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             send_prompt_button.FlatStyle = FlatStyle.System;
-            send_prompt_button.Location = new Point(192, 5);
+            send_prompt_button.Location = new Point(192, 6);
             send_prompt_button.Name = "send_prompt_button";
             send_prompt_button.Size = new Size(144, 25);
             send_prompt_button.TabIndex = 1;
@@ -443,6 +443,13 @@
             models_ToolStripMenuItem.Name = "models_ToolStripMenuItem";
             models_ToolStripMenuItem.Size = new Size(193, 22);
             models_ToolStripMenuItem.Text = "Models";
+            // 
+            // openConfigDirectoryToolStripMenuItem
+            // 
+            openConfigDirectoryToolStripMenuItem.Name = "openConfigDirectoryToolStripMenuItem";
+            openConfigDirectoryToolStripMenuItem.Size = new Size(193, 22);
+            openConfigDirectoryToolStripMenuItem.Text = "Open Config Directory";
+            openConfigDirectoryToolStripMenuItem.Click += openConfigDirectoryToolStripMenuItem_Click;
             // 
             // helpToolStripMenuItem
             // 
@@ -710,13 +717,6 @@
             upload_vistaOpenFileDialog.Multiselect = true;
             upload_vistaOpenFileDialog.SupportMultiDottedExtensions = true;
             upload_vistaOpenFileDialog.Title = "Choose wisely!";
-            // 
-            // openConfigDirectoryToolStripMenuItem
-            // 
-            openConfigDirectoryToolStripMenuItem.Name = "openConfigDirectoryToolStripMenuItem";
-            openConfigDirectoryToolStripMenuItem.Size = new Size(193, 22);
-            openConfigDirectoryToolStripMenuItem.Text = "Open Config Directory";
-            openConfigDirectoryToolStripMenuItem.Click += openConfigDirectoryToolStripMenuItem_Click;
             // 
             // WinGPT_Form
             // 
