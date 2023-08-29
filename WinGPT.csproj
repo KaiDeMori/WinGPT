@@ -15,9 +15,11 @@
 		<SignAssembly>False</SignAssembly>
 		<Platforms>AnyCPU;x64;x86</Platforms>
 		<StartupObject>WinGPT.WinGPT_Main</StartupObject>
+		<!--
 		<GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
 		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
 		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+		-->
 		<Authors>Kai De–Mori</Authors>
 		<Company>peopleoftheprompt.org</Company>
 		<PackageProjectUrl>https://www.peopleoftheprompt.org</PackageProjectUrl>
@@ -25,7 +27,7 @@
 	</PropertyGroup>
 
 
-
+	<!-- This target is just for debugging purposes -->
 	<Target Name="GetDirectories" AfterTargets="Build">
 		<Message Text="#################################" Importance="High" />
 		<ItemGroup>
@@ -45,8 +47,12 @@
 	</Target>
 
 
-	<Target Name="PostPublishActions" AfterTargets="Publish">
-
+	<Target Name="PostPublishActions"
+	        AfterTargets="Publish"
+	        Condition="'$(ZipIt)' == 'True'">
+		<Message Text="##############  ZipIt ##############" Importance="high" />
+		<Message Text="ZipIt: $(ZipIt)" Importance="high" />
+		<Message Text="PublishProfileName: $(PublishProfileName)" Importance="high" />
 		<Message Text="PublishProfile: $(PublishProfile)" Importance="high" />
 		<Message Text="ConfigurationName: $(ConfigurationName)" Importance="high" />
 		<Message Text="PublishProfileName: $(ConfigurationName)$(PublishProfile)" Importance="high" />
@@ -54,7 +60,7 @@
 		<!-- Define properties for the temporary and output directories -->
 		<PropertyGroup>
 			<TempDir>$(MSBuildProjectDirectory)\WinGPT</TempDir>
-			<ZipFileName>_WinGPT_$(Platform).zip</ZipFileName>
+			<ZipFileName>WinGPT_$(Platform).zip</ZipFileName>
 		</PropertyGroup>
 
 		<!-- Convert PublishDir to an absolute path -->
@@ -88,6 +94,9 @@
 		<Message Text="Directories to delete: @(DirsToDelete)" Importance="high" />
 		<Delete Files="@(FilesToDelete)" />
 		<RemoveDir Directories="@(DirsToDelete)" />
+
+		<Message Text="##############  ZipedIt ##############" Importance="high" />
+
 	</Target>
 
 
