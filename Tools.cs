@@ -5,6 +5,12 @@ using System.Reflection;
 namespace WinGPT;
 
 public static class Tools {
+   public static Font RoundFontSize(Font font) {
+      var rounded_size = (float) Math.Round(font.Size, MidpointRounding.AwayFromZero);
+      var f            = new Font(font.FontFamily, rounded_size, font.Style, font.Unit);
+      return f;
+   }
+
    public readonly struct ErrorOr<SUCCESS_TYPE, ERROR_TYPE> {
       private readonly SUCCESS_TYPE result;
       private readonly ERROR_TYPE?  error;
