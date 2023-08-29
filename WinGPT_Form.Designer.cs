@@ -181,6 +181,7 @@
             // 
             // prompt_textBox
             // 
+            prompt_textBox.AllowDrop = true;
             prompt_textBox.Dock = DockStyle.Fill;
             prompt_textBox.Location = new Point(12, 35);
             prompt_textBox.Multiline = true;

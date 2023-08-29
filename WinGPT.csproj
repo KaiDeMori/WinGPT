@@ -54,7 +54,7 @@
 		<!-- Define properties for the temporary and output directories -->
 		<PropertyGroup>
 			<TempDir>$(MSBuildProjectDirectory)\WinGPT</TempDir>
-			<ZipFileName>WinGPT_$(Platform).zip</ZipFileName>
+			<ZipFileName>_WinGPT_$(Platform).zip</ZipFileName>
 		</PropertyGroup>
 
 		<!-- Convert PublishDir to an absolute path -->

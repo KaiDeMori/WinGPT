@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace WinGPT;
 
@@ -23,10 +24,12 @@ public class Config_UIable {
    [Description("This controls the font of the prompt text-box.")]
    public Font Prompt_Font { get; set; } = new Font("Arial", 12);
 
-   [Category("markf278down text-box")]
-   [DisplayName("Font")]
-   [Description("This controls the font of the raw markf278down response text-box.")]
-   public Font markf278down_Font { get; set; } = new Font("Arial", 12);
+    [Category("markf278down text-box")]
+    [DisplayName("Font")]
+    [Description("This controls the font of the raw markf278down response text-box.")]
+    //[Category("Base"), Description("The font")]
+    //[Editor(typeof(CustomFontEditor), typeof(UITypeEditor))]
+    public Font markf278down_Font { get; set; } = new Font("Arial", 12);
 
    // the corrected version would be
    [Category("markf278down text-box")]
@@ -42,3 +45,36 @@ public class Config_UIable {
    [Description("If true, the response text-box is scrolled to the last response. ")]
    public bool Auto_Scroll { get; set; } = true;
 }
+
+/// <summary>
+/// Trying to fix two bugs in the framework, but:
+/// fogetaboutit!
+/// * Font Size is wrongly calculated and off by either 0.25 of 0.111…
+/// * Font Name and preview cannot be set in the FontDialog, for strange weights like "Arial Narrow Bold"
+/// </summary>
+public class CustomFontEditor : UITypeEditor {
+   public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context) {
+      return UITypeEditorEditStyle.Modal;
+   }
+
+   public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value) {
+        //FontDialog dlg = new FontDialog();
+        //dlg = new FontDialog();
+
+        //if (value is Font font)
+        //{
+        //    dlg.Font = font;
+        //}
+
+        //if (dlg.ShowDialog() == DialogResult.OK)
+        //    return dlg.Font;
+
+        var nativeFontDialog = new NativeFontDialog();
+        var font = nativeFontDialog.open((Font)value);
+
+        //return base.EditValue(context, provider, value);
+        return font;
+   }
+}
+
+
