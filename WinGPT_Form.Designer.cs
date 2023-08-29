@@ -29,24 +29,26 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            TreeNode treeNode1 = new TreeNode("Node2");
-            TreeNode treeNode2 = new TreeNode("Chat1", new TreeNode[] { treeNode1 });
-            TreeNode treeNode3 = new TreeNode("Node3");
-            TreeNode treeNode4 = new TreeNode("Node4");
-            TreeNode treeNode5 = new TreeNode("Conversation History Root", new TreeNode[] { treeNode2, treeNode3, treeNode4 });
+            TreeNode treeNode6 = new TreeNode("Node2");
+            TreeNode treeNode7 = new TreeNode("Chat1", new TreeNode[] { treeNode6 });
+            TreeNode treeNode8 = new TreeNode("Node3");
+            TreeNode treeNode9 = new TreeNode("Node4");
+            TreeNode treeNode10 = new TreeNode("Conversation History Root", new TreeNode[] { treeNode7, treeNode8, treeNode9 });
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WinGPT_Form));
             main_toolTip = new ToolTip(components);
             history_file_name_textBox = new TextBox();
             autoclear_checkBox = new CheckBox();
             clear_button = new Button();
             text_splitContainer = new SplitContainer();
+            toggle_LEFT_button = new Button();
             prompt_textBox = new TextBox();
-            panel2 = new Panel();
+            prompt_buttons_panel = new Panel();
             remove_file_button = new Button();
             uploaded_files_comboBox = new ComboBox();
             upload_button = new Button();
             send_prompt_button = new Button();
-            character_textBox = new TextBox();
+            tulpa_textBox = new TextBox();
+            toggle_RIGHT_button = new Button();
             preview_tabControl = new TabControl();
             webview2_tabPage = new TabPage();
             webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
@@ -59,43 +61,18 @@
             main_menuStrip = new MenuStrip();
             base_directory_toolStripMenuItem = new ToolStripMenuItem();
             settings_ToolStripMenuItem = new ToolStripMenuItem();
-            toolsToolStripMenuItem = new ToolStripMenuItem();
+            tools_ToolStripMenuItem = new ToolStripMenuItem();
             openai_api_key_toolStripMenuItem = new ToolStripMenuItem();
-            tokenCounterToolStripMenuItem = new ToolStripMenuItem();
+            tokenCounter_ToolStripMenuItem = new ToolStripMenuItem();
             sysmsghack_ToolStripMenuItem = new ToolStripMenuItem();
             models_ToolStripMenuItem = new ToolStripMenuItem();
-            openConfigDirectoryToolStripMenuItem = new ToolStripMenuItem();
-            helpToolStripMenuItem = new ToolStripMenuItem();
-            aboutToolStripMenuItem1 = new ToolStripMenuItem();
+            openConfigDirectory_ToolStripMenuItem = new ToolStripMenuItem();
+            help_ToolStripMenuItem = new ToolStripMenuItem();
+            about_ToolStripMenuItem = new ToolStripMenuItem();
             main_panel = new Panel();
-            characters_tableLayoutPanel = new TableLayoutPanel();
+            tulpas_tableLayoutPanel = new TableLayoutPanel();
             tulpas_flowLayoutPanel = new FlowLayoutPanel();
             placeholder_radioButton = new RadioButton();
-            contentsToolStripMenuItem = new ToolStripMenuItem();
-            indexToolStripMenuItem = new ToolStripMenuItem();
-            searchToolStripMenuItem = new ToolStripMenuItem();
-            toolStripSeparator5 = new ToolStripSeparator();
-            aboutToolStripMenuItem = new ToolStripMenuItem();
-            customizeToolStripMenuItem = new ToolStripMenuItem();
-            optionsToolStripMenuItem = new ToolStripMenuItem();
-            undoToolStripMenuItem = new ToolStripMenuItem();
-            redoToolStripMenuItem = new ToolStripMenuItem();
-            toolStripSeparator3 = new ToolStripSeparator();
-            cutToolStripMenuItem = new ToolStripMenuItem();
-            copyToolStripMenuItem = new ToolStripMenuItem();
-            pasteToolStripMenuItem = new ToolStripMenuItem();
-            toolStripSeparator4 = new ToolStripSeparator();
-            selectAllToolStripMenuItem = new ToolStripMenuItem();
-            newToolStripMenuItem = new ToolStripMenuItem();
-            openToolStripMenuItem = new ToolStripMenuItem();
-            toolStripSeparator = new ToolStripSeparator();
-            saveToolStripMenuItem = new ToolStripMenuItem();
-            saveAsToolStripMenuItem = new ToolStripMenuItem();
-            toolStripSeparator1 = new ToolStripSeparator();
-            printToolStripMenuItem = new ToolStripMenuItem();
-            printPreviewToolStripMenuItem = new ToolStripMenuItem();
-            toolStripSeparator2 = new ToolStripSeparator();
-            exitToolStripMenuItem = new ToolStripMenuItem();
             main_statusStrip = new StatusStrip();
             main_toolStripStatusLabel = new ToolStripStatusLabel();
             main_toolStripProgressBar = new ToolStripProgressBar();
@@ -105,14 +82,14 @@
             text_splitContainer.Panel1.SuspendLayout();
             text_splitContainer.Panel2.SuspendLayout();
             text_splitContainer.SuspendLayout();
-            panel2.SuspendLayout();
+            prompt_buttons_panel.SuspendLayout();
             preview_tabControl.SuspendLayout();
             webview2_tabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)webView21).BeginInit();
             markf278down_tabPage.SuspendLayout();
             main_menuStrip.SuspendLayout();
             main_panel.SuspendLayout();
-            characters_tableLayoutPanel.SuspendLayout();
+            tulpas_tableLayoutPanel.SuspendLayout();
             tulpas_flowLayoutPanel.SuspendLayout();
             main_statusStrip.SuspendLayout();
             SuspendLayout();
@@ -162,14 +139,16 @@
             // text_splitContainer.Panel1
             // 
             text_splitContainer.Panel1.BackColor = SystemColors.Control;
+            text_splitContainer.Panel1.Controls.Add(toggle_LEFT_button);
             text_splitContainer.Panel1.Controls.Add(prompt_textBox);
-            text_splitContainer.Panel1.Controls.Add(panel2);
-            text_splitContainer.Panel1.Controls.Add(character_textBox);
+            text_splitContainer.Panel1.Controls.Add(prompt_buttons_panel);
+            text_splitContainer.Panel1.Controls.Add(tulpa_textBox);
             text_splitContainer.Panel1.Padding = new Padding(12);
             // 
             // text_splitContainer.Panel2
             // 
             text_splitContainer.Panel2.BackColor = SystemColors.Control;
+            text_splitContainer.Panel2.Controls.Add(toggle_RIGHT_button);
             text_splitContainer.Panel2.Controls.Add(preview_tabControl);
             text_splitContainer.Panel2.Controls.Add(new_conversation_button);
             text_splitContainer.Panel2.Controls.Add(history_file_name_textBox);
@@ -178,6 +157,20 @@
             text_splitContainer.SplitterDistance = 360;
             text_splitContainer.SplitterWidth = 7;
             text_splitContainer.TabIndex = 0;
+            text_splitContainer.MouseDoubleClick += text_splitContainer_MouseDoubleClick;
+            // 
+            // toggle_LEFT_button
+            // 
+            toggle_LEFT_button.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            toggle_LEFT_button.Font = new Font("Consolas", 6F, FontStyle.Regular, GraphicsUnit.Point);
+            toggle_LEFT_button.Location = new Point(350, 0);
+            toggle_LEFT_button.Margin = new Padding(0);
+            toggle_LEFT_button.Name = "toggle_LEFT_button";
+            toggle_LEFT_button.Size = new Size(12, 324);
+            toggle_LEFT_button.TabIndex = 6;
+            toggle_LEFT_button.Text = "<";
+            toggle_LEFT_button.UseVisualStyleBackColor = true;
+            toggle_LEFT_button.Click += toggle_LEFT_button_Click;
             // 
             // prompt_textBox
             // 
@@ -192,19 +185,19 @@
             prompt_textBox.TabIndex = 0;
             prompt_textBox.KeyDown += prompt_textBox_KeyDown;
             // 
-            // panel2
+            // prompt_buttons_panel
             // 
-            panel2.Controls.Add(autoclear_checkBox);
-            panel2.Controls.Add(clear_button);
-            panel2.Controls.Add(remove_file_button);
-            panel2.Controls.Add(uploaded_files_comboBox);
-            panel2.Controls.Add(upload_button);
-            panel2.Controls.Add(send_prompt_button);
-            panel2.Dock = DockStyle.Bottom;
-            panel2.Location = new Point(12, 249);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(336, 63);
-            panel2.TabIndex = 3;
+            prompt_buttons_panel.Controls.Add(clear_button);
+            prompt_buttons_panel.Controls.Add(remove_file_button);
+            prompt_buttons_panel.Controls.Add(uploaded_files_comboBox);
+            prompt_buttons_panel.Controls.Add(upload_button);
+            prompt_buttons_panel.Controls.Add(send_prompt_button);
+            prompt_buttons_panel.Controls.Add(autoclear_checkBox);
+            prompt_buttons_panel.Dock = DockStyle.Bottom;
+            prompt_buttons_panel.Location = new Point(12, 249);
+            prompt_buttons_panel.Name = "prompt_buttons_panel";
+            prompt_buttons_panel.Size = new Size(336, 63);
+            prompt_buttons_panel.TabIndex = 3;
             // 
             // remove_file_button
             // 
@@ -255,13 +248,26 @@
             // 
             // character_textBox
             // 
-            character_textBox.Dock = DockStyle.Top;
-            character_textBox.Enabled = false;
-            character_textBox.Location = new Point(12, 12);
-            character_textBox.Name = "character_textBox";
-            character_textBox.PlaceholderText = "Current Character";
-            character_textBox.Size = new Size(336, 23);
-            character_textBox.TabIndex = 2;
+            tulpa_textBox.Dock = DockStyle.Top;
+            tulpa_textBox.Enabled = false;
+            tulpa_textBox.Location = new Point(12, 12);
+            tulpa_textBox.Name = "tulpa_textBox";
+            tulpa_textBox.PlaceholderText = "Current Character";
+            tulpa_textBox.Size = new Size(336, 23);
+            tulpa_textBox.TabIndex = 2;
+            // 
+            // toggle_RIGHT_button
+            // 
+            toggle_RIGHT_button.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            toggle_RIGHT_button.Font = new Font("Consolas", 6F, FontStyle.Regular, GraphicsUnit.Point);
+            toggle_RIGHT_button.Location = new Point(-2, 0);
+            toggle_RIGHT_button.Margin = new Padding(0);
+            toggle_RIGHT_button.Name = "toggle_RIGHT_button";
+            toggle_RIGHT_button.Size = new Size(12, 324);
+            toggle_RIGHT_button.TabIndex = 5;
+            toggle_RIGHT_button.Text = ">";
+            toggle_RIGHT_button.UseVisualStyleBackColor = true;
+            toggle_RIGHT_button.Click += toggle_RIGHT_button_Click;
             // 
             // preview_tabControl
             // 
@@ -355,17 +361,17 @@
             conversation_history_treeView.Indent = 10;
             conversation_history_treeView.Location = new Point(0, 37);
             conversation_history_treeView.Name = "conversation_history_treeView";
-            treeNode1.Name = "Node2";
-            treeNode1.Text = "Node2";
-            treeNode2.Name = "Node1";
-            treeNode2.Text = "Chat1";
-            treeNode3.Name = "Node3";
-            treeNode3.Text = "Node3";
-            treeNode4.Name = "Node4";
-            treeNode4.Text = "Node4";
-            treeNode5.Name = "RootNode";
-            treeNode5.Text = "Conversation History Root";
-            conversation_history_treeView.Nodes.AddRange(new TreeNode[] { treeNode5 });
+            treeNode6.Name = "Node2";
+            treeNode6.Text = "Node2";
+            treeNode7.Name = "Node1";
+            treeNode7.Text = "Chat1";
+            treeNode8.Name = "Node3";
+            treeNode8.Text = "Node3";
+            treeNode9.Name = "Node4";
+            treeNode9.Text = "Node4";
+            treeNode10.Name = "RootNode";
+            treeNode10.Text = "Conversation History Root";
+            conversation_history_treeView.Nodes.AddRange(new TreeNode[] { treeNode10 });
             conversation_history_treeView.PathSeparator = "/";
             conversation_history_treeView.Size = new Size(161, 324);
             conversation_history_treeView.TabIndex = 0;
@@ -380,10 +386,11 @@
             main_splitter.Size = new Size(3, 324);
             main_splitter.TabIndex = 1;
             main_splitter.TabStop = false;
+            main_splitter.MouseDoubleClick += main_splitter_MouseDoubleClick;
             // 
             // main_menuStrip
             // 
-            main_menuStrip.Items.AddRange(new ToolStripItem[] { base_directory_toolStripMenuItem, settings_ToolStripMenuItem, toolsToolStripMenuItem, helpToolStripMenuItem });
+            main_menuStrip.Items.AddRange(new ToolStripItem[] { base_directory_toolStripMenuItem, settings_ToolStripMenuItem, tools_ToolStripMenuItem, help_ToolStripMenuItem });
             main_menuStrip.Location = new Point(0, 0);
             main_menuStrip.Name = "main_menuStrip";
             main_menuStrip.ShowItemToolTips = true;
@@ -406,12 +413,12 @@
             settings_ToolStripMenuItem.Text = "Settings";
             settings_ToolStripMenuItem.Click += settings_ToolStripMenuItem_Click;
             // 
-            // toolsToolStripMenuItem
+            // tools_ToolStripMenuItem
             // 
-            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openai_api_key_toolStripMenuItem, tokenCounterToolStripMenuItem, sysmsghack_ToolStripMenuItem, models_ToolStripMenuItem, openConfigDirectoryToolStripMenuItem });
-            toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            toolsToolStripMenuItem.Size = new Size(46, 20);
-            toolsToolStripMenuItem.Text = "&Tools";
+            tools_ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openai_api_key_toolStripMenuItem, tokenCounter_ToolStripMenuItem, sysmsghack_ToolStripMenuItem, models_ToolStripMenuItem, openConfigDirectory_ToolStripMenuItem });
+            tools_ToolStripMenuItem.Name = "tools_ToolStripMenuItem";
+            tools_ToolStripMenuItem.Size = new Size(46, 20);
+            tools_ToolStripMenuItem.Text = "&Tools";
             // 
             // openai_api_key_toolStripMenuItem
             // 
@@ -421,13 +428,13 @@
             openai_api_key_toolStripMenuItem.Text = "OpenAI API Key";
             openai_api_key_toolStripMenuItem.Click += openai_api_key_toolStripMenuItem_Click;
             // 
-            // tokenCounterToolStripMenuItem
+            // tokenCounter_ToolStripMenuItem
             // 
-            tokenCounterToolStripMenuItem.Image = Properties.Resources.TokenCounter;
-            tokenCounterToolStripMenuItem.Name = "tokenCounterToolStripMenuItem";
-            tokenCounterToolStripMenuItem.Size = new Size(193, 22);
-            tokenCounterToolStripMenuItem.Text = "Token Counter";
-            tokenCounterToolStripMenuItem.Click += tokenCounterToolStripMenuItem_Click;
+            tokenCounter_ToolStripMenuItem.Image = Properties.Resources.TokenCounter;
+            tokenCounter_ToolStripMenuItem.Name = "tokenCounter_ToolStripMenuItem";
+            tokenCounter_ToolStripMenuItem.Size = new Size(193, 22);
+            tokenCounter_ToolStripMenuItem.Text = "Token Counter";
+            tokenCounter_ToolStripMenuItem.Click += tokenCounterToolStripMenuItem_Click;
             // 
             // sysmsghack_ToolStripMenuItem
             // 
@@ -445,34 +452,34 @@
             models_ToolStripMenuItem.Size = new Size(193, 22);
             models_ToolStripMenuItem.Text = "Models";
             // 
-            // openConfigDirectoryToolStripMenuItem
+            // openConfigDirectory_ToolStripMenuItem
             // 
-            openConfigDirectoryToolStripMenuItem.Name = "openConfigDirectoryToolStripMenuItem";
-            openConfigDirectoryToolStripMenuItem.Size = new Size(193, 22);
-            openConfigDirectoryToolStripMenuItem.Text = "Open Config Directory";
-            openConfigDirectoryToolStripMenuItem.Click += openConfigDirectoryToolStripMenuItem_Click;
+            openConfigDirectory_ToolStripMenuItem.Name = "openConfigDirectory_ToolStripMenuItem";
+            openConfigDirectory_ToolStripMenuItem.Size = new Size(193, 22);
+            openConfigDirectory_ToolStripMenuItem.Text = "Open Config Directory";
+            openConfigDirectory_ToolStripMenuItem.Click += openConfigDirectoryToolStripMenuItem_Click;
             // 
-            // helpToolStripMenuItem
+            // help_ToolStripMenuItem
             // 
-            helpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { aboutToolStripMenuItem1 });
-            helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            helpToolStripMenuItem.Size = new Size(44, 20);
-            helpToolStripMenuItem.Text = "&Help";
+            help_ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { about_ToolStripMenuItem });
+            help_ToolStripMenuItem.Name = "help_ToolStripMenuItem";
+            help_ToolStripMenuItem.Size = new Size(44, 20);
+            help_ToolStripMenuItem.Text = "&Help";
             // 
-            // aboutToolStripMenuItem1
+            // about_ToolStripMenuItem
             // 
-            aboutToolStripMenuItem1.Image = (Image)resources.GetObject("aboutToolStripMenuItem1.Image");
-            aboutToolStripMenuItem1.Name = "aboutToolStripMenuItem1";
-            aboutToolStripMenuItem1.Size = new Size(116, 22);
-            aboutToolStripMenuItem1.Text = "&About...";
-            aboutToolStripMenuItem1.Click += about_ToolStripMenuItem_Click;
+            about_ToolStripMenuItem.Image = (Image)resources.GetObject("about_ToolStripMenuItem.Image");
+            about_ToolStripMenuItem.Name = "about_ToolStripMenuItem";
+            about_ToolStripMenuItem.Size = new Size(180, 22);
+            about_ToolStripMenuItem.Text = "&About...";
+            about_ToolStripMenuItem.Click += about_ToolStripMenuItem_Click;
             // 
             // main_panel
             // 
             main_panel.Controls.Add(main_splitter);
             main_panel.Controls.Add(text_splitContainer);
             main_panel.Controls.Add(conversation_history_treeView);
-            main_panel.Controls.Add(characters_tableLayoutPanel);
+            main_panel.Controls.Add(tulpas_tableLayoutPanel);
             main_panel.Dock = DockStyle.Fill;
             main_panel.Location = new Point(0, 24);
             main_panel.Name = "main_panel";
@@ -481,18 +488,18 @@
             // 
             // characters_tableLayoutPanel
             // 
-            characters_tableLayoutPanel.AutoSize = true;
-            characters_tableLayoutPanel.ColumnCount = 1;
-            characters_tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            characters_tableLayoutPanel.Controls.Add(tulpas_flowLayoutPanel, 0, 0);
-            characters_tableLayoutPanel.Dock = DockStyle.Top;
-            characters_tableLayoutPanel.Location = new Point(0, 0);
-            characters_tableLayoutPanel.Name = "characters_tableLayoutPanel";
-            characters_tableLayoutPanel.RowCount = 1;
-            characters_tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            characters_tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            characters_tableLayoutPanel.Size = new Size(882, 37);
-            characters_tableLayoutPanel.TabIndex = 3;
+            tulpas_tableLayoutPanel.AutoSize = true;
+            tulpas_tableLayoutPanel.ColumnCount = 1;
+            tulpas_tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tulpas_tableLayoutPanel.Controls.Add(tulpas_flowLayoutPanel, 0, 0);
+            tulpas_tableLayoutPanel.Dock = DockStyle.Top;
+            tulpas_tableLayoutPanel.Location = new Point(0, 0);
+            tulpas_tableLayoutPanel.Name = "tulpas_tableLayoutPanel";
+            tulpas_tableLayoutPanel.RowCount = 1;
+            tulpas_tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tulpas_tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tulpas_tableLayoutPanel.Size = new Size(882, 37);
+            tulpas_tableLayoutPanel.TabIndex = 3;
             // 
             // tulpas_flowLayoutPanel
             // 
@@ -516,175 +523,6 @@
             placeholder_radioButton.TabStop = true;
             placeholder_radioButton.Text = "_TULPA_PLACEHOLDER_";
             placeholder_radioButton.UseVisualStyleBackColor = true;
-            // 
-            // contentsToolStripMenuItem
-            // 
-            contentsToolStripMenuItem.Name = "contentsToolStripMenuItem";
-            contentsToolStripMenuItem.Size = new Size(122, 22);
-            contentsToolStripMenuItem.Text = "&Contents";
-            // 
-            // indexToolStripMenuItem
-            // 
-            indexToolStripMenuItem.Name = "indexToolStripMenuItem";
-            indexToolStripMenuItem.Size = new Size(122, 22);
-            indexToolStripMenuItem.Text = "&Index";
-            // 
-            // searchToolStripMenuItem
-            // 
-            searchToolStripMenuItem.Name = "searchToolStripMenuItem";
-            searchToolStripMenuItem.Size = new Size(122, 22);
-            searchToolStripMenuItem.Text = "&Search";
-            // 
-            // toolStripSeparator5
-            // 
-            toolStripSeparator5.Name = "toolStripSeparator5";
-            toolStripSeparator5.Size = new Size(119, 6);
-            // 
-            // aboutToolStripMenuItem
-            // 
-            aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new Size(122, 22);
-            aboutToolStripMenuItem.Text = "&About...";
-            // 
-            // customizeToolStripMenuItem
-            // 
-            customizeToolStripMenuItem.Name = "customizeToolStripMenuItem";
-            customizeToolStripMenuItem.Size = new Size(130, 22);
-            customizeToolStripMenuItem.Text = "&Customize";
-            // 
-            // optionsToolStripMenuItem
-            // 
-            optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            optionsToolStripMenuItem.Size = new Size(130, 22);
-            optionsToolStripMenuItem.Text = "&Options";
-            // 
-            // undoToolStripMenuItem
-            // 
-            undoToolStripMenuItem.Name = "undoToolStripMenuItem";
-            undoToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Z;
-            undoToolStripMenuItem.Size = new Size(144, 22);
-            undoToolStripMenuItem.Text = "&Undo";
-            // 
-            // redoToolStripMenuItem
-            // 
-            redoToolStripMenuItem.Name = "redoToolStripMenuItem";
-            redoToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Y;
-            redoToolStripMenuItem.Size = new Size(144, 22);
-            redoToolStripMenuItem.Text = "&Redo";
-            // 
-            // toolStripSeparator3
-            // 
-            toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new Size(141, 6);
-            // 
-            // cutToolStripMenuItem
-            // 
-            cutToolStripMenuItem.Image = (Image)resources.GetObject("cutToolStripMenuItem.Image");
-            cutToolStripMenuItem.ImageTransparentColor = Color.Magenta;
-            cutToolStripMenuItem.Name = "cutToolStripMenuItem";
-            cutToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.X;
-            cutToolStripMenuItem.Size = new Size(144, 22);
-            cutToolStripMenuItem.Text = "Cu&t";
-            // 
-            // copyToolStripMenuItem
-            // 
-            copyToolStripMenuItem.Image = (Image)resources.GetObject("copyToolStripMenuItem.Image");
-            copyToolStripMenuItem.ImageTransparentColor = Color.Magenta;
-            copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            copyToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.C;
-            copyToolStripMenuItem.Size = new Size(144, 22);
-            copyToolStripMenuItem.Text = "&Copy";
-            // 
-            // pasteToolStripMenuItem
-            // 
-            pasteToolStripMenuItem.Image = (Image)resources.GetObject("pasteToolStripMenuItem.Image");
-            pasteToolStripMenuItem.ImageTransparentColor = Color.Magenta;
-            pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            pasteToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.V;
-            pasteToolStripMenuItem.Size = new Size(144, 22);
-            pasteToolStripMenuItem.Text = "&Paste";
-            // 
-            // toolStripSeparator4
-            // 
-            toolStripSeparator4.Name = "toolStripSeparator4";
-            toolStripSeparator4.Size = new Size(141, 6);
-            // 
-            // selectAllToolStripMenuItem
-            // 
-            selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
-            selectAllToolStripMenuItem.Size = new Size(144, 22);
-            selectAllToolStripMenuItem.Text = "Select &All";
-            // 
-            // newToolStripMenuItem
-            // 
-            newToolStripMenuItem.Image = (Image)resources.GetObject("newToolStripMenuItem.Image");
-            newToolStripMenuItem.ImageTransparentColor = Color.Magenta;
-            newToolStripMenuItem.Name = "newToolStripMenuItem";
-            newToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.N;
-            newToolStripMenuItem.Size = new Size(146, 22);
-            newToolStripMenuItem.Text = "&New";
-            // 
-            // openToolStripMenuItem
-            // 
-            openToolStripMenuItem.Image = (Image)resources.GetObject("openToolStripMenuItem.Image");
-            openToolStripMenuItem.ImageTransparentColor = Color.Magenta;
-            openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.O;
-            openToolStripMenuItem.Size = new Size(146, 22);
-            openToolStripMenuItem.Text = "&Open";
-            // 
-            // toolStripSeparator
-            // 
-            toolStripSeparator.Name = "toolStripSeparator";
-            toolStripSeparator.Size = new Size(143, 6);
-            // 
-            // saveToolStripMenuItem
-            // 
-            saveToolStripMenuItem.Image = (Image)resources.GetObject("saveToolStripMenuItem.Image");
-            saveToolStripMenuItem.ImageTransparentColor = Color.Magenta;
-            saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
-            saveToolStripMenuItem.Size = new Size(146, 22);
-            saveToolStripMenuItem.Text = "&Save";
-            // 
-            // saveAsToolStripMenuItem
-            // 
-            saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            saveAsToolStripMenuItem.Size = new Size(146, 22);
-            saveAsToolStripMenuItem.Text = "Save &As";
-            // 
-            // toolStripSeparator1
-            // 
-            toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(143, 6);
-            // 
-            // printToolStripMenuItem
-            // 
-            printToolStripMenuItem.Image = (Image)resources.GetObject("printToolStripMenuItem.Image");
-            printToolStripMenuItem.ImageTransparentColor = Color.Magenta;
-            printToolStripMenuItem.Name = "printToolStripMenuItem";
-            printToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.P;
-            printToolStripMenuItem.Size = new Size(146, 22);
-            printToolStripMenuItem.Text = "&Print";
-            // 
-            // printPreviewToolStripMenuItem
-            // 
-            printPreviewToolStripMenuItem.Image = (Image)resources.GetObject("printPreviewToolStripMenuItem.Image");
-            printPreviewToolStripMenuItem.ImageTransparentColor = Color.Magenta;
-            printPreviewToolStripMenuItem.Name = "printPreviewToolStripMenuItem";
-            printPreviewToolStripMenuItem.Size = new Size(146, 22);
-            printPreviewToolStripMenuItem.Text = "Print Pre&view";
-            // 
-            // toolStripSeparator2
-            // 
-            toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(143, 6);
-            // 
-            // exitToolStripMenuItem
-            // 
-            exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(146, 22);
-            exitToolStripMenuItem.Text = "E&xit";
             // 
             // main_statusStrip
             // 
@@ -738,8 +576,8 @@
             text_splitContainer.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)text_splitContainer).EndInit();
             text_splitContainer.ResumeLayout(false);
-            panel2.ResumeLayout(false);
-            panel2.PerformLayout();
+            prompt_buttons_panel.ResumeLayout(false);
+            prompt_buttons_panel.PerformLayout();
             preview_tabControl.ResumeLayout(false);
             webview2_tabPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)webView21).EndInit();
@@ -749,8 +587,8 @@
             main_menuStrip.PerformLayout();
             main_panel.ResumeLayout(false);
             main_panel.PerformLayout();
-            characters_tableLayoutPanel.ResumeLayout(false);
-            characters_tableLayoutPanel.PerformLayout();
+            tulpas_tableLayoutPanel.ResumeLayout(false);
+            tulpas_tableLayoutPanel.PerformLayout();
             tulpas_flowLayoutPanel.ResumeLayout(false);
             tulpas_flowLayoutPanel.PerformLayout();
             main_statusStrip.ResumeLayout(false);
@@ -770,39 +608,14 @@
         private Button send_prompt_button;
         private Panel main_panel;
         private Button new_conversation_button;
-        private ToolStripMenuItem contentsToolStripMenuItem;
-        private ToolStripMenuItem indexToolStripMenuItem;
-        private ToolStripMenuItem searchToolStripMenuItem;
-        private ToolStripSeparator toolStripSeparator5;
-        private ToolStripMenuItem aboutToolStripMenuItem;
-        private ToolStripMenuItem customizeToolStripMenuItem;
-        private ToolStripMenuItem optionsToolStripMenuItem;
-        private ToolStripMenuItem undoToolStripMenuItem;
-        private ToolStripMenuItem redoToolStripMenuItem;
-        private ToolStripSeparator toolStripSeparator3;
-        private ToolStripMenuItem cutToolStripMenuItem;
-        private ToolStripMenuItem copyToolStripMenuItem;
-        private ToolStripMenuItem pasteToolStripMenuItem;
-        private ToolStripSeparator toolStripSeparator4;
-        private ToolStripMenuItem selectAllToolStripMenuItem;
-        private ToolStripMenuItem newToolStripMenuItem;
-        private ToolStripMenuItem openToolStripMenuItem;
-        private ToolStripSeparator toolStripSeparator;
-        private ToolStripMenuItem saveToolStripMenuItem;
-        private ToolStripMenuItem saveAsToolStripMenuItem;
-        private ToolStripSeparator toolStripSeparator1;
-        private ToolStripMenuItem printToolStripMenuItem;
-        private ToolStripMenuItem printPreviewToolStripMenuItem;
-        private ToolStripSeparator toolStripSeparator2;
-        private ToolStripMenuItem exitToolStripMenuItem;
         private ToolStripMenuItem base_directory_toolStripMenuItem;
-        private ToolStripMenuItem toolsToolStripMenuItem;
+        private ToolStripMenuItem tools_ToolStripMenuItem;
         private ToolStripMenuItem openai_api_key_toolStripMenuItem;
-        private ToolStripMenuItem helpToolStripMenuItem;
-        private ToolStripMenuItem aboutToolStripMenuItem1;
+        private ToolStripMenuItem help_ToolStripMenuItem;
+        private ToolStripMenuItem about_ToolStripMenuItem;
         internal TextBox history_file_name_textBox;
-        private TextBox character_textBox;
-        private TableLayoutPanel characters_tableLayoutPanel;
+        private TextBox tulpa_textBox;
+        private TableLayoutPanel tulpas_tableLayoutPanel;
         private FlowLayoutPanel tulpas_flowLayoutPanel;
         private RadioButton placeholder_radioButton;
         private StatusStrip main_statusStrip;
@@ -810,14 +623,14 @@
         private ToolStripProgressBar main_toolStripProgressBar;
         private Ookii.Dialogs.WinForms.VistaFolderBrowserDialog base_directory_vistaFolderBrowserDialog;
         internal ToolTip main_toolTip;
-        private ToolStripMenuItem tokenCounterToolStripMenuItem;
+        private ToolStripMenuItem tokenCounter_ToolStripMenuItem;
         private ToolStripMenuItem sysmsghack_ToolStripMenuItem;
         private ToolStripMenuItem models_ToolStripMenuItem;
         private TabControl preview_tabControl;
         private TabPage markf278down_tabPage;
         private TabPage webview2_tabPage;
         private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
-        private Panel panel2;
+        private Panel prompt_buttons_panel;
         private Button upload_button;
         private ComboBox uploaded_files_comboBox;
         private Ookii.Dialogs.WinForms.VistaOpenFileDialog upload_vistaOpenFileDialog;
@@ -826,6 +639,8 @@
         private ToolStripMenuItem settings_ToolStripMenuItem;
         private Button submit_edits_button;
         internal Button remove_file_button;
-        private ToolStripMenuItem openConfigDirectoryToolStripMenuItem;
+        private ToolStripMenuItem openConfigDirectory_ToolStripMenuItem;
+        private Button toggle_RIGHT_button;
+        private Button toggle_LEFT_button;
     }
 }
