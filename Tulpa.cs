@@ -239,8 +239,15 @@ public class Tulpa : InterTulpa {
    }
 
    private static string create_markdown_code_block(FileInfo file) {
-      var file_content = System.IO.File.ReadAllText(file.FullName);
-      var markdown     = new StringBuilder();
+      var file_content = String.Empty;
+      try {
+         file_content = System.IO.File.ReadAllText(file.FullName);
+      }
+      catch (Exception) {
+         return file_content;
+      }
+
+      var markdown = new StringBuilder();
       markdown.Append("### ");
       markdown.Append(file.Name);
       markdown.Append("{.external-filename}");
