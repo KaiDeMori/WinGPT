@@ -11,6 +11,9 @@ internal static class WinGPT_Main {
       if (CustomAction_Uninstall_Check(args))
          return;
 
+      Config.Load();
+      Application.SetHighDpiMode(HighDpiMode.DpiUnaware);
+
       //QuickTulpaTest.run();
       //QuickHistoryTest.run();
 

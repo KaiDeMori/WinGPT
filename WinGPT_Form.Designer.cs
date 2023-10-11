@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            TreeNode treeNode6 = new TreeNode("Node2");
-            TreeNode treeNode7 = new TreeNode("Chat1", new TreeNode[] { treeNode6 });
-            TreeNode treeNode8 = new TreeNode("Node3");
-            TreeNode treeNode9 = new TreeNode("Node4");
-            TreeNode treeNode10 = new TreeNode("Conversation History Root", new TreeNode[] { treeNode7, treeNode8, treeNode9 });
+            TreeNode treeNode1 = new TreeNode("Node2");
+            TreeNode treeNode2 = new TreeNode("Chat1", new TreeNode[] { treeNode1 });
+            TreeNode treeNode3 = new TreeNode("Node3");
+            TreeNode treeNode4 = new TreeNode("Node4");
+            TreeNode treeNode5 = new TreeNode("Conversation History Root", new TreeNode[] { treeNode2, treeNode3, treeNode4 });
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WinGPT_Form));
             main_toolTip = new ToolTip(components);
             history_file_name_textBox = new TextBox();
@@ -101,7 +101,7 @@
             history_file_name_textBox.Location = new Point(12, 12);
             history_file_name_textBox.Name = "history_file_name_textBox";
             history_file_name_textBox.PlaceholderText = "Filename";
-            history_file_name_textBox.Size = new Size(330, 23);
+            history_file_name_textBox.Size = new Size(305, 23);
             history_file_name_textBox.TabIndex = 3;
             history_file_name_textBox.KeyDown += history_file_name_textBox_KeyDown;
             history_file_name_textBox.Leave += history_file_name_textBox_Leave;
@@ -153,8 +153,8 @@
             text_splitContainer.Panel2.Controls.Add(new_conversation_button);
             text_splitContainer.Panel2.Controls.Add(history_file_name_textBox);
             text_splitContainer.Panel2.Padding = new Padding(12);
-            text_splitContainer.Size = new Size(721, 324);
-            text_splitContainer.SplitterDistance = 360;
+            text_splitContainer.Size = new Size(673, 316);
+            text_splitContainer.SplitterDistance = 337;
             text_splitContainer.SplitterWidth = 7;
             text_splitContainer.TabIndex = 0;
             text_splitContainer.MouseDoubleClick += text_splitContainer_MouseDoubleClick;
@@ -163,10 +163,10 @@
             // 
             toggle_LEFT_button.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             toggle_LEFT_button.Font = new Font("Consolas", 6F, FontStyle.Regular, GraphicsUnit.Point);
-            toggle_LEFT_button.Location = new Point(350, 0);
+            toggle_LEFT_button.Location = new Point(327, 0);
             toggle_LEFT_button.Margin = new Padding(0);
             toggle_LEFT_button.Name = "toggle_LEFT_button";
-            toggle_LEFT_button.Size = new Size(12, 324);
+            toggle_LEFT_button.Size = new Size(12, 316);
             toggle_LEFT_button.TabIndex = 6;
             toggle_LEFT_button.Text = "<";
             toggle_LEFT_button.UseVisualStyleBackColor = true;
@@ -181,7 +181,7 @@
             prompt_textBox.Name = "prompt_textBox";
             prompt_textBox.PlaceholderText = "Prompt";
             prompt_textBox.ScrollBars = ScrollBars.Both;
-            prompt_textBox.Size = new Size(336, 214);
+            prompt_textBox.Size = new Size(313, 206);
             prompt_textBox.TabIndex = 0;
             prompt_textBox.KeyDown += prompt_textBox_KeyDown;
             // 
@@ -194,15 +194,15 @@
             prompt_buttons_panel.Controls.Add(send_prompt_button);
             prompt_buttons_panel.Controls.Add(autoclear_checkBox);
             prompt_buttons_panel.Dock = DockStyle.Bottom;
-            prompt_buttons_panel.Location = new Point(12, 249);
+            prompt_buttons_panel.Location = new Point(12, 241);
             prompt_buttons_panel.Name = "prompt_buttons_panel";
-            prompt_buttons_panel.Size = new Size(336, 63);
+            prompt_buttons_panel.Size = new Size(313, 63);
             prompt_buttons_panel.TabIndex = 3;
             // 
             // remove_file_button
             // 
             remove_file_button.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            remove_file_button.Location = new Point(269, 38);
+            remove_file_button.Location = new Point(246, 38);
             remove_file_button.Name = "remove_file_button";
             remove_file_button.Size = new Size(67, 25);
             remove_file_button.TabIndex = 4;
@@ -216,9 +216,9 @@
             uploaded_files_comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             uploaded_files_comboBox.FormattingEnabled = true;
             uploaded_files_comboBox.Items.AddRange(new object[] { "File 1", "File 2", "File 3.md" });
-            uploaded_files_comboBox.Location = new Point(101, 39);
+            uploaded_files_comboBox.Location = new Point(119, 40);
             uploaded_files_comboBox.Name = "uploaded_files_comboBox";
-            uploaded_files_comboBox.Size = new Size(162, 23);
+            uploaded_files_comboBox.Size = new Size(121, 23);
             uploaded_files_comboBox.TabIndex = 3;
             // 
             // upload_button
@@ -227,7 +227,7 @@
             upload_button.FlatStyle = FlatStyle.System;
             upload_button.Location = new Point(0, 38);
             upload_button.Name = "upload_button";
-            upload_button.Size = new Size(95, 25);
+            upload_button.Size = new Size(113, 25);
             upload_button.TabIndex = 2;
             upload_button.Text = "Upload File(s)";
             upload_button.UseVisualStyleBackColor = true;
@@ -238,7 +238,7 @@
             send_prompt_button.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             send_prompt_button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             send_prompt_button.FlatStyle = FlatStyle.System;
-            send_prompt_button.Location = new Point(192, 6);
+            send_prompt_button.Location = new Point(169, 6);
             send_prompt_button.Name = "send_prompt_button";
             send_prompt_button.Size = new Size(144, 25);
             send_prompt_button.TabIndex = 1;
@@ -246,14 +246,14 @@
             send_prompt_button.UseVisualStyleBackColor = true;
             send_prompt_button.Click += send_prompt_button_Click;
             // 
-            // character_textBox
+            // tulpa_textBox
             // 
             tulpa_textBox.Dock = DockStyle.Top;
             tulpa_textBox.Enabled = false;
             tulpa_textBox.Location = new Point(12, 12);
             tulpa_textBox.Name = "tulpa_textBox";
             tulpa_textBox.PlaceholderText = "Current Character";
-            tulpa_textBox.Size = new Size(336, 23);
+            tulpa_textBox.Size = new Size(313, 23);
             tulpa_textBox.TabIndex = 2;
             // 
             // toggle_RIGHT_button
@@ -263,7 +263,7 @@
             toggle_RIGHT_button.Location = new Point(-2, 0);
             toggle_RIGHT_button.Margin = new Padding(0);
             toggle_RIGHT_button.Name = "toggle_RIGHT_button";
-            toggle_RIGHT_button.Size = new Size(12, 324);
+            toggle_RIGHT_button.Size = new Size(12, 316);
             toggle_RIGHT_button.TabIndex = 5;
             toggle_RIGHT_button.Text = ">";
             toggle_RIGHT_button.UseVisualStyleBackColor = true;
@@ -278,7 +278,7 @@
             preview_tabControl.Multiline = true;
             preview_tabControl.Name = "preview_tabControl";
             preview_tabControl.SelectedIndex = 0;
-            preview_tabControl.Size = new Size(330, 252);
+            preview_tabControl.Size = new Size(305, 244);
             preview_tabControl.TabIndex = 4;
             // 
             // webview2_tabPage
@@ -287,7 +287,7 @@
             webview2_tabPage.Location = new Point(4, 24);
             webview2_tabPage.Name = "webview2_tabPage";
             webview2_tabPage.Padding = new Padding(3);
-            webview2_tabPage.Size = new Size(322, 224);
+            webview2_tabPage.Size = new Size(297, 216);
             webview2_tabPage.TabIndex = 2;
             webview2_tabPage.Text = "WebView2";
             webview2_tabPage.UseVisualStyleBackColor = true;
@@ -300,7 +300,7 @@
             webView21.Dock = DockStyle.Fill;
             webView21.Location = new Point(3, 3);
             webView21.Name = "webView21";
-            webView21.Size = new Size(316, 218);
+            webView21.Size = new Size(291, 210);
             webView21.TabIndex = 0;
             webView21.ZoomFactor = 1D;
             // 
@@ -311,7 +311,7 @@
             markf278down_tabPage.Location = new Point(4, 24);
             markf278down_tabPage.Name = "markf278down_tabPage";
             markf278down_tabPage.Padding = new Padding(3);
-            markf278down_tabPage.Size = new Size(322, 224);
+            markf278down_tabPage.Size = new Size(297, 216);
             markf278down_tabPage.TabIndex = 1;
             markf278down_tabPage.Text = "markf278down";
             markf278down_tabPage.UseVisualStyleBackColor = true;
@@ -325,7 +325,7 @@
             response_textBox.PlaceholderText = "Conversation";
             response_textBox.ReadOnly = true;
             response_textBox.ScrollBars = ScrollBars.Both;
-            response_textBox.Size = new Size(316, 195);
+            response_textBox.Size = new Size(291, 187);
             response_textBox.TabIndex = 1;
             response_textBox.Enter += response_textBox_Enter;
             response_textBox.Leave += response_textBox_Leave;
@@ -335,7 +335,7 @@
             submit_edits_button.Dock = DockStyle.Top;
             submit_edits_button.Location = new Point(3, 3);
             submit_edits_button.Name = "submit_edits_button";
-            submit_edits_button.Size = new Size(316, 23);
+            submit_edits_button.Size = new Size(291, 23);
             submit_edits_button.TabIndex = 2;
             submit_edits_button.Text = "Submit Edits";
             submit_edits_button.UseVisualStyleBackColor = true;
@@ -346,9 +346,9 @@
             new_conversation_button.AutoSize = true;
             new_conversation_button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             new_conversation_button.Dock = DockStyle.Bottom;
-            new_conversation_button.Location = new Point(12, 287);
+            new_conversation_button.Location = new Point(12, 279);
             new_conversation_button.Name = "new_conversation_button";
-            new_conversation_button.Size = new Size(330, 25);
+            new_conversation_button.Size = new Size(305, 25);
             new_conversation_button.TabIndex = 2;
             new_conversation_button.Text = "New Conversation";
             new_conversation_button.UseVisualStyleBackColor = true;
@@ -361,19 +361,19 @@
             conversation_history_treeView.Indent = 10;
             conversation_history_treeView.Location = new Point(0, 37);
             conversation_history_treeView.Name = "conversation_history_treeView";
-            treeNode6.Name = "Node2";
-            treeNode6.Text = "Node2";
-            treeNode7.Name = "Node1";
-            treeNode7.Text = "Chat1";
-            treeNode8.Name = "Node3";
-            treeNode8.Text = "Node3";
-            treeNode9.Name = "Node4";
-            treeNode9.Text = "Node4";
-            treeNode10.Name = "RootNode";
-            treeNode10.Text = "Conversation History Root";
-            conversation_history_treeView.Nodes.AddRange(new TreeNode[] { treeNode10 });
+            treeNode1.Name = "Node2";
+            treeNode1.Text = "Node2";
+            treeNode2.Name = "Node1";
+            treeNode2.Text = "Chat1";
+            treeNode3.Name = "Node3";
+            treeNode3.Text = "Node3";
+            treeNode4.Name = "Node4";
+            treeNode4.Text = "Node4";
+            treeNode5.Name = "RootNode";
+            treeNode5.Text = "Conversation History Root";
+            conversation_history_treeView.Nodes.AddRange(new TreeNode[] { treeNode5 });
             conversation_history_treeView.PathSeparator = "/";
-            conversation_history_treeView.Size = new Size(161, 324);
+            conversation_history_treeView.Size = new Size(161, 316);
             conversation_history_treeView.TabIndex = 0;
             conversation_history_treeView.BeforeCollapse += conversation_history_treeView_BeforeCollapse;
             conversation_history_treeView.AfterSelect += conversation_history_treeView_AfterSelect;
@@ -383,7 +383,7 @@
             // 
             main_splitter.Location = new Point(161, 37);
             main_splitter.Name = "main_splitter";
-            main_splitter.Size = new Size(3, 324);
+            main_splitter.Size = new Size(3, 316);
             main_splitter.TabIndex = 1;
             main_splitter.TabStop = false;
             main_splitter.MouseDoubleClick += main_splitter_MouseDoubleClick;
@@ -394,7 +394,7 @@
             main_menuStrip.Location = new Point(0, 0);
             main_menuStrip.Name = "main_menuStrip";
             main_menuStrip.ShowItemToolTips = true;
-            main_menuStrip.Size = new Size(882, 24);
+            main_menuStrip.Size = new Size(834, 24);
             main_menuStrip.TabIndex = 2;
             main_menuStrip.Text = "Main Menu";
             // 
@@ -470,7 +470,7 @@
             // 
             about_ToolStripMenuItem.Image = (Image)resources.GetObject("about_ToolStripMenuItem.Image");
             about_ToolStripMenuItem.Name = "about_ToolStripMenuItem";
-            about_ToolStripMenuItem.Size = new Size(180, 22);
+            about_ToolStripMenuItem.Size = new Size(116, 22);
             about_ToolStripMenuItem.Text = "&About...";
             about_ToolStripMenuItem.Click += about_ToolStripMenuItem_Click;
             // 
@@ -483,10 +483,10 @@
             main_panel.Dock = DockStyle.Fill;
             main_panel.Location = new Point(0, 24);
             main_panel.Name = "main_panel";
-            main_panel.Size = new Size(882, 361);
+            main_panel.Size = new Size(834, 353);
             main_panel.TabIndex = 2;
             // 
-            // characters_tableLayoutPanel
+            // tulpas_tableLayoutPanel
             // 
             tulpas_tableLayoutPanel.AutoSize = true;
             tulpas_tableLayoutPanel.ColumnCount = 1;
@@ -498,7 +498,7 @@
             tulpas_tableLayoutPanel.RowCount = 1;
             tulpas_tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tulpas_tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tulpas_tableLayoutPanel.Size = new Size(882, 37);
+            tulpas_tableLayoutPanel.Size = new Size(834, 37);
             tulpas_tableLayoutPanel.TabIndex = 3;
             // 
             // tulpas_flowLayoutPanel
@@ -507,7 +507,7 @@
             tulpas_flowLayoutPanel.AutoSize = true;
             tulpas_flowLayoutPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             tulpas_flowLayoutPanel.Controls.Add(placeholder_radioButton);
-            tulpas_flowLayoutPanel.Location = new Point(365, 3);
+            tulpas_flowLayoutPanel.Location = new Point(341, 3);
             tulpas_flowLayoutPanel.Name = "tulpas_flowLayoutPanel";
             tulpas_flowLayoutPanel.Size = new Size(152, 31);
             tulpas_flowLayoutPanel.TabIndex = 2;
@@ -527,9 +527,9 @@
             // main_statusStrip
             // 
             main_statusStrip.Items.AddRange(new ToolStripItem[] { main_toolStripStatusLabel, main_toolStripProgressBar });
-            main_statusStrip.Location = new Point(0, 385);
+            main_statusStrip.Location = new Point(0, 377);
             main_statusStrip.Name = "main_statusStrip";
-            main_statusStrip.Size = new Size(882, 22);
+            main_statusStrip.Size = new Size(834, 22);
             main_statusStrip.TabIndex = 4;
             main_statusStrip.Text = "statusStrip1";
             // 
@@ -561,7 +561,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(882, 407);
+            ClientSize = new Size(834, 399);
             Controls.Add(main_panel);
             Controls.Add(main_menuStrip);
             Controls.Add(main_statusStrip);

@@ -19,7 +19,7 @@ public class BaseDirectoryWatcherAndTreeViewUpdater : IDisposable {
 
       this.treeViewPersistor = new TreeViewPersistor(treeView);
       treeViewPersistor.Load();
-
+      
       fileSystemWatcher.EnableRaisingEvents = true;
    }
 

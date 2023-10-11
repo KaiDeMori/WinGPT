@@ -44,6 +44,22 @@ public class Config_UIable {
    [DisplayName("Use Auto-Scroll")]
    [Description("If true, the response text-box is scrolled to the last response. ")]
    public bool Auto_Scroll { get; set; } = true;
+
+   [Category("Experimental")]
+   [DisplayName("Remove toggle buttons")]
+   [Description("Quick-Fix for the DPI error with Toggle-Button size and location.")]
+   public bool Remove_Toggle_Buttons { get; set; } = false;
+
+   [Category("Experimental")]
+   [DisplayName("DPI awareness")]
+   [Description("Sets the DPI-awareness. Needs app restart!")]
+   public HighDpiMode High_DPI_Mode { get; set; } = HighDpiMode.DpiUnaware;
+
+   [Category("Experimental")]
+   [DisplayName("Auto Scale Mode")]
+   [Description("Sets the AutoScaleMode. Needs app restart!")]
+   public AutoScaleMode Auto_Scale_Mode { get; set; } = AutoScaleMode.Font;
+
 }
 
 /// <summary>

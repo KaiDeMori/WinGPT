@@ -56,7 +56,10 @@ public class TreeViewPersistor {
          return;
 
       // Create a Dictionary for efficient lookup
-      Dictionary<string, NodeAndState> stateDict = state.NodesState.ToDictionary(s => s.Fullname);
+      Dictionary<string, NodeAndState> stateDict =
+         state.NodesState
+            .DistinctBy(s => s.Fullname)
+            .ToDictionary(s => s.Fullname);
 
       _treeView.BeginUpdate();
 
