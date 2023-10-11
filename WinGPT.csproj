@@ -26,6 +26,7 @@
 		<RepositoryUrl>https://github.com/KaiDeMori/WinGPT</RepositoryUrl>
 	</PropertyGroup>
 
+	<Import Project="CustomBuild.targets" />
 
 	<!-- This target is just for debugging purposes -->
 	<Target Name="GetDirectories" AfterTargets="Build">
@@ -43,7 +44,11 @@
 		<Message Text="Directories: $(MSBuildProjectDirectory)" Importance="high" />
 		<Message Text="Directories: @(tmp_dirs)" Importance="high" />
 		<Message Text="Folders: @(Folders)" Importance="high" />
+		<Message Text="PublishProfileName: $(PublishProfileName)" Importance="high" />
+		<Message Text="PublishProfile: $(PublishProfile)" Importance="high" />
+		<Message Text="ConfigurationName: $(ConfigurationName)" Importance="high" />
 		<Message Text="Platform: $(Platform)" Importance="high" />
+
 	</Target>
 
 
@@ -56,6 +61,7 @@
 		<Message Text="PublishProfile: $(PublishProfile)" Importance="high" />
 		<Message Text="ConfigurationName: $(ConfigurationName)" Importance="high" />
 		<Message Text="PublishProfileName: $(ConfigurationName)$(PublishProfile)" Importance="high" />
+		<Message Text="Platform: $(Platform)" Importance="high" />
 
 		<!-- Define properties for the temporary and output directories -->
 		<PropertyGroup>

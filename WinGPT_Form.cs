@@ -7,6 +7,7 @@ using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
 using Newtonsoft.Json.Linq;
 using WinGPT.OpenAI;
+using WinGPT.OpenAI.Chat;
 using WinGPT.Taxonomy;
 using Message = WinGPT.OpenAI.Chat.Message;
 
@@ -24,8 +25,13 @@ public partial class WinGPT_Form : Form {
    private readonly BindingList<FileInfo> Associated_files = new BindingList<FileInfo>();
 
    public WinGPT_Form() {
-      Config.Load();
       InitializeComponent();
+      AutoScaleMode = Config.Active.UIable.Auto_Scale_Mode;
+
+      if (Config.Active.UIable.Remove_Toggle_Buttons) {
+         toggle_LEFT_button.Visible  = false;
+         toggle_RIGHT_button.Visible = false;
+      }
 
       if (Config.Active.WindowParameters != null) {
          this.StartPosition = Config.Active.WindowParameters.StartPosition;
@@ -37,6 +43,7 @@ public partial class WinGPT_Form : Form {
       Load    += WinGPT_Form_Load;
       Shown   += WinGPT_Form_Shown;
       Closing += WinGPT_Form_Closing;
+      //ResizeEnd += WinGPT_Form_ResizeEnd;
       //HandleCreated += (sender, args) => 
       //   set_splitter_state();
 
@@ -56,6 +63,16 @@ public partial class WinGPT_Form : Form {
       //Maybe we should put more init stuff here, instead of Load and Shown 
       apply_UIable();
       ToolTipDefinitions.SetToolTips(this);
+   }
+
+   private void WinGPT_Form_ResizeEnd(object? sender, EventArgs e) {
+      //DRAGONS
+      Point newloc = toggle_LEFT_button.Location with {
+         X = text_splitContainer.Panel1.Width - 20
+      };
+      toggle_LEFT_button.Location = newloc;
+      toggle_LEFT_button.Height   = text_splitContainer.Panel1.Height - 100;
+      toggle_RIGHT_button.Height  = text_splitContainer.Panel1.Height;
    }
 
    private void prompt_textBox_DragDrop(object? sender, DragEventArgs e) {
@@ -695,11 +712,14 @@ public partial class WinGPT_Form : Form {
       if (file_name is not null && code_content is not null) {
          //find the file in the Associated_files
          var fileinfo = Associated_files.FirstOrDefault(f => f.Name == file_name);
-         if (fileinfo is not null && fileinfo.Exists) {
-            //write the code_content to the file
-            File.WriteAllText(fileinfo.FullName, code_content);
-            Invoke(() => main_toolStripStatusLabel.Text = $"File {fileinfo.Name} saved to {fileinfo.DirectoryName}");
+         if (fileinfo is null || !fileinfo.Exists) {
+            //if the file does not exist, create it in the AdHoc_Downloads_Path
+            fileinfo = new FileInfo(Path.Join(Config.AdHoc_Downloads_Path.FullName, file_name));
          }
+
+         //write the code_content to the file
+         File.WriteAllText(fileinfo.FullName, code_content);
+         Invoke(() => main_toolStripStatusLabel.Text = $"File {fileinfo.Name} saved to {fileinfo.DirectoryName}");
       }
    }
 
@@ -758,7 +778,7 @@ public partial class WinGPT_Form : Form {
    #endregion
 
    private void history_file_name_textBox_Leave(object sender, EventArgs e) {
-      history_file_name_textBox.Text = Conversation.Active.HistoryFile.Name;
+      history_file_name_textBox.Text = Conversation.Active?.HistoryFile.Name;
    }
 
    private void openConfigDirectoryToolStripMenuItem_Click(object sender, EventArgs e) {

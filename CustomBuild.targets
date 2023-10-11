@@ -1,0 +1,30 @@
+﻿<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<PublishType>none</PublishType>
+	</PropertyGroup>
+
+	<Choose>
+		<When Condition="'$(PublishType)' == 'web'">
+			<PropertyGroup>
+				<PublishDir>C:\Users\devboese\Documents\_dev\peopleoftheprompt.org\secret_beta\binarisms\ClickOnce</PublishDir>
+				<PublishUrl>C:\Users\devboese\Documents\_dev\peopleoftheprompt.org\secret_beta\binarisms\ClickOnce</PublishUrl>
+				<MapFileExtensions>false</MapFileExtensions>
+				<UpdateUrl>http://www.example.com/myAppUpdate</UpdateUrl>
+				<ExcludeDeploymentUrl>false</ExcludeDeploymentUrl>
+				<CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+			</PropertyGroup>
+
+		</When>
+		<When Condition=" '$(PublishType)' == 'network' ">
+			<PropertyGroup>
+				<PublishDir>C:\Users\me\Documents\Deploy\Network\</PublishDir>
+				<PublishUrl>C:\Users\me\Documents\Deploy\Network\</PublishUrl>
+				<MapFileExtensions>false</MapFileExtensions>
+				<UpdateUrl>\\DummyServer\Share\</UpdateUrl>
+				<ExcludeDeploymentUrl>true</ExcludeDeploymentUrl>
+			</PropertyGroup>
+		</When>
+	</Choose>
+
+
+</Project>

@@ -3,10 +3,12 @@
 namespace WinGPT;
 
 public partial class API_KEY_Form : Form {
-   private ErrorProvider errorProvider = new ErrorProvider(); // create an instance of ErrorProvider
-   private ErrorProvider infoProvider  = new ErrorProvider(); // create an instance of ErrorProvider
+   private readonly ErrorProvider errorProvider = new ErrorProvider(); // create an instance of ErrorProvider
+   private readonly ErrorProvider infoProvider  = new ErrorProvider(); // create an instance of ErrorProvider
 
-   private Regex key_regex = new Regex("^sk-[a-zA-Z0-9]{48}$");
+   private readonly Regex key_regex = new Regex("^sk-[a-zA-Z0-9]{48}$");
+
+   private DialogResult currentDialogResult = DialogResult.Cancel;
 
    public API_KEY_Form() {
       InitializeComponent();
@@ -28,36 +30,53 @@ public partial class API_KEY_Form : Form {
       Validate();
    }
 
-   private void Validate() {
+   private new void Validate() {
       errorProvider.SetError(api_key_textBox, "");
       infoProvider.SetError(api_key_textBox, "");
       if (string.IsNullOrWhiteSpace(api_key_textBox.Text)) {
          errorProvider.SetError(api_key_textBox, "API Key cannot be empty.");
          //MessageBox.Show("API Key cannot be empty.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-         //DialogResult = DialogResult.Cancel;
+         currentDialogResult       = DialogResult.Cancel;
+         api_key_ok_button.Enabled = false;
          return;
       }
 
-      var apiKey = api_key_textBox.Text;
-      if (!key_regex.IsMatch(apiKey)) {
+      var apiKey = api_key_textBox.Text.Trim();
+      if (key_regex.IsMatch(apiKey)) {
          // set error message on api_key_textBox
-         //errorProvider.SetError(api_key_textBox, "Invalid API Key format.");
-         infoProvider.SetError(api_key_textBox, "Not an OpenAI API key.");
-         //return;
+         infoProvider.SetError(api_key_textBox, "Valid OpenAI API key.");
+         currentDialogResult       = DialogResult.OK;
+         api_key_ok_button.Enabled = true;
+         return;
       }
 
       if (apiKey.Length == 32) {
          infoProvider.SetError(api_key_textBox, "PeopleOfThePrompt!");
+         currentDialogResult       = DialogResult.OK;
+         api_key_ok_button.Enabled = true;
+         return;
       }
+
+      infoProvider.SetError(api_key_textBox, "Not an OpenAI API key.");
+      currentDialogResult       = DialogResult.Cancel;
+      api_key_ok_button.Enabled = false;
 
       // if the input is valid, clear the error message
       //errorProvider.SetError(api_key_textBox, "");
    }
 
    private void api_key_ok_button_Click(object sender, EventArgs e) {
-      Config.Active.OpenAI_API_Key = api_key_textBox.Text;
-      Config.Save();
-      DialogResult = DialogResult.OK;
-      Close();
+      if (currentDialogResult == DialogResult.OK) {
+         Config.Active.OpenAI_API_Key = api_key_textBox.Text.Trim();
+         try {
+            Config.Save();
+            DialogResult = DialogResult.OK;
+         }
+         catch (Exception exception) {
+            MessageBox.Show($"Error saving config file:\r\n{exception.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+         }
+      }
+
+      DialogResult = currentDialogResult;
    }
 }

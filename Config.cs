@@ -131,7 +131,7 @@ internal class Config {
 
 internal class WindowParameters {
    public FormStartPosition StartPosition { get; set; } = FormStartPosition.Manual;
-   public FormWindowState   WindowState   { get; set; }
+   public FormWindowState   WindowState   { get; set; } = FormWindowState.Normal;
 
    public Point Location { get; set; }
    public Size  Size     { get; set; }
