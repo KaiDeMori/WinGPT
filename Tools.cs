@@ -135,7 +135,7 @@ public static class Tools {
       }
    }
 
-   public static readonly string nl = Environment.NewLine;
+   public static readonly string nl = "\n"; //Environment.NewLine;
 
 
    public static DirectoryInfo[] GetRelativeDirectories(DirectoryInfo baseDirectory, FileSystemInfo fileSystemInfo) {
