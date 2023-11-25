@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Text;
 using Newtonsoft.Json;
+using WinGPT.OpenAI;
 using WinGPT.OpenAI.Chat;
 using Message = WinGPT.OpenAI.Chat.Message;
 
@@ -103,7 +104,14 @@ public class Tulpa : InterTulpa {
       all_messages.AddRange(conversation.Messages);
       if (conversation.useSysMsgHack)
          all_messages.Add(new_system_message);
-      all_messages.Add(user_message);
+
+      if (Config.Active.LanguageModel == Models.gpt_4_vision_preview) {
+         //TODO
+      }
+      else {
+         all_messages.Add(user_message);
+      }
+
       var all_immutable = all_messages.ToImmutableList();
 
       Request request = new() {
@@ -213,11 +221,26 @@ public class Tulpa : InterTulpa {
       if (associated_files is not null) {
          //add the associated files to the system message
          foreach (var file in associated_files) {
-            var markdown_codeblock = create_markdown_code_block(file);
-            tuned_up_system_message_content.AppendLine(Tools.nl);
-            tuned_up_system_message_content.AppendLine("-----");
-            tuned_up_system_message_content.AppendLine(Tools.nl);
-            tuned_up_system_message_content.AppendLine(markdown_codeblock);
+            var file_type = FileTypeIdentifier.GetFileType(file.FullName);
+            switch (file_type) {
+               case FileType.Code: {
+                  var markdown_codeblock = create_markdown_code_block(file);
+                  tuned_up_system_message_content.AppendLine(markdown_codeblock);
+                  break;
+               }
+               case FileType.Image:
+                  //noot yet implemented
+                  break;
+               case FileType.Text:
+                  //simple append content but wihtout markdown code block
+                  var simpleText = create_simple_text(file);
+                  tuned_up_system_message_content.AppendLine(simpleText);
+                  break;
+               case FileType.Other:
+                  break;
+               default:
+                  throw new ArgumentOutOfRangeException();
+            }
          }
       }
    }
@@ -258,6 +281,51 @@ public class Tulpa : InterTulpa {
       markdown.Append(Tools.nl);
       markdown.Append("```");
       markdown.Append(Tools.nl);
+      markdown.Append("-----");
+      markdown.Append(Tools.nl);
       return markdown.ToString();
    }
+
+   private static string create_simple_text(FileInfo file) {
+      var file_content = String.Empty;
+      try {
+         file_content = System.IO.File.ReadAllText(file.FullName);
+      }
+      catch (Exception) {
+         return file_content;
+      }
+
+      var markdown = new StringBuilder();
+      markdown.Append("### ");
+      markdown.Append(file.Name);
+      markdown.Append("{.external-filename}");
+      markdown.Append(Tools.nl);
+      markdown.Append(file_content);
+      markdown.Append(Tools.nl);
+      markdown.Append("-----");
+      markdown.Append(Tools.nl);
+      return markdown.ToString();
+   }
+
+   //and one for "other"
+   private static string create_OTHER_text(FileInfo file) {
+      var file_content = String.Empty;
+      try {
+         file_content = System.IO.File.ReadAllText(file.FullName);
+      }
+      catch (Exception) {
+         return file_content;
+      }
+
+      var markdown = new StringBuilder();
+      markdown.Append(Tools.nl);
+      markdown.Append("-----");
+      markdown.Append(Tools.nl);
+      markdown.Append(file_content);
+      markdown.Append(Tools.nl);
+      markdown.Append("-----");
+      markdown.Append(Tools.nl);
+      return markdown.ToString();
+   }
+
 }

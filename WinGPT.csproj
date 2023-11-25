@@ -52,9 +52,7 @@
 	</Target>
 
 
-	<Target Name="PostPublishActions"
-	        AfterTargets="Publish"
-	        Condition="'$(ZipIt)' == 'True'">
+	<Target Name="PostPublishActions" AfterTargets="Publish" Condition="'$(ZipIt)' == 'True'">
 		<Message Text="##############  ZipIt ##############" Importance="high" />
 		<Message Text="ZipIt: $(ZipIt)" Importance="high" />
 		<Message Text="PublishProfileName: $(PublishProfileName)" Importance="high" />
@@ -84,10 +82,7 @@
 		<Copy SourceFiles="@(PublishedFiles)" DestinationFolder="$(TempDir)\%(RecursiveDir)" />
 
 		<!-- Create a ZIP file from the temporary directory -->
-		<ZipDirectory
-			SourceDirectory="$(TempDir)"
-			DestinationFile="$(OutputDir)\$(ZipFileName)"
-			Overwrite="true" />
+		<ZipDirectory SourceDirectory="$(TempDir)" DestinationFile="$(OutputDir)\$(ZipFileName)" Overwrite="true" />
 
 		<!-- Delete the temporary directory -->
 		<RemoveDir Directories="$(TempDir)" />
@@ -151,6 +146,9 @@
 		</None>
 		<None Update="Filetransfer\saveFile_system_message.md">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="FileTypes.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="OpenAI\ErrorCodes.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

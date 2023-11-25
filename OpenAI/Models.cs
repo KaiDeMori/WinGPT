@@ -8,6 +8,8 @@ public class Models {
       gpt_4_0613,
       gpt_3_5_turbo_16k_0613,
       gpt_3_5_turbo_0613,
+      gpt_4_1106_preview,
+      gpt_4_vision_preview,
       //that's what co-pilot suggested! what does it know that we don't?
       //"gpt-neo-2.7B",
    };
@@ -19,6 +21,8 @@ public class Models {
    public const string gpt_4_0613             = "gpt-4-0613";
    public const string gpt_3_5_turbo_16k_0613 = "gpt-3.5-turbo-16k-0613";
    public const string gpt_3_5_turbo_0613     = "gpt-3.5-turbo-0613";
+   public const string gpt_4_1106_preview     = "gpt-4-1106-preview";
+   public const string gpt_4_vision_preview   = "gpt-4-vision-preview";
 
    //that's what co-pilot suggested! what does it know that we don't?
    //public const string gpt_neo_2_7B = "gpt-neo-2.7B";
