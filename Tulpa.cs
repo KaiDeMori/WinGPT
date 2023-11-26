@@ -66,61 +66,16 @@ public class Tulpa : InterTulpa {
          Messages.Select(m => m.Clone()).ToList();
 
       remove_last_user_message(tulpa_messages_togo);
-
-      //DRAGONS not sure if we want to do this always
-      //get the first system message or create a new one
-      Message first_system_message = tulpa_messages_togo.FirstOrDefault(m => m.role == Role.system) ?? new Message {role = Role.system};
-
-      //It's a StringBuilder. You can append to it. What do expect?
-      //Just don't enumerate it.
-      var tuned_up_system_message_content = new StringBuilder();
-
-      //add the content of the old system message to the new one
-      tuned_up_system_message_content.Append(first_system_message.content);
-
-      if (Config.Active.UIable.Use_Save_Link)
-         add_save_link(tuned_up_system_message_content);
-
-      // "Upload"
-      add_associated_files_to_system_message(associated_files, tuned_up_system_message_content);
-
-      // if the save_function is null, the parameter will just be ignored
-      Function<SaveParameters>? save_function = null;
-      if (Config.Active.UIable.Use_Save_Function)
-         save_function = Enable_Save_via_Prompt_Function();
-
-      var new_system_message = new Message {
-         role    = Role.system,
-         content = tuned_up_system_message_content.ToString(),
-      };
-
-      //replace the first system message with the new one, make sure its at the same position as the old one
-      tulpa_messages_togo.Remove(first_system_message);
-      tulpa_messages_togo.Insert(Math.Max(tulpa_messages_togo.IndexOf(first_system_message), 0), new_system_message);
-
-      // concatenate the Tulpa_Messages and the conversation messages and the new prompt as a user message.
-      List<Message> all_messages = new();
-      all_messages.AddRange(tulpa_messages_togo);
-      all_messages.AddRange(conversation.Messages);
-      if (conversation.useSysMsgHack)
-         all_messages.Add(new_system_message);
-
-      if (Config.Active.LanguageModel == Models.gpt_4_vision_preview) {
-         //TODO
+      Request request;
+      if (Tools.isVisionModel()) {
+         request = Create_Vision_Request(user_message, conversation, associated_files, tulpa_messages_togo);
       }
+      //else if (Tools.isImageGenerationModel()) {
+      //   //DRAGONS not sure how to do it yet and cost calculation is also non-trivial in this case
+      //}
       else {
-         all_messages.Add(user_message);
+         request = Create_Textual_Request(user_message, conversation, associated_files, tulpa_messages_togo);
       }
-
-      var all_immutable = all_messages.ToImmutableList();
-
-      Request request = new() {
-         messages    = all_immutable,
-         model       = Config.Active.LanguageModel,
-         temperature = Configuration.Temperature,
-         functions   = save_function is not null ? new IFunction[] {save_function} : null,
-         max_tokens  = Config.Active.UIable.Max_Tokens
-      };
 
       // done with Pre-Production
       /////////////////////////////
@@ -206,6 +161,77 @@ public class Tulpa : InterTulpa {
       return response_message;
    }
 
+   private Request Create_Vision_Request(Message userMessage, Conversation conversation, FileInfo[]? associatedFiles, List<Message> tulpaMessagesTogo) {
+      VisionMessage newVisionMessage = VisionPreviewHelper.add_vision_preview_user_message(userMessage.content, associatedFiles);
+
+      var all_messages = new List<Message> {
+         newVisionMessage
+      };
+
+      var all_immutable = all_messages.ToImmutableList();
+
+      Request request = new() {
+         messages    = all_immutable,
+         model       = Config.Active.LanguageModel,
+         temperature = Configuration.Temperature,
+         max_tokens  = Config.Active.UIable.Vision_Max_Tokens
+      };
+      return request;
+   }
+
+   private Request Create_Textual_Request(Message user_message, Conversation conversation, FileInfo[]? associated_files, List<Message> tulpa_messages_togo) {
+      //DRAGONS not sure if we want to do this always
+      //get the first system message or create a new one
+      Message first_system_message = tulpa_messages_togo.FirstOrDefault(m => m.role == Role.system) ?? new Message {role = Role.system};
+
+      //It's a StringBuilder. You can append to it. What do expect?
+      //Just don't enumerate it.
+      var tuned_up_system_message_content = new StringBuilder();
+
+      //add the content of the old system message to the new one
+      tuned_up_system_message_content.Append(first_system_message.content);
+
+      if (Config.Active.UIable.Use_Save_Link)
+         add_save_link(tuned_up_system_message_content);
+
+      // "Upload"
+      add_associated_files_to_system_message(associated_files, tuned_up_system_message_content);
+
+      // if the save_function is null, the parameter will just be ignored
+      Function<SaveParameters>? save_function = null;
+      if (Config.Active.UIable.Use_Save_Function)
+         save_function = Enable_Save_via_Prompt_Function();
+
+      var new_system_message = new Message {
+         role    = Role.system,
+         content = tuned_up_system_message_content.ToString(),
+      };
+
+      //replace the first system message with the new one, make sure its at the same position as the old one
+      tulpa_messages_togo.Remove(first_system_message);
+      tulpa_messages_togo.Insert(Math.Max(tulpa_messages_togo.IndexOf(first_system_message), 0), new_system_message);
+
+      // concatenate the Tulpa_Messages and the conversation messages and the new prompt as a user message.
+      List<Message> all_messages = new();
+      all_messages.AddRange(tulpa_messages_togo);
+      all_messages.AddRange(conversation.Messages);
+      if (conversation.useSysMsgHack)
+         all_messages.Add(new_system_message);
+
+      all_messages.Add(user_message);
+
+      var all_immutable = all_messages.ToImmutableList();
+
+      Request request = new() {
+         messages    = all_immutable,
+         model       = Config.Active.LanguageModel,
+         temperature = Configuration.Temperature,
+         functions   = save_function is not null ? new IFunction[] {save_function} : null,
+         max_tokens  = Config.Active.UIable.Max_Tokens
+      };
+      return request;
+   }
+
    private static Function<SaveParameters>? Enable_Save_via_Prompt_Function() {
       var saveFile_function_json = System.IO.File.ReadAllText("Filetransfer/saveFile_Function.json");
       Function<SaveParameters>? saveFile_function =
@@ -221,27 +247,36 @@ public class Tulpa : InterTulpa {
       if (associated_files is not null) {
          //add the associated files to the system message
          foreach (var file in associated_files) {
-            var file_type = FileTypeIdentifier.GetFileType(file.FullName);
-            switch (file_type) {
-               case FileType.Code: {
-                  var markdown_codeblock = create_markdown_code_block(file);
-                  tuned_up_system_message_content.AppendLine(markdown_codeblock);
-                  break;
-               }
-               case FileType.Image:
-                  //noot yet implemented
-                  break;
-               case FileType.Text:
-                  //simple append content but wihtout markdown code block
-                  var simpleText = create_simple_text(file);
-                  tuned_up_system_message_content.AppendLine(simpleText);
-                  break;
-               case FileType.Other:
-                  break;
-               default:
-                  throw new ArgumentOutOfRangeException();
+            if (IsCodeFile(file)) {
+               var markdown_codeblock = create_markdown_code_block(file);
+               tuned_up_system_message_content.AppendLine(Tools.nl);
+               tuned_up_system_message_content.AppendLine("-----");
+               tuned_up_system_message_content.AppendLine(Tools.nl);
+               tuned_up_system_message_content.AppendLine(markdown_codeblock);
+            }
+            else {
+               //we cannot attach images to the system message
             }
          }
+      }
+   }
+
+   private bool IsCodeFile(FileInfo file) {
+      var ext = file.Extension.ToLower();
+      //var isCodeFile = ext is ".cs" or ".vb" or ".js" or ".ts" or ".py" or ".html" or ".css" or ".xml" or ".json";
+      switch (ext) {
+         case ".cs":
+         case ".vb":
+         case ".js":
+         case ".ts":
+         case ".py":
+         case ".html":
+         case ".css":
+         case ".xml":
+         case ".json":
+            return true;
+         default:
+            return false;
       }
    }
 
@@ -281,51 +316,6 @@ public class Tulpa : InterTulpa {
       markdown.Append(Tools.nl);
       markdown.Append("```");
       markdown.Append(Tools.nl);
-      markdown.Append("-----");
-      markdown.Append(Tools.nl);
       return markdown.ToString();
    }
-
-   private static string create_simple_text(FileInfo file) {
-      var file_content = String.Empty;
-      try {
-         file_content = System.IO.File.ReadAllText(file.FullName);
-      }
-      catch (Exception) {
-         return file_content;
-      }
-
-      var markdown = new StringBuilder();
-      markdown.Append("### ");
-      markdown.Append(file.Name);
-      markdown.Append("{.external-filename}");
-      markdown.Append(Tools.nl);
-      markdown.Append(file_content);
-      markdown.Append(Tools.nl);
-      markdown.Append("-----");
-      markdown.Append(Tools.nl);
-      return markdown.ToString();
-   }
-
-   //and one for "other"
-   private static string create_OTHER_text(FileInfo file) {
-      var file_content = String.Empty;
-      try {
-         file_content = System.IO.File.ReadAllText(file.FullName);
-      }
-      catch (Exception) {
-         return file_content;
-      }
-
-      var markdown = new StringBuilder();
-      markdown.Append(Tools.nl);
-      markdown.Append("-----");
-      markdown.Append(Tools.nl);
-      markdown.Append(file_content);
-      markdown.Append(Tools.nl);
-      markdown.Append("-----");
-      markdown.Append(Tools.nl);
-      return markdown.ToString();
-   }
-
 }

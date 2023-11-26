@@ -4,7 +4,8 @@ using System.Drawing.Design;
 namespace WinGPT;
 
 public class Config_UIable {
-   public int? Max_Tokens { get; set; }
+   public int? Max_Tokens        { get; set; }
+   public int? Vision_Max_Tokens { get; set; } = 1000;
 
    /// <summary>
    /// This controls the function that enables saving via prompt.

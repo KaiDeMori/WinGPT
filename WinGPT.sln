@@ -11,6 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JSON_Schema_Trials", "..\JS
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "WinGPT_Setup", "..\WinGPT_Setup\WinGPT_Setup.vdproj", "{1920FF3C-47BB-4779-B0D4-6945771DBEE7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{26401D2B-EEE0-489C-873F-E95E8C5451B1}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
