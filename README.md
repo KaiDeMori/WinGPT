@@ -23,7 +23,7 @@ You managed Level 0! Congratualations!! You have officially used AI now.
 
 
 ### Level 1
-Open the `Settings` menu and select `Show Tulpas`.
+Find the `Tulpa` folder in your base directory.
 
 
 # What is a Tulpa?
