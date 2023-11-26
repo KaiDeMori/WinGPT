@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using WinGPT.OpenAI;
 
 namespace WinGPT;
 
@@ -135,8 +136,7 @@ public static class Tools {
       }
    }
 
-   public static readonly string nl = "\n"; //Environment.NewLine;
-
+   public static readonly string nl = Environment.NewLine;
 
    public static DirectoryInfo[] GetRelativeDirectories(DirectoryInfo baseDirectory, FileSystemInfo fileSystemInfo) {
       List<DirectoryInfo> intermediateDirectories = new();
@@ -158,5 +158,19 @@ public static class Tools {
       }
 
       return intermediateDirectories.ToArray();
+   }
+
+   public static bool isVisionModel() {
+      return Config.Active.LanguageModel switch {
+         Models.gpt_4_vision_preview => true,
+         _                           => false
+      };
+   }
+
+   public static bool isImageGenerationModel() {
+      return Config.Active.LanguageModel switch {
+         Models.dall_e_3 => true,
+         _               => false
+      };
    }
 }
