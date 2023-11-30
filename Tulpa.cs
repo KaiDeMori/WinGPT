@@ -131,19 +131,8 @@ public class Tulpa : InterTulpa {
             }
 
             Debug.WriteLine($"saveFunctionCall: {save_CallArguments}");
-            //see if the file is in the associated files
-            var file_to_save =
-               associated_files?.FirstOrDefault(f => f.Name == save_CallArguments.filename)
-               ?? new FileInfo(Path.Join(Config.AdHoc_Downloads_Path.FullName, save_CallArguments.filename));
-            string dummy_assistant_content;
-            try {
-               //save the file
-               System.IO.File.WriteAllText(file_to_save.FullName, save_CallArguments.text_content);
-               dummy_assistant_content = $"File {file_to_save.Name} was saved successfully.";
-            }
-            catch (Exception e) {
-               dummy_assistant_content = $"File {file_to_save.Name} could not be saved.\r\n{e.Message}";
-            }
+            //see if the file is in the associated files use the new AssociatedFilesSaver
+            AssociatedFilesSaver.SaveFile(save_CallArguments.filename, save_CallArguments.text_content, associated_files, out var dummy_assistant_content);
 
             //in case we have no content for the user, provide some feedback
             if (response_message.content is null) {
@@ -191,15 +180,15 @@ public class Tulpa : InterTulpa {
       //add the content of the old system message to the new one
       tuned_up_system_message_content.Append(first_system_message.content);
 
-      if (Config.Active.UIable.Use_Save_Link)
-         add_save_link(tuned_up_system_message_content);
+      if (Config.Active.UIable.Use_Save_Via_Link)
+         add_save_link_preprompt(tuned_up_system_message_content);
 
       // "Upload"
       add_associated_files_to_system_message(associated_files, tuned_up_system_message_content);
 
       // if the save_function is null, the parameter will just be ignored
       Function<SaveParameters>? save_function = null;
-      if (Config.Active.UIable.Use_Save_Function)
+      if (Config.Active.UIable.Use_Save_Via_Prompt)
          save_function = Enable_Save_via_Prompt_Function();
 
       var new_system_message = new Message {
@@ -244,43 +233,37 @@ public class Tulpa : InterTulpa {
    }
 
    private void add_associated_files_to_system_message(FileInfo[]? associated_files, StringBuilder tuned_up_system_message_content) {
-      if (associated_files is not null) {
-         //add the associated files to the system message
-         foreach (var file in associated_files) {
-            if (IsCodeFile(file)) {
-               var markdown_codeblock = create_markdown_code_block(file);
-               tuned_up_system_message_content.AppendLine(Tools.nl);
-               tuned_up_system_message_content.AppendLine("-----");
-               tuned_up_system_message_content.AppendLine(Tools.nl);
+      if (associated_files is null)
+         return;
+
+      //add the associated files to the system message
+      foreach (var file in associated_files) {
+         //now we want to add code files in a code block, text files with the simple filename wrapper and all other files not at all
+         //use the shiny new FileTypeIdentifier
+         var fileType = FileTypeIdentifier.GetFileType(file.FullName);
+         switch (fileType) {
+            case FileType.Code:
+               var markdown_codeblock = Markf278DownHelper.create_markdown_code_block(file);
                tuned_up_system_message_content.AppendLine(markdown_codeblock);
-            }
-            else {
-               //we cannot attach images to the system message
-            }
+               break;
+            case FileType.Text:
+               var markdown_textblock = Markf278DownHelper.create_markdown_text_block(file);
+               tuned_up_system_message_content.AppendLine(markdown_textblock);
+               break;
+            case FileType.Image:
+               //not available. We need to use the Vision API for that!
+               break;
+            case FileType.Other:
+               //not available. Maybe we can add a link to the file?
+               //or do some Base64 encoding?
+               break;
+            default:
+               throw new ArgumentOutOfRangeException();
          }
       }
    }
 
-   private bool IsCodeFile(FileInfo file) {
-      var ext = file.Extension.ToLower();
-      //var isCodeFile = ext is ".cs" or ".vb" or ".js" or ".ts" or ".py" or ".html" or ".css" or ".xml" or ".json";
-      switch (ext) {
-         case ".cs":
-         case ".vb":
-         case ".js":
-         case ".ts":
-         case ".py":
-         case ".html":
-         case ".css":
-         case ".xml":
-         case ".json":
-            return true;
-         default:
-            return false;
-      }
-   }
-
-   private static void add_save_link(StringBuilder tuned_up_system_message_content) {
+   private static void add_save_link_preprompt(StringBuilder tuned_up_system_message_content) {
       var system_message = System.IO.File.ReadAllText("Filetransfer/save_link_system_message.md");
       tuned_up_system_message_content.AppendLine(Tools.nl);
       tuned_up_system_message_content.AppendLine(system_message);
@@ -294,28 +277,5 @@ public class Tulpa : InterTulpa {
       var last_message = tulpa_messages_togo.LastOrDefault();
       if (last_message?.role == Role.user)
          tulpa_messages_togo.Remove(last_message);
-   }
-
-   private static string create_markdown_code_block(FileInfo file) {
-      var file_content = String.Empty;
-      try {
-         file_content = System.IO.File.ReadAllText(file.FullName);
-      }
-      catch (Exception) {
-         return file_content;
-      }
-
-      var markdown = new StringBuilder();
-      markdown.Append("### ");
-      markdown.Append(file.Name);
-      markdown.Append("{.external-filename}");
-      markdown.Append(Tools.nl);
-      markdown.Append("```");
-      markdown.Append(Tools.nl);
-      markdown.Append(file_content);
-      markdown.Append(Tools.nl);
-      markdown.Append("```");
-      markdown.Append(Tools.nl);
-      return markdown.ToString();
    }
 }
