@@ -222,6 +222,8 @@ public partial class WinGPT_Form : Form {
 
       var response_message = await Config.ActiveTulpa.SendAsync(user_message, Conversation.Active, Associated_files.ToArray());
 
+      this.FlashNotification();
+
       if (response_message is null) {
          //we got an error.
          Set_status_bar(false);
