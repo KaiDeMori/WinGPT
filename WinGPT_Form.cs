@@ -320,6 +320,9 @@ public partial class WinGPT_Form : Form {
 
    private void prompt_textBox_KeyDown(object sender, KeyEventArgs e) {
       if (e is {Control: true, KeyCode: Keys.Enter}) {
+         // Suppress the key event so it doesn't get entered into the TextBox
+         e.Handled          = true;
+         e.SuppressKeyPress = true;
          send_prompt_button_Click(sender, e);
       }
    }

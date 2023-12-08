@@ -1,8 +1,8 @@
 <Project>
 
 	<PropertyGroup>
-		<ApplicationVersion>0.2.3.0</ApplicationVersion>
-		<Version>0.2.3.0</Version>
+		<ApplicationVersion>0.2.4.0</ApplicationVersion>
+		<Version>0.2.4.0</Version>
 		<!--
 		<AssemblyVersion>3.3.3.0</AssemblyVersion>
 		<Authors>John Doe</Authors>
