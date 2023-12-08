@@ -47,7 +47,8 @@ public partial class WinGPT_Form : Form {
       //HandleCreated += (sender, args) => 
       //   set_splitter_state();
 
-      Text += $" v{Assembly.GetExecutingAssembly().GetName().Version} PRE-ALPHA — {Application_Paths.APP_MODE}";
+      var update = UpdateHelper.check_if_update_available()?" — update available!":string.Empty;
+      Text += $" v{Assembly.GetExecutingAssembly().GetName().Version} PRE-ALPHA › {Application_Paths.APP_MODE}{update} ";
 
       Set_status_bar(true, "Initializing available models.");
       Initialize_Models_MenuItems();
