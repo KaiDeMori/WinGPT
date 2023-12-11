@@ -44,7 +44,7 @@ internal class Config {
 
    public string? BaseDirectory  { get; set; }
    public string  OpenAI_API_Key { get; set; } = "";
-   public string  LanguageModel  { get; set; } = "gpt-4";
+   public string  LanguageModel  { get; set; } = "gpt-4-1106-preview";
    public string  LastUsedTulpa  { get; set; } = DefaultAssistant_Filename;
 
    public double            MainSplitter_relative_position { get; set; } = .2;
