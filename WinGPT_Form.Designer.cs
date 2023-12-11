@@ -69,6 +69,7 @@
             openConfigDirectory_ToolStripMenuItem = new ToolStripMenuItem();
             help_ToolStripMenuItem = new ToolStripMenuItem();
             about_ToolStripMenuItem = new ToolStripMenuItem();
+            goToWinGPTWikiToolStripMenuItem = new ToolStripMenuItem();
             main_panel = new Panel();
             tulpas_tableLayoutPanel = new TableLayoutPanel();
             tulpas_flowLayoutPanel = new FlowLayoutPanel();
@@ -461,7 +462,7 @@
             // 
             // help_ToolStripMenuItem
             // 
-            help_ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { about_ToolStripMenuItem });
+            help_ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { about_ToolStripMenuItem, goToWinGPTWikiToolStripMenuItem });
             help_ToolStripMenuItem.Name = "help_ToolStripMenuItem";
             help_ToolStripMenuItem.Size = new Size(44, 20);
             help_ToolStripMenuItem.Text = "&Help";
@@ -470,9 +471,17 @@
             // 
             about_ToolStripMenuItem.Image = (Image)resources.GetObject("about_ToolStripMenuItem.Image");
             about_ToolStripMenuItem.Name = "about_ToolStripMenuItem";
-            about_ToolStripMenuItem.Size = new Size(116, 22);
+            about_ToolStripMenuItem.Size = new Size(180, 22);
             about_ToolStripMenuItem.Text = "&About...";
             about_ToolStripMenuItem.Click += about_ToolStripMenuItem_Click;
+            // 
+            // goToWinGPTWikiToolStripMenuItem
+            // 
+            goToWinGPTWikiToolStripMenuItem.Image = Properties.Resources.Interwebs;
+            goToWinGPTWikiToolStripMenuItem.Name = "goToWinGPTWikiToolStripMenuItem";
+            goToWinGPTWikiToolStripMenuItem.Size = new Size(180, 22);
+            goToWinGPTWikiToolStripMenuItem.Text = "Go to WinGPT Wiki";
+            goToWinGPTWikiToolStripMenuItem.Click += goToWinGPTWikiToolStripMenuItem_Click;
             // 
             // main_panel
             // 
@@ -642,5 +651,6 @@
         private ToolStripMenuItem openConfigDirectory_ToolStripMenuItem;
         private Button toggle_RIGHT_button;
         private Button toggle_LEFT_button;
+        private ToolStripMenuItem goToWinGPTWikiToolStripMenuItem;
     }
 }

@@ -1,12 +1,15 @@
 <Project>
 
 	<PropertyGroup>
-		<ApplicationVersion>0.2.4.0</ApplicationVersion>
-		<Version>0.2.4.0</Version>
-		<!--
-		<AssemblyVersion>3.3.3.0</AssemblyVersion>
-		<Authors>John Doe</Authors>
-		-->
+		<ApplicationVersion>0.2.5.0</ApplicationVersion>
+		<Version>0.2.5.0</Version>
+		<Title>WinGPT</Title>
+		<Authors>Kai De–Mori</Authors>
+		<Description>A simple Windows Froms Interface for OpenAI GPT-4&#13;&#10;a.k.a.&#13;&#10;Ancient meets Sci-Fi&#13;&#10;a.k.a.&#13;&#10;The Last WinForms Application</Description>
+		<Copyright>GNU GPL 3.0</Copyright>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>GPT-4, UI</PackageTags>
+		<PackageProjectUrl>https://www.peopleoftheprompt.org</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/KaiDeMori/WinGPT</RepositoryUrl>
 	</PropertyGroup>
-
 </Project>
