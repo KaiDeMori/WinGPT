@@ -5,7 +5,7 @@ Old–School WinForms GPT interface.
 This is a simple WinForms interface for the OpenAI GPT API.
 
 ## How to use?
-[News & Docs](https://wiki.peopleoftheprompt.org/index.php?title=Main_Page)
+[News & Docs](https://wiki.peopleoftheprompt.org/)
 
 ### Level 0
 - Start the application  
