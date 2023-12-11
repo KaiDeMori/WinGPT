@@ -29,7 +29,7 @@ partial class AboutBox : Form {
       }
    }
 
-   public string AssemblyVersion => Assembly.GetExecutingAssembly().GetName().Version.ToString();
+   public string AssemblyVersion => Tools.Version.ToString();
 
    public string AssemblyDescription {
       get {

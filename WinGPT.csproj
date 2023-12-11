@@ -131,8 +131,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Compile Remove="Application Files\**" />
 		<Compile Remove="NewFolder\**" />
+		<EmbeddedResource Remove="Application Files\**" />
 		<EmbeddedResource Remove="NewFolder\**" />
+		<None Remove="Application Files\**" />
 		<None Remove="NewFolder\**" />
 	</ItemGroup>
 
