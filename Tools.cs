@@ -173,4 +173,6 @@ public static class Tools {
          _               => false
       };
    }
+
+   public static Version Version => Assembly.GetExecutingAssembly().GetName().Version!;
 }
