@@ -1,6 +1,4 @@
 using System.Diagnostics;
-using System.Net;
-using System.Reflection;
 
 namespace WinGPT;
 
@@ -18,7 +16,7 @@ public static class UpdateHelper {
    public static bool check_if_update_available() {
       try {
          // Get the current version of the assembly
-         var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
+         var currentVersion = Tools.Version;
          if (currentVersion == null)
             throw new InvalidOperationException("Could not determine the current assembly version.");
 
