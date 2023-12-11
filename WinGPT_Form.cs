@@ -14,7 +14,6 @@ using Message = WinGPT.OpenAI.Chat.Message;
 namespace WinGPT;
 
 public partial class WinGPT_Form : Form {
-   //we need a dictionary from Tulpa to RadioButton
    public readonly Dictionary<Tulpa, RadioButton> Tulpa_to_RadioButton = new();
 
    private BaseDirectoryWatcherAndTreeViewUpdater baseDirectoryWatcherAndTreeViewUpdater;
@@ -47,7 +46,7 @@ public partial class WinGPT_Form : Form {
       //HandleCreated += (sender, args) => 
       //   set_splitter_state();
 
-      var update = UpdateHelper.check_if_update_available()?" — update available!":string.Empty;
+      var update = UpdateHelper.check_if_update_available() ? " — update available!" : string.Empty;
       Text += $" v{Assembly.GetExecutingAssembly().GetName().Version} PRE-ALPHA › {Application_Paths.APP_MODE}{update} ";
 
       Set_status_bar(true, "Initializing available models.");
@@ -846,5 +845,21 @@ public partial class WinGPT_Form : Form {
 
       // Call the base implementation
       return base.ProcessCmdKey(ref message, keyData);
+   }
+
+   private void goToWinGPTWikiToolStripMenuItem_Click(object sender, EventArgs e) {
+      // Open default browser with the wiki
+      try {
+         // Use the ProcessStartInfo class to specify the URL and the action to open it
+         var psi = new ProcessStartInfo {
+            FileName        = Config.WIKI_URL,
+            UseShellExecute = true // Use the operating system's shell to start the process
+         };
+         Process.Start(psi);
+      }
+      catch (Exception ex) {
+         // Handle the exception if the browser couldn't be started
+         MessageBox.Show($"An error occurred while trying to open the URL: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
    }
 }
