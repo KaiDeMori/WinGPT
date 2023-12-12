@@ -288,8 +288,17 @@ public partial class WinGPT_Form : Form {
          Config.Save();
    }
 
-   private void base_directory_toolStripMenuItem_Click(object sender, EventArgs e) {
+   private void changeBaseDirectoryToolStripMenuItem_Click(object sender, EventArgs e) {
       Startup.UpdateBaseDirectory();
+      //DRAGONS not sure if we need some clean-up first.
+      baseDirectoryWatcherAndTreeViewUpdater?.Dispose();
+      baseDirectoryWatcherAndTreeViewUpdater =
+         new BaseDirectoryWatcherAndTreeViewUpdater(
+            Config.History_Directory,
+            conversation_history_treeView
+         );
+      //recreate the new tulpa buttons
+      tulpaDirectoryWatcher = new TulpaDirectoryWatcher(CreateTulpaButtons_safe);
    }
 
    private void sysmsghack_ToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -860,6 +869,12 @@ public partial class WinGPT_Form : Form {
       catch (Exception ex) {
          // Handle the exception if the browser couldn't be started
          MessageBox.Show($"An error occurred while trying to open the URL: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
+   }
+
+   private void openInFileManagerToolStripMenuItem_Click(object sender, EventArgs e) {
+      if (Config.Active.BaseDirectory != null) {
+         Open_in_Explorer(new(Config.Active.BaseDirectory));
       }
    }
 }
