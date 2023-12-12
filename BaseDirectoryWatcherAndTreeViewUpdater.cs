@@ -144,6 +144,7 @@ public class BaseDirectoryWatcherAndTreeViewUpdater : IDisposable {
    }
 
    public void Dispose() {
+      fileSystemWatcher.EnableRaisingEvents =false;
       fileSystemWatcher.Dispose();
    }
 

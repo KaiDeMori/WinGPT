@@ -60,6 +60,8 @@
             main_splitter = new Splitter();
             main_menuStrip = new MenuStrip();
             base_directory_toolStripMenuItem = new ToolStripMenuItem();
+            openInFileManagerToolStripMenuItem = new ToolStripMenuItem();
+            changeBaseDirectoryToolStripMenuItem = new ToolStripMenuItem();
             settings_ToolStripMenuItem = new ToolStripMenuItem();
             tools_ToolStripMenuItem = new ToolStripMenuItem();
             openai_api_key_toolStripMenuItem = new ToolStripMenuItem();
@@ -401,11 +403,24 @@
             // 
             // base_directory_toolStripMenuItem
             // 
+            base_directory_toolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openInFileManagerToolStripMenuItem, changeBaseDirectoryToolStripMenuItem });
             base_directory_toolStripMenuItem.Name = "base_directory_toolStripMenuItem";
             base_directory_toolStripMenuItem.Size = new Size(94, 20);
             base_directory_toolStripMenuItem.Text = "&Base Directory";
-            base_directory_toolStripMenuItem.ToolTipText = "Specify the base directory.";
-            base_directory_toolStripMenuItem.Click += base_directory_toolStripMenuItem_Click;
+            // 
+            // openInFileManagerToolStripMenuItem
+            // 
+            openInFileManagerToolStripMenuItem.Name = "openInFileManagerToolStripMenuItem";
+            openInFileManagerToolStripMenuItem.Size = new Size(193, 22);
+            openInFileManagerToolStripMenuItem.Text = "Open in File Manager";
+            openInFileManagerToolStripMenuItem.Click += openInFileManagerToolStripMenuItem_Click;
+            // 
+            // changeBaseDirectoryToolStripMenuItem
+            // 
+            changeBaseDirectoryToolStripMenuItem.Name = "changeBaseDirectoryToolStripMenuItem";
+            changeBaseDirectoryToolStripMenuItem.Size = new Size(193, 22);
+            changeBaseDirectoryToolStripMenuItem.Text = "Change Base Directory";
+            changeBaseDirectoryToolStripMenuItem.Click += changeBaseDirectoryToolStripMenuItem_Click;
             // 
             // settings_ToolStripMenuItem
             // 
@@ -471,7 +486,7 @@
             // 
             about_ToolStripMenuItem.Image = (Image)resources.GetObject("about_ToolStripMenuItem.Image");
             about_ToolStripMenuItem.Name = "about_ToolStripMenuItem";
-            about_ToolStripMenuItem.Size = new Size(180, 22);
+            about_ToolStripMenuItem.Size = new Size(174, 22);
             about_ToolStripMenuItem.Text = "&About...";
             about_ToolStripMenuItem.Click += about_ToolStripMenuItem_Click;
             // 
@@ -479,7 +494,7 @@
             // 
             goToWinGPTWikiToolStripMenuItem.Image = Properties.Resources.Interwebs;
             goToWinGPTWikiToolStripMenuItem.Name = "goToWinGPTWikiToolStripMenuItem";
-            goToWinGPTWikiToolStripMenuItem.Size = new Size(180, 22);
+            goToWinGPTWikiToolStripMenuItem.Size = new Size(174, 22);
             goToWinGPTWikiToolStripMenuItem.Text = "Go to WinGPT Wiki";
             goToWinGPTWikiToolStripMenuItem.Click += goToWinGPTWikiToolStripMenuItem_Click;
             // 
@@ -652,5 +667,7 @@
         private Button toggle_RIGHT_button;
         private Button toggle_LEFT_button;
         private ToolStripMenuItem goToWinGPTWikiToolStripMenuItem;
+        private ToolStripMenuItem openInFileManagerToolStripMenuItem;
+        private ToolStripMenuItem changeBaseDirectoryToolStripMenuItem;
     }
 }
