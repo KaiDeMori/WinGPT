@@ -420,7 +420,7 @@
             changeBaseDirectoryToolStripMenuItem.Name = "changeBaseDirectoryToolStripMenuItem";
             changeBaseDirectoryToolStripMenuItem.Size = new Size(193, 22);
             changeBaseDirectoryToolStripMenuItem.Text = "Change Base Directory";
-            changeBaseDirectoryToolStripMenuItem.Click += changeBaseDirectoryToolStripMenuItem_Click;
+            changeBaseDirectoryToolStripMenuItem.Click += change_BaseDirectory_ToolStripMenuItem_Click;
             // 
             // settings_ToolStripMenuItem
             // 
@@ -450,7 +450,7 @@
             tokenCounter_ToolStripMenuItem.Name = "tokenCounter_ToolStripMenuItem";
             tokenCounter_ToolStripMenuItem.Size = new Size(193, 22);
             tokenCounter_ToolStripMenuItem.Text = "Token Counter";
-            tokenCounter_ToolStripMenuItem.Click += tokenCounterToolStripMenuItem_Click;
+            tokenCounter_ToolStripMenuItem.Click += token_Counter_ToolStripMenuItem_Click;
             // 
             // sysmsghack_ToolStripMenuItem
             // 
