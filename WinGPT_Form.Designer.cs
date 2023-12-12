@@ -57,10 +57,12 @@
             submit_edits_button = new Button();
             new_conversation_button = new Button();
             conversation_history_treeView = new TreeView();
+            history_contextMenuStrip = new ContextMenuStrip(components);
+            openToolStripMenuItem = new ToolStripMenuItem();
             main_splitter = new Splitter();
             main_menuStrip = new MenuStrip();
             base_directory_toolStripMenuItem = new ToolStripMenuItem();
-            openInFileManagerToolStripMenuItem = new ToolStripMenuItem();
+            open_Base_Directory_ToolStripMenuItem = new ToolStripMenuItem();
             changeBaseDirectoryToolStripMenuItem = new ToolStripMenuItem();
             settings_ToolStripMenuItem = new ToolStripMenuItem();
             tools_ToolStripMenuItem = new ToolStripMenuItem();
@@ -68,10 +70,13 @@
             tokenCounter_ToolStripMenuItem = new ToolStripMenuItem();
             sysmsghack_ToolStripMenuItem = new ToolStripMenuItem();
             models_ToolStripMenuItem = new ToolStripMenuItem();
-            openConfigDirectory_ToolStripMenuItem = new ToolStripMenuItem();
+            open_Config_Directory_ToolStripMenuItem = new ToolStripMenuItem();
+            open_AdHoc_Directory_ToolStripMenuItem = new ToolStripMenuItem();
+            open_Tulpas_Directory_ToolStripMenuItem = new ToolStripMenuItem();
+            open_Downloads_Directory_ToolStripMenuItem = new ToolStripMenuItem();
             help_ToolStripMenuItem = new ToolStripMenuItem();
             about_ToolStripMenuItem = new ToolStripMenuItem();
-            goToWinGPTWikiToolStripMenuItem = new ToolStripMenuItem();
+            goTo_WinGPT_Wiki_ToolStripMenuItem = new ToolStripMenuItem();
             main_panel = new Panel();
             tulpas_tableLayoutPanel = new TableLayoutPanel();
             tulpas_flowLayoutPanel = new FlowLayoutPanel();
@@ -90,6 +95,7 @@
             webview2_tabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)webView21).BeginInit();
             markf278down_tabPage.SuspendLayout();
+            history_contextMenuStrip.SuspendLayout();
             main_menuStrip.SuspendLayout();
             main_panel.SuspendLayout();
             tulpas_tableLayoutPanel.SuspendLayout();
@@ -359,6 +365,7 @@
             // 
             // conversation_history_treeView
             // 
+            conversation_history_treeView.ContextMenuStrip = history_contextMenuStrip;
             conversation_history_treeView.Dock = DockStyle.Left;
             conversation_history_treeView.HideSelection = false;
             conversation_history_treeView.Indent = 10;
@@ -382,6 +389,19 @@
             conversation_history_treeView.AfterSelect += conversation_history_treeView_AfterSelect;
             conversation_history_treeView.NodeMouseDoubleClick += conversation_history_treeView_NodeMouseDoubleClick;
             // 
+            // history_contextMenuStrip
+            // 
+            history_contextMenuStrip.Items.AddRange(new ToolStripItem[] { openToolStripMenuItem });
+            history_contextMenuStrip.Name = "history_contextMenuStrip";
+            history_contextMenuStrip.Size = new Size(104, 26);
+            // 
+            // openToolStripMenuItem
+            // 
+            openToolStripMenuItem.Name = "openToolStripMenuItem";
+            openToolStripMenuItem.Size = new Size(103, 22);
+            openToolStripMenuItem.Text = "Open";
+            openToolStripMenuItem.Click += open_treenode_ToolStripMenuItem_Click;
+            // 
             // main_splitter
             // 
             main_splitter.Location = new Point(161, 37);
@@ -403,20 +423,22 @@
             // 
             // base_directory_toolStripMenuItem
             // 
-            base_directory_toolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openInFileManagerToolStripMenuItem, changeBaseDirectoryToolStripMenuItem });
+            base_directory_toolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { open_Base_Directory_ToolStripMenuItem, changeBaseDirectoryToolStripMenuItem });
             base_directory_toolStripMenuItem.Name = "base_directory_toolStripMenuItem";
             base_directory_toolStripMenuItem.Size = new Size(94, 20);
             base_directory_toolStripMenuItem.Text = "&Base Directory";
             // 
-            // openInFileManagerToolStripMenuItem
+            // open_Base_Directory_ToolStripMenuItem
             // 
-            openInFileManagerToolStripMenuItem.Name = "openInFileManagerToolStripMenuItem";
-            openInFileManagerToolStripMenuItem.Size = new Size(193, 22);
-            openInFileManagerToolStripMenuItem.Text = "Open in File Manager";
-            openInFileManagerToolStripMenuItem.Click += openInFileManagerToolStripMenuItem_Click;
+            open_Base_Directory_ToolStripMenuItem.Image = Properties.Resources.FolderOpened;
+            open_Base_Directory_ToolStripMenuItem.Name = "open_Base_Directory_ToolStripMenuItem";
+            open_Base_Directory_ToolStripMenuItem.Size = new Size(193, 22);
+            open_Base_Directory_ToolStripMenuItem.Text = "Open in File Manager";
+            open_Base_Directory_ToolStripMenuItem.Click += open_Base_Directory_ToolStripMenuItem_Click;
             // 
             // changeBaseDirectoryToolStripMenuItem
             // 
+            changeBaseDirectoryToolStripMenuItem.Image = Properties.Resources.SwitchDirectory;
             changeBaseDirectoryToolStripMenuItem.Name = "changeBaseDirectoryToolStripMenuItem";
             changeBaseDirectoryToolStripMenuItem.Size = new Size(193, 22);
             changeBaseDirectoryToolStripMenuItem.Text = "Change Base Directory";
@@ -431,7 +453,7 @@
             // 
             // tools_ToolStripMenuItem
             // 
-            tools_ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openai_api_key_toolStripMenuItem, tokenCounter_ToolStripMenuItem, sysmsghack_ToolStripMenuItem, models_ToolStripMenuItem, openConfigDirectory_ToolStripMenuItem });
+            tools_ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openai_api_key_toolStripMenuItem, tokenCounter_ToolStripMenuItem, sysmsghack_ToolStripMenuItem, models_ToolStripMenuItem, open_Config_Directory_ToolStripMenuItem, open_AdHoc_Directory_ToolStripMenuItem, open_Tulpas_Directory_ToolStripMenuItem, open_Downloads_Directory_ToolStripMenuItem });
             tools_ToolStripMenuItem.Name = "tools_ToolStripMenuItem";
             tools_ToolStripMenuItem.Size = new Size(46, 20);
             tools_ToolStripMenuItem.Text = "&Tools";
@@ -440,7 +462,7 @@
             // 
             openai_api_key_toolStripMenuItem.Image = (Image)resources.GetObject("openai_api_key_toolStripMenuItem.Image");
             openai_api_key_toolStripMenuItem.Name = "openai_api_key_toolStripMenuItem";
-            openai_api_key_toolStripMenuItem.Size = new Size(193, 22);
+            openai_api_key_toolStripMenuItem.Size = new Size(216, 22);
             openai_api_key_toolStripMenuItem.Text = "OpenAI API Key";
             openai_api_key_toolStripMenuItem.Click += openai_api_key_toolStripMenuItem_Click;
             // 
@@ -448,7 +470,7 @@
             // 
             tokenCounter_ToolStripMenuItem.Image = Properties.Resources.TokenCounter;
             tokenCounter_ToolStripMenuItem.Name = "tokenCounter_ToolStripMenuItem";
-            tokenCounter_ToolStripMenuItem.Size = new Size(193, 22);
+            tokenCounter_ToolStripMenuItem.Size = new Size(216, 22);
             tokenCounter_ToolStripMenuItem.Text = "Token Counter";
             tokenCounter_ToolStripMenuItem.Click += token_Counter_ToolStripMenuItem_Click;
             // 
@@ -457,7 +479,7 @@
             sysmsghack_ToolStripMenuItem.CheckOnClick = true;
             sysmsghack_ToolStripMenuItem.Image = Properties.Resources.AddField;
             sysmsghack_ToolStripMenuItem.Name = "sysmsghack_ToolStripMenuItem";
-            sysmsghack_ToolStripMenuItem.Size = new Size(193, 22);
+            sysmsghack_ToolStripMenuItem.Size = new Size(216, 22);
             sysmsghack_ToolStripMenuItem.Text = "GPT4 sysmsghack";
             sysmsghack_ToolStripMenuItem.Click += sysmsghack_ToolStripMenuItem_Click;
             // 
@@ -465,19 +487,45 @@
             // 
             models_ToolStripMenuItem.Image = Properties.Resources.ColumnGroup;
             models_ToolStripMenuItem.Name = "models_ToolStripMenuItem";
-            models_ToolStripMenuItem.Size = new Size(193, 22);
+            models_ToolStripMenuItem.Size = new Size(216, 22);
             models_ToolStripMenuItem.Text = "Models";
             // 
-            // openConfigDirectory_ToolStripMenuItem
+            // open_Config_Directory_ToolStripMenuItem
             // 
-            openConfigDirectory_ToolStripMenuItem.Name = "openConfigDirectory_ToolStripMenuItem";
-            openConfigDirectory_ToolStripMenuItem.Size = new Size(193, 22);
-            openConfigDirectory_ToolStripMenuItem.Text = "Open Config Directory";
-            openConfigDirectory_ToolStripMenuItem.Click += openConfigDirectoryToolStripMenuItem_Click;
+            open_Config_Directory_ToolStripMenuItem.Image = Properties.Resources.FolderOpened;
+            open_Config_Directory_ToolStripMenuItem.Name = "open_Config_Directory_ToolStripMenuItem";
+            open_Config_Directory_ToolStripMenuItem.Size = new Size(216, 22);
+            open_Config_Directory_ToolStripMenuItem.Text = "Open Config Directory";
+            open_Config_Directory_ToolStripMenuItem.Click += open_Config_Directory_ToolStripMenuItem_Click;
+            // 
+            // open_AdHoc_Directory_ToolStripMenuItem
+            // 
+            open_AdHoc_Directory_ToolStripMenuItem.Image = Properties.Resources.FolderOpened;
+            open_AdHoc_Directory_ToolStripMenuItem.Name = "open_AdHoc_Directory_ToolStripMenuItem";
+            open_AdHoc_Directory_ToolStripMenuItem.Size = new Size(216, 22);
+            open_AdHoc_Directory_ToolStripMenuItem.Text = "Open Ad-Hoc Directory";
+            open_AdHoc_Directory_ToolStripMenuItem.ToolTipText = "Opens the directory where the temporary conversations are stored.";
+            open_AdHoc_Directory_ToolStripMenuItem.Click += open_AdHoc_Directory_ToolStripMenuItem_Click;
+            // 
+            // open_Tulpas_Directory_ToolStripMenuItem
+            // 
+            open_Tulpas_Directory_ToolStripMenuItem.Image = Properties.Resources.FolderOpened;
+            open_Tulpas_Directory_ToolStripMenuItem.Name = "open_Tulpas_Directory_ToolStripMenuItem";
+            open_Tulpas_Directory_ToolStripMenuItem.Size = new Size(216, 22);
+            open_Tulpas_Directory_ToolStripMenuItem.Text = "Open Tulpas Directory";
+            open_Tulpas_Directory_ToolStripMenuItem.Click += open_Tulpas_Directory_ToolStripMenuItem_Click;
+            // 
+            // open_Downloads_Directory_ToolStripMenuItem
+            // 
+            open_Downloads_Directory_ToolStripMenuItem.Image = Properties.Resources.FolderOpened;
+            open_Downloads_Directory_ToolStripMenuItem.Name = "open_Downloads_Directory_ToolStripMenuItem";
+            open_Downloads_Directory_ToolStripMenuItem.Size = new Size(216, 22);
+            open_Downloads_Directory_ToolStripMenuItem.Text = "Open Downloads Directory";
+            open_Downloads_Directory_ToolStripMenuItem.Click += open_Downloads_Directory_ToolStripMenuItem_Click;
             // 
             // help_ToolStripMenuItem
             // 
-            help_ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { about_ToolStripMenuItem, goToWinGPTWikiToolStripMenuItem });
+            help_ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { about_ToolStripMenuItem, goTo_WinGPT_Wiki_ToolStripMenuItem });
             help_ToolStripMenuItem.Name = "help_ToolStripMenuItem";
             help_ToolStripMenuItem.Size = new Size(44, 20);
             help_ToolStripMenuItem.Text = "&Help";
@@ -490,13 +538,13 @@
             about_ToolStripMenuItem.Text = "&About...";
             about_ToolStripMenuItem.Click += about_ToolStripMenuItem_Click;
             // 
-            // goToWinGPTWikiToolStripMenuItem
+            // goTo_WinGPT_Wiki_ToolStripMenuItem
             // 
-            goToWinGPTWikiToolStripMenuItem.Image = Properties.Resources.Interwebs;
-            goToWinGPTWikiToolStripMenuItem.Name = "goToWinGPTWikiToolStripMenuItem";
-            goToWinGPTWikiToolStripMenuItem.Size = new Size(174, 22);
-            goToWinGPTWikiToolStripMenuItem.Text = "Go to WinGPT Wiki";
-            goToWinGPTWikiToolStripMenuItem.Click += goToWinGPTWikiToolStripMenuItem_Click;
+            goTo_WinGPT_Wiki_ToolStripMenuItem.Image = Properties.Resources.Interwebs;
+            goTo_WinGPT_Wiki_ToolStripMenuItem.Name = "goTo_WinGPT_Wiki_ToolStripMenuItem";
+            goTo_WinGPT_Wiki_ToolStripMenuItem.Size = new Size(174, 22);
+            goTo_WinGPT_Wiki_ToolStripMenuItem.Text = "Go to WinGPT Wiki";
+            goTo_WinGPT_Wiki_ToolStripMenuItem.Click += goTo_WinGPT_Wiki_ToolStripMenuItem_Click;
             // 
             // main_panel
             // 
@@ -607,6 +655,7 @@
             ((System.ComponentModel.ISupportInitialize)webView21).EndInit();
             markf278down_tabPage.ResumeLayout(false);
             markf278down_tabPage.PerformLayout();
+            history_contextMenuStrip.ResumeLayout(false);
             main_menuStrip.ResumeLayout(false);
             main_menuStrip.PerformLayout();
             main_panel.ResumeLayout(false);
@@ -663,11 +712,16 @@
         private ToolStripMenuItem settings_ToolStripMenuItem;
         private Button submit_edits_button;
         internal Button remove_file_button;
-        private ToolStripMenuItem openConfigDirectory_ToolStripMenuItem;
+        private ToolStripMenuItem open_Config_Directory_ToolStripMenuItem;
         private Button toggle_RIGHT_button;
         private Button toggle_LEFT_button;
-        private ToolStripMenuItem goToWinGPTWikiToolStripMenuItem;
-        private ToolStripMenuItem openInFileManagerToolStripMenuItem;
+        private ToolStripMenuItem goTo_WinGPT_Wiki_ToolStripMenuItem;
+        private ToolStripMenuItem open_Base_Directory_ToolStripMenuItem;
         private ToolStripMenuItem changeBaseDirectoryToolStripMenuItem;
+        private ContextMenuStrip history_contextMenuStrip;
+        private ToolStripMenuItem openToolStripMenuItem;
+        private ToolStripMenuItem open_AdHoc_Directory_ToolStripMenuItem;
+        private ToolStripMenuItem open_Tulpas_Directory_ToolStripMenuItem;
+        private ToolStripMenuItem open_Downloads_Directory_ToolStripMenuItem;
     }
 }

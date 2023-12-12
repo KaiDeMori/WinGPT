@@ -63,6 +63,12 @@ public partial class WinGPT_Form : Form {
       //Maybe we should put more init stuff here, instead of Load and Shown 
       apply_UIable();
       ToolTipDefinitions.SetToolTips(this);
+
+      open_Config_Directory_ToolStripMenuItem.Image    = FolderBitmap;
+      open_AdHoc_Directory_ToolStripMenuItem.Image     = FolderBitmap;
+      open_Tulpas_Directory_ToolStripMenuItem.Image    = FolderBitmap;
+      open_Base_Directory_ToolStripMenuItem.Image      = FolderBitmap;
+      open_Downloads_Directory_ToolStripMenuItem.Image = FolderBitmap;
    }
 
    private void WinGPT_Form_ResizeEnd(object? sender, EventArgs e) {
@@ -382,12 +388,14 @@ public partial class WinGPT_Form : Form {
       }
    }
 
-   private static void Open_in_Explorer(DirectoryInfo directoryInfo) {
-      var psi = new System.Diagnostics.ProcessStartInfo() {
-         FileName        = directoryInfo.FullName,
+   private static void Open_in_Explorer(FileSystemInfo? filesystemInfo) {
+      if (filesystemInfo is null)
+         return;
+      var psi = new ProcessStartInfo {
+         FileName        = filesystemInfo.FullName,
          UseShellExecute = true
       };
-      System.Diagnostics.Process.Start(psi);
+      Process.Start(psi);
    }
 
    private void conversation_history_treeView_BeforeCollapse(object sender, TreeViewCancelEventArgs e) {
@@ -798,7 +806,7 @@ public partial class WinGPT_Form : Form {
       history_file_name_textBox.Text = Conversation.Active?.HistoryFile.Name;
    }
 
-   private void openConfigDirectoryToolStripMenuItem_Click(object sender, EventArgs e) {
+   private void open_Config_Directory_ToolStripMenuItem_Click(object sender, EventArgs e) {
       Open_in_Explorer(Application_Paths.Config_File.Directory);
    }
 
@@ -824,6 +832,8 @@ public partial class WinGPT_Form : Form {
 
    int prompt_splitter_distance;
 
+   private readonly Bitmap? FolderBitmap = SystemIconsHelper.GetFileIcon(null, true)?.ToBitmap();
+
    private void toggle_RIGHT_button_Click(object sender, EventArgs e) {
       if (text_splitContainer.Panel1Collapsed) {
          text_splitContainer.Panel1Collapsed  = false;
@@ -845,8 +855,7 @@ public partial class WinGPT_Form : Form {
          text_splitContainer.Panel1Collapsed = true;
       }
    }
-
-
+    
    protected override bool ProcessCmdKey(ref System.Windows.Forms.Message message, Keys keyData) {
       // Check if Ctrl+E was pressed
       if (keyData == (Keys.Control | Keys.E)) {
@@ -859,7 +868,7 @@ public partial class WinGPT_Form : Form {
       return base.ProcessCmdKey(ref message, keyData);
    }
 
-   private void goToWinGPTWikiToolStripMenuItem_Click(object sender, EventArgs e) {
+   private void goTo_WinGPT_Wiki_ToolStripMenuItem_Click(object sender, EventArgs e) {
       // Open default browser with the wiki
       try {
          // Use the ProcessStartInfo class to specify the URL and the action to open it
@@ -875,9 +884,35 @@ public partial class WinGPT_Form : Form {
       }
    }
 
-   private void openInFileManagerToolStripMenuItem_Click(object sender, EventArgs e) {
+   private void open_Base_Directory_ToolStripMenuItem_Click(object sender, EventArgs e) {
       if (Config.Active.BaseDirectory != null) {
-         Open_in_Explorer(new(Config.Active.BaseDirectory));
+         Open_in_Explorer(new DirectoryInfo(Config.Active.BaseDirectory));
       }
+   }
+
+   private void open_treenode_ToolStripMenuItem_Click(object sender, EventArgs e) {
+      // Get the current mouse position and convert it to the TreeView's client coordinates
+      Point mousePosition = conversation_history_treeView.PointToClient(Control.MousePosition);
+
+      // Get the node at the mouse position
+      TreeNode nodeAtMousePosition = conversation_history_treeView.GetNodeAt(mousePosition);
+
+      // Now you have the TreeNode that was clicked on, and you can work with it
+      if (nodeAtMousePosition != null) {
+         // Open the file in the default program
+         Open_in_Explorer(nodeAtMousePosition.Tag as FileSystemInfo);
+      }
+   }
+
+   private void open_AdHoc_Directory_ToolStripMenuItem_Click(object sender, EventArgs e) {
+      Open_in_Explorer(Config.Preliminary_Conversations_Path);
+   }
+
+   private void open_Tulpas_Directory_ToolStripMenuItem_Click(object sender, EventArgs e) {
+      Open_in_Explorer(Config.Tulpa_Directory);
+   }
+
+   private void open_Downloads_Directory_ToolStripMenuItem_Click(object sender, EventArgs e) {
+      Open_in_Explorer(Config.AdHoc_Downloads_Path);
    }
 }
