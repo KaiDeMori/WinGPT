@@ -93,15 +93,24 @@ internal static class Startup {
          return false;
       }
 
+      // Check if it's the same
+      if (selectedDirectory == Config.Active.BaseDirectory) {
+         // If it's the same, just return
+         return true;
+      }
+
       // Check if directory selected by the user is not empty
       if (Directory.EnumerateFileSystemEntries(selectedDirectory).Any()) {
          // Ask user for confirmation if directory is not empty
          DialogResult dialogResult = MessageBox.Show("The selected directory is not empty. Are you sure you want to use this directory?", "Confirmation",
             MessageBoxButtons.YesNo);
          if (dialogResult == DialogResult.Yes) {
-            // If user confirms, update the BaseDirectory
+            // If user confirms, use the already existing one.
+            // don't create the subdirectories, we assume they already exist
             Config.Active.BaseDirectory = selectedDirectory;
             AssertSubdirectories();
+            Config.Save();
+            return true;
          }
          else {
             DialogResult openExplorerResult =

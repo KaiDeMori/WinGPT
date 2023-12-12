@@ -281,14 +281,14 @@ public partial class WinGPT_Form : Form {
       }
    }
 
-   private void tokenCounterToolStripMenuItem_Click(object sender, EventArgs e) {
+   private void token_Counter_ToolStripMenuItem_Click(object sender, EventArgs e) {
       //show the TokenCounter dialog
       var dialogResult = new TokenCounter_Form().ShowDialog();
       if (dialogResult == DialogResult.OK)
          Config.Save();
    }
 
-   private void changeBaseDirectoryToolStripMenuItem_Click(object sender, EventArgs e) {
+   private void change_BaseDirectory_ToolStripMenuItem_Click(object sender, EventArgs e) {
       Startup.UpdateBaseDirectory();
       //DRAGONS not sure if we need some clean-up first.
       baseDirectoryWatcherAndTreeViewUpdater?.Dispose();
@@ -407,9 +407,12 @@ public partial class WinGPT_Form : Form {
    #region UI affairs
 
    public string PromptUserForBaseDirectory() {
-      if (base_directory_vistaFolderBrowserDialog.ShowDialog() == DialogResult.OK)
-         return base_directory_vistaFolderBrowserDialog.SelectedPath;
-      return string.Empty;
+      var dialogResult = base_directory_vistaFolderBrowserDialog.ShowDialog();
+      return dialogResult switch {
+         DialogResult.OK     => base_directory_vistaFolderBrowserDialog.SelectedPath,
+         DialogResult.Cancel => Config.Active.BaseDirectory,
+         _                   => string.Empty
+      } ?? string.Empty;
    }
 
    private void Update_Conversation() {
