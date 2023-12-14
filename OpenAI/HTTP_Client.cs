@@ -1,9 +1,11 @@
 ﻿namespace WinGPT.OpenAI;
 
 internal static class HTTP_Client {
+   public static readonly string UserAgentString = $"WinGPT/{Tools.Version} a.k.a WinForms meets Sci-Fi";
+
    private static readonly HttpClient _httpClient = new() {
       DefaultRequestHeaders = {
-         {"User-Agent", $"WinGPT/{Tools.Version} a.k.a WinForms meets Sci-Fi"},
+         {"User-Agent", UserAgentString},
       }
    };
 
