@@ -1,10 +1,11 @@
 ﻿using System.Reflection;
 
-namespace WinGPT; 
+namespace WinGPT;
 
 partial class AboutBox : Form {
    public AboutBox() {
       InitializeComponent();
+      // ReSharper disable once VirtualMemberCallInConstructor
       this.Text                    = $"About {AssemblyTitle}";
       this.labelProductName.Text   = AssemblyProduct;
       this.labelVersion.Text       = $"Version {AssemblyVersion}";
@@ -15,7 +16,7 @@ partial class AboutBox : Form {
 
    #region Assembly Attribute Accessors
 
-   public string AssemblyTitle {
+   public static string AssemblyTitle {
       get {
          object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
          if (attributes.Length > 0) {
@@ -25,13 +26,13 @@ partial class AboutBox : Form {
             }
          }
 
-         return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
+         return Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
       }
    }
 
-   public string AssemblyVersion => Tools.Version.ToString();
+   public static string AssemblyVersion => Tools.Version.ToString();
 
-   public string AssemblyDescription {
+   public static string AssemblyDescription {
       get {
          object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
          if (attributes.Length == 0) {
@@ -42,7 +43,7 @@ partial class AboutBox : Form {
       }
    }
 
-   public string AssemblyProduct {
+   public static string AssemblyProduct {
       get {
          object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
          if (attributes.Length == 0) {
@@ -53,7 +54,7 @@ partial class AboutBox : Form {
       }
    }
 
-   public string AssemblyCopyright {
+   public static string AssemblyCopyright {
       get {
          object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
          if (attributes.Length == 0) {
@@ -64,7 +65,7 @@ partial class AboutBox : Form {
       }
    }
 
-   public string AssemblyCompany {
+   public static string AssemblyCompany {
       get {
          object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
          if (attributes.Length == 0) {

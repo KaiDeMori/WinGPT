@@ -127,7 +127,7 @@ public static class Tools {
          // If the file path starts with the base directory path, get the relative path
          // by removing the base directory path from the start of the file path.
          // Also remove any leading directory separator that might remain after the removal.
-         return filePath.Substring(baseDirPath.Length).TrimStart(Path.DirectorySeparatorChar);
+         return filePath[baseDirPath.Length..].TrimStart(Path.DirectorySeparatorChar);
       }
       else {
          // If the file path doesn't start with the base directory path, it's not possible to get a relative path.

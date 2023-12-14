@@ -1,15 +1,11 @@
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Reflection;
 using Markdig;
 //using Markdig.SyntaxHighlighting;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
 using Newtonsoft.Json.Linq;
-using AutoUpdaterDotNET;
 using WinGPT.OpenAI;
-using WinGPT.OpenAI.Chat;
-using WinGPT.Properties;
 using WinGPT.Taxonomy;
 using Message = WinGPT.OpenAI.Chat.Message;
 
@@ -19,11 +15,17 @@ public partial class WinGPT_Form : Form {
    public readonly Dictionary<Tulpa, RadioButton> Tulpa_to_RadioButton = new();
 
    private BaseDirectoryWatcherAndTreeViewUpdater baseDirectoryWatcherAndTreeViewUpdater;
-   private TulpaDirectoryWatcher                  tulpaDirectoryWatcher;
 
-   private readonly TaskCompletionSource<bool> stupid_edge_mumble_mumble = new TaskCompletionSource<bool>();
+   private readonly TaskCompletionSource<bool> stupid_edge_mumble_mumble = new();
 
-   private readonly BindingList<FileInfo> Associated_files = new BindingList<FileInfo>();
+   private readonly BindingList<FileInfo> Associated_files = new();
+
+   private int treeview_width;
+   private int main_splitter_position;
+   private int prompt_splitter_distance;
+
+   private readonly Bitmap?               FolderBitmap = SystemIconsHelper.GetFileIcon(null, true)?.ToBitmap();
+   private          TulpaDirectoryWatcher tulpa_DirectoryWatcher;
 
    // This makes the "virtual member call in constructor" warning go away, but I don't understand why this should be any better.
    //public sealed override string Text => base.Text;
@@ -77,6 +79,7 @@ public partial class WinGPT_Form : Form {
       update_wingpt_ToolStripMenuItem.Enabled = false;
    }
 
+   [Obsolete("We were trying to figure out how to make the toggle buttons persist.")]
    private void WinGPT_Form_ResizeEnd(object? sender, EventArgs e) {
       //DRAGONS
       Point newloc = toggle_LEFT_button.Location with {
@@ -166,7 +169,7 @@ public partial class WinGPT_Form : Form {
       await stupid_edge_mumble_mumble.Task;
 
       Set_status_bar(true, "Watch the Tulpas!");
-      tulpaDirectoryWatcher = new TulpaDirectoryWatcher(CreateTulpaButtons_safe);
+      tulpa_DirectoryWatcher = new(CreateTulpaButtons_safe);
 
       //baseDirectoryWatcher = new BaseDirectoryWatcher(Config.History_Directory, conversation_history_treeView);
       //baseDirectoryWatcher.InitializeTree();
@@ -316,7 +319,8 @@ public partial class WinGPT_Form : Form {
             conversation_history_treeView
          );
       //recreate the new tulpa buttons
-      tulpaDirectoryWatcher = new TulpaDirectoryWatcher(CreateTulpaButtons_safe);
+      tulpa_DirectoryWatcher?.Stop();
+      tulpa_DirectoryWatcher = new(CreateTulpaButtons_safe);
    }
 
    private void sysmsghack_ToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -381,7 +385,7 @@ public partial class WinGPT_Form : Form {
 
       if (result == DialogResult.OK) {
          foreach (string file in upload_vistaOpenFileDialog.FileNames) {
-            FileInfo fileInfo = new FileInfo(file);
+            FileInfo fileInfo = new(file);
             if (fileInfo.Exists) {
                Associated_files.Add(fileInfo);
             }
@@ -762,7 +766,7 @@ public partial class WinGPT_Form : Form {
 
    private void CoreWebView2_ContextMenuRequested(object? sender, CoreWebView2ContextMenuRequestedEventArgs args) {
       IList<CoreWebView2ContextMenuItem> menuList = args.MenuItems;
-      CoreWebView2ContextMenuTargetKind  context  = args.ContextMenuTarget.Kind;
+      //CoreWebView2ContextMenuTargetKind  context  = args.ContextMenuTarget.Kind;
 
       HashSet<string> namesToRemove = new() {
          "back", "forward", "reload", "other", "share"
@@ -812,7 +816,6 @@ public partial class WinGPT_Form : Form {
       Update_Conversation();
    }
 
-   #endregion
 
    private void history_file_name_textBox_Leave(object sender, EventArgs e) {
       history_file_name_textBox.Text = Conversation.Active?.HistoryFile.Name;
@@ -821,9 +824,6 @@ public partial class WinGPT_Form : Form {
    private void open_Config_Directory_ToolStripMenuItem_Click(object sender, EventArgs e) {
       Open_in_Explorer(Application_Paths.Config_File.Directory);
    }
-
-   int treeview_width;
-   int main_splitter_position;
 
    private void main_splitter_MouseDoubleClick(object sender, MouseEventArgs e) {
       if (conversation_history_treeView.Visible) {
@@ -841,10 +841,6 @@ public partial class WinGPT_Form : Form {
    private void text_splitContainer_MouseDoubleClick(object sender, MouseEventArgs e) {
       //text_splitContainer.Panel2Collapsed = !text_splitContainer.Panel2Collapsed;
    }
-
-   int prompt_splitter_distance;
-
-   private readonly Bitmap? FolderBitmap = SystemIconsHelper.GetFileIcon(null, true)?.ToBitmap();
 
    private void toggle_RIGHT_button_Click(object sender, EventArgs e) {
       if (text_splitContainer.Panel1Collapsed) {
@@ -931,4 +927,6 @@ public partial class WinGPT_Form : Form {
    private void update_wingpt_ToolStripMenuItem_Click(object sender, EventArgs e) {
       UpdateHelper.StartUpdate(this);
    }
+
+   #endregion
 }
