@@ -51,13 +51,7 @@ public partial class WinGPT_Form : Form {
       //HandleCreated += (sender, args) => 
       //   set_splitter_state();
 
-      var update_message = string.Empty;
-      if (UpdateHelper.check_if_update_available()) {
-         update_wingpt_ToolStripMenuItem.Enabled = true;
-         update_message                          = " — update available!";
-      }
-
-      Text += $" v{Tools.Version} PRE-ALPHA › {Application_Paths.APP_MODE}{update_message} ";
+      Text += $" v{Tools.Version} PRE-ALPHA › {Application_Paths.APP_MODE}";
 
       Set_status_bar(true, "Initializing available models.");
       Initialize_Models_MenuItems();
@@ -145,6 +139,12 @@ public partial class WinGPT_Form : Form {
    }
 
    private async void WinGPT_Form_Shown(object? sender, EventArgs e) {
+      if (await UpdateHelper.check_if_update_available()) {
+         update_wingpt_ToolStripMenuItem.Enabled = true;
+         Text
+            += " — update available!";
+      }
+
       set_splitter_state();
 
       Set_status_bar(true, "Asserting prerequisties…");
@@ -929,9 +929,6 @@ public partial class WinGPT_Form : Form {
    }
 
    private void update_wingpt_ToolStripMenuItem_Click(object sender, EventArgs e) {
-      AutoUpdater.Icon = Resources.WinGPT_64x64_;
-      AutoUpdater.SetOwner(this);
-      AutoUpdater.HttpUserAgent = HTTP_Client.UserAgentString;
-      AutoUpdater.Start("https://peopleoftheprompt.org/secret_beta/binarisms/Version.xml");
+      UpdateHelper.StartUpdate(this);
    }
 }
