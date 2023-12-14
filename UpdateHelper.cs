@@ -1,4 +1,8 @@
 using System.Diagnostics;
+using System.Xml;
+using AutoUpdaterDotNET;
+using WinGPT.OpenAI;
+using WinGPT.Properties;
 
 namespace WinGPT;
 
@@ -7,36 +11,66 @@ namespace WinGPT;
 /// </summary>
 public static class UpdateHelper {
    // URL of the version file on the web server
-   private static readonly string VersionUrl = "https://peopleoftheprompt.org/secret_beta/binarisms/current_version.txt";
+   private static readonly string VersionUrl = "https://peopleoftheprompt.org/secret_beta/binarisms/Version.xml";
+
+   private static async Task<Version?> GetVersionFromUrlAsync() {
+      try {
+         using HttpClient httpClient = new HttpClient();
+         string xmlContent = await httpClient.GetStringAsync(VersionUrl);
+
+         XmlDocument xmlDoc = new XmlDocument();
+         xmlDoc.LoadXml(xmlContent);
+
+         XmlNode? versionNode = xmlDoc.SelectSingleNode("/item/version");
+         if (versionNode == null) {
+            Debug.WriteLine("The <version> element is missing in the XML content.");
+            return null;
+         }
+
+         if (Version.TryParse(versionNode.InnerText, out Version? version)) {
+            return version;
+         } else {
+            Debug.WriteLine("The version string in the XML is not in a valid format.");
+            return null;
+         }
+      } catch (Exception ex) {
+         Debug.WriteLine($"Exception occurred while getting version from URL: {ex.Message}");
+         return null;
+      }
+   }
 
    /// <summary>
    /// Checks if an update is available by comparing the current assembly version with the version from the web server.
    /// </summary>
    /// <returns>True if an update is available, false otherwise.</returns>
-   public static bool check_if_update_available() {
+   public static async Task<bool> check_if_update_available() {
       try {
          // Get the current version of the assembly
          var currentVersion = Tools.Version;
-         if (currentVersion == null)
-            throw new InvalidOperationException("Could not determine the current assembly version.");
 
-         // Get the version string from the web server
-         using var httpClient          = new HttpClient();
-         string    latestVersionString = httpClient.GetStringAsync(VersionUrl).Result.Trim();
+         // Get the version from the web server
+         var latestVersion = await GetVersionFromUrlAsync();
+         if (latestVersion == null) {
+            Debug.WriteLine("Failed to get the latest version from the web server.");
+            return false;
+         }
 
-         // Parse the version string
-         if (Version.TryParse(latestVersionString, out var latestVersion)) {
-            //return latestVersion.Major > currentVersion.Major || (latestVersion.Major == currentVersion.Major && latestVersion.Minor > currentVersion.Minor);
-            return latestVersion > currentVersion;
-         }
-         else {
-            throw new FormatException("The version string from the server is not in a correct format.");
-         }
-      }
-      catch (Exception ex) {
-         // Log the exception (logging mechanism to be implemented)
-         Debug.WriteLine($"Error checking for updates: {ex.Message}");
+         // Compare the versions
+         return latestVersion > currentVersion;
+      } catch (Exception ex) {
+         Debug.WriteLine($"Exception occurred while checking if update is available: {ex.Message}");
          return false;
+      }
+   }
+
+   public static void StartUpdate(Form form) {
+      try {
+         AutoUpdater.Icon = Resources.WinGPT_64x64_;
+         AutoUpdater.SetOwner(form);
+         AutoUpdater.HttpUserAgent = HTTP_Client.UserAgentString;
+         AutoUpdater.Start(VersionUrl);
+      } catch (Exception ex) {
+         Debug.WriteLine($"Exception occurred while starting the update: {ex.Message}");
       }
    }
 }
