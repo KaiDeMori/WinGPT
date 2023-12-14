@@ -6,8 +6,10 @@ using Markdig;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
 using Newtonsoft.Json.Linq;
+using AutoUpdaterDotNET;
 using WinGPT.OpenAI;
 using WinGPT.OpenAI.Chat;
+using WinGPT.Properties;
 using WinGPT.Taxonomy;
 using Message = WinGPT.OpenAI.Chat.Message;
 
@@ -22,6 +24,9 @@ public partial class WinGPT_Form : Form {
    private readonly TaskCompletionSource<bool> stupid_edge_mumble_mumble = new TaskCompletionSource<bool>();
 
    private readonly BindingList<FileInfo> Associated_files = new BindingList<FileInfo>();
+
+   // This makes the "virtual member call in constructor" warning go away, but I don't understand why this should be any better.
+   //public sealed override string Text => base.Text;
 
    public WinGPT_Form() {
       InitializeComponent();
@@ -46,8 +51,13 @@ public partial class WinGPT_Form : Form {
       //HandleCreated += (sender, args) => 
       //   set_splitter_state();
 
-      var update = UpdateHelper.check_if_update_available() ? " — update available!" : string.Empty;
-      Text += $" v{Tools.Version} PRE-ALPHA › {Application_Paths.APP_MODE}{update} ";
+      var update_message = string.Empty;
+      if (UpdateHelper.check_if_update_available()) {
+         update_wingpt_ToolStripMenuItem.Enabled = true;
+         update_message                          = " — update available!";
+      }
+
+      Text += $" v{Tools.Version} PRE-ALPHA › {Application_Paths.APP_MODE}{update_message} ";
 
       Set_status_bar(true, "Initializing available models.");
       Initialize_Models_MenuItems();
@@ -69,6 +79,8 @@ public partial class WinGPT_Form : Form {
       open_Tulpas_Directory_ToolStripMenuItem.Image    = FolderBitmap;
       open_Base_Directory_ToolStripMenuItem.Image      = FolderBitmap;
       open_Downloads_Directory_ToolStripMenuItem.Image = FolderBitmap;
+
+      update_wingpt_ToolStripMenuItem.Enabled = false;
    }
 
    private void WinGPT_Form_ResizeEnd(object? sender, EventArgs e) {
@@ -855,7 +867,7 @@ public partial class WinGPT_Form : Form {
          text_splitContainer.Panel1Collapsed = true;
       }
    }
-    
+
    protected override bool ProcessCmdKey(ref System.Windows.Forms.Message message, Keys keyData) {
       // Check if Ctrl+E was pressed
       if (keyData == (Keys.Control | Keys.E)) {
@@ -914,5 +926,12 @@ public partial class WinGPT_Form : Form {
 
    private void open_Downloads_Directory_ToolStripMenuItem_Click(object sender, EventArgs e) {
       Open_in_Explorer(Config.AdHoc_Downloads_Path);
+   }
+
+   private void update_wingpt_ToolStripMenuItem_Click(object sender, EventArgs e) {
+      AutoUpdater.Icon = Resources.WinGPT_64x64_;
+      AutoUpdater.SetOwner(this);
+      AutoUpdater.HttpUserAgent = HTTP_Client.UserAgentString;
+      AutoUpdater.Start("https://peopleoftheprompt.org/secret_beta/binarisms/Version.xml");
    }
 }

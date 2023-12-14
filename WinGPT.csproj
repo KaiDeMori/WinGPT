@@ -107,8 +107,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Markdig" Version="0.32.0" />
-		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1901.177" />
+		<PackageReference Include="Autoupdater.NET.Official" Version="1.8.4" />
+		<PackageReference Include="Markdig" Version="0.33.0" />
+		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2210.55" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.15" />
 		<PackageReference Include="Ookii.Dialogs.WinForms" Version="4.0.0" />
