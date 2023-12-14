@@ -25,6 +25,11 @@ internal class TulpaDirectoryWatcher {
       FileSystemWatcher.EnableRaisingEvents = true;
    }
 
+   public void Stop() {
+      FileSystemWatcher.EnableRaisingEvents = false;
+      FileSystemWatcher.Dispose();
+   }
+
    private void Update_Tulpas_and_Buttons() {
       var tulpas = ReadAllTulpas();
 
@@ -41,11 +46,5 @@ internal class TulpaDirectoryWatcher {
       var files  = Config.Tulpa_Directory.GetFiles(Config.marf278down_filter);
       var tulpas = files.Select(Tulpa.CreateFrom).NotNull().ToList();
       return tulpas;
-   }
-
-
-   private void OnSomethingChanged(object sender, FileSystemEventArgs e) {
-      var tulpas = ReadAllTulpas();
-      CreateTulpaButtons(tulpas, null);
    }
 }

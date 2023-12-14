@@ -68,7 +68,7 @@ public class Tulpa : InterTulpa {
       remove_last_user_message(tulpa_messages_togo);
       Request request;
       if (Tools.isVisionModel()) {
-         request = Create_Vision_Request(user_message, conversation, associated_files, tulpa_messages_togo);
+         request = Create_Vision_Request(user_message, associated_files);
       }
       //else if (Tools.isImageGenerationModel()) {
       //   //DRAGONS not sure how to do it yet and cost calculation is also non-trivial in this case
@@ -150,7 +150,7 @@ public class Tulpa : InterTulpa {
       return response_message;
    }
 
-   private Request Create_Vision_Request(Message userMessage, Conversation conversation, FileInfo[]? associatedFiles, List<Message> tulpaMessagesTogo) {
+   private Request Create_Vision_Request(Message userMessage, FileInfo[]? associatedFiles) {
       VisionMessage newVisionMessage = VisionPreviewHelper.add_vision_preview_user_message(userMessage.content, associatedFiles);
 
       var all_messages = new List<Message> {
@@ -232,7 +232,7 @@ public class Tulpa : InterTulpa {
       return saveFile_function;
    }
 
-   private void add_associated_files_to_system_message(FileInfo[]? associated_files, StringBuilder tuned_up_system_message_content) {
+   private static void add_associated_files_to_system_message(FileInfo[]? associated_files, StringBuilder tuned_up_system_message_content) {
       if (associated_files is null)
          return;
 

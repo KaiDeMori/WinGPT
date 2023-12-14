@@ -15,8 +15,8 @@ public static class UpdateHelper {
 
    private static async Task<Version?> GetVersionFromUrlAsync() {
       try {
-         using HttpClient httpClient = new HttpClient();
-         string xmlContent = await httpClient.GetStringAsync(VersionUrl);
+         using HttpClient httpClient = new();
+         string           xmlContent = await httpClient.GetStringAsync(VersionUrl);
 
          XmlDocument xmlDoc = new XmlDocument();
          xmlDoc.LoadXml(xmlContent);
