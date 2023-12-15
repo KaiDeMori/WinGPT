@@ -929,4 +929,8 @@ public partial class WinGPT_Form : Form {
    }
 
    #endregion
+
+   private void refresh_ConversationHistory_ToolStripMenuItem_Click(object sender, EventArgs e) {
+      baseDirectoryWatcherAndTreeViewUpdater?.RefreshTreeView();
+   }
 }
