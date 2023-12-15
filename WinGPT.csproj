@@ -2,6 +2,7 @@
 
 	<PropertyGroup Label="Globals">
 		<WebView2LoaderPreference>Dynamic</WebView2LoaderPreference>
+		<Configurations>Debug;Release</Configurations>
 	</PropertyGroup>
 
 	<PropertyGroup>

@@ -13,9 +13,9 @@ dotnet publish WinGPT.csproj -c Release -p:PublishProfile=x64
 dotnet publish WinGPT.csproj -c Release -p:PublishProfile=x86
 
 
-cd ../WinGPT_Setup
-"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WinGPT_Setup.vdproj /Build Release
-cd ../WinGPT
+#cd ../WinGPT_SetupWizard
+#"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WinGPT_SetupWizard.vdproj /Build Release
+#cd ../WinGPT
 
 echo Done!
 
