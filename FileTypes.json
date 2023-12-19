@@ -1,0 +1,36 @@
+{
+  "Image": [
+    ".bmp",
+    ".gif",
+    ".jpeg",
+    ".jpg",
+    ".png"
+  ],
+  "Code": [
+    ".cpp",
+    ".cs",
+    ".css",
+    ".go",
+    ".html",
+    ".java",
+    ".js",
+    ".json",
+    ".md",
+    ".php",
+    ".py",
+    ".rb",
+    ".ts",
+    ".vb",
+    ".xml"
+  ],
+  "Text": [
+    ".doc",
+    ".docx",
+    ".pdf",
+    ".ppt",
+    ".pptx",
+    ".txt",
+    ".xls",
+    ".xlsx"
+  ]
+}

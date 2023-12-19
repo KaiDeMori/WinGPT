@@ -1,91 +1,186 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
-	<AssemblyName>WinGPT</AssemblyName>
-    <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <ApplicationIcon>Icons\WinGPT_1.ico</ApplicationIcon>
-    <SignAssembly>False</SignAssembly>
-    <Version>0.1.5</Version>
-    <Platforms>AnyCPU;x64</Platforms>
-    <StartupObject>WinGPT.WinGPT_Main</StartupObject>
-  </PropertyGroup>
+	<PropertyGroup Label="Globals">
+		<WebView2LoaderPreference>Dynamic</WebView2LoaderPreference>
+		<Configurations>Debug;Release</Configurations>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Content Include="Icons\WinGPT_1.ico" />
-  </ItemGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net7.0-windows</TargetFramework>
+		<AssemblyName>WinGPT</AssemblyName>
+		<Nullable>enable</Nullable>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<ApplicationIcon>Icons\WinGPT_1.ico</ApplicationIcon>
+		<SignAssembly>False</SignAssembly>
+		<Platforms>AnyCPU;x64;x86</Platforms>
+		<StartupObject>WinGPT.WinGPT_Main</StartupObject>
+		<!--
+		<GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+		-->
+		<Authors>Kai De–Mori</Authors>
+		<Company>peopleoftheprompt.org</Company>
+		<PackageProjectUrl>https://www.peopleoftheprompt.org</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/KaiDeMori/WinGPT</RepositoryUrl>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="CefSharp.WinForms.NETCore" Version="114.2.120" />
-    <PackageReference Include="HtmlRenderer.Core" Version="1.5.1-beta1" />
-    <PackageReference Include="HtmlRenderer.WinForms" Version="1.5.1-beta1" />
-    <PackageReference Include="Markdig" Version="0.31.0" />
-    <PackageReference Include="Markdig.SyntaxHighlighting" Version="1.1.7" />
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1823.32" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.15" />
-    <PackageReference Include="Ookii.Dialogs.WinForms" Version="4.0.0" />
-    <PackageReference Include="Sprache" Version="2.3.1" />
-    <PackageReference Include="WebStoating.Markdig.Prism" Version="1.0.0" />
-  </ItemGroup>
+	<Import Project="CustomBuild.targets" />
 
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<!-- This target is just for debugging purposes -->
+	<Target Name="GetDirectories" AfterTargets="Build">
+		<Message Text="#################################" Importance="High" />
+		<ItemGroup>
+			<!-- Get all directories in the output directory -->
+			<tmp_dirs Include="$(MSBuildProjectDirectory)\*" />
+		</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+		<ItemGroup>
+			<Folders Include="$([System.IO.Directory]::GetDirectories(`$(MSBuildProjectDirectory)`))" />
+		</ItemGroup>
+
+		<!-- Print the directories -->
+		<Message Text="Directories: $(MSBuildProjectDirectory)" Importance="high" />
+		<Message Text="Directories: @(tmp_dirs)" Importance="high" />
+		<Message Text="Folders: @(Folders)" Importance="high" />
+		<Message Text="PublishProfileName: $(PublishProfileName)" Importance="high" />
+		<Message Text="PublishProfile: $(PublishProfile)" Importance="high" />
+		<Message Text="ConfigurationName: $(ConfigurationName)" Importance="high" />
+		<Message Text="Platform: $(Platform)" Importance="high" />
+
+	</Target>
+
+
+	<Target Name="PostPublishActions" AfterTargets="Publish" Condition="'$(ZipIt)' == 'True'">
+		<Message Text="##############  ZipIt ##############" Importance="high" />
+		<Message Text="ZipIt: $(ZipIt)" Importance="high" />
+		<Message Text="PublishProfileName: $(PublishProfileName)" Importance="high" />
+		<Message Text="PublishProfile: $(PublishProfile)" Importance="high" />
+		<Message Text="ConfigurationName: $(ConfigurationName)" Importance="high" />
+		<Message Text="PublishProfileName: $(ConfigurationName)$(PublishProfile)" Importance="high" />
+		<Message Text="Platform: $(Platform)" Importance="high" />
+
+		<!-- Define properties for the temporary and output directories -->
+		<PropertyGroup>
+			<TempDir>$(MSBuildProjectDirectory)\WinGPT</TempDir>
+			<ZipFileName>WinGPT_$(Platform).zip</ZipFileName>
+		</PropertyGroup>
+
+		<!-- Convert PublishDir to an absolute path -->
+		<ConvertToAbsolutePath Paths="$(PublishDir)">
+			<Output TaskParameter="AbsolutePaths" PropertyName="OutputDir" />
+		</ConvertToAbsolutePath>
+
+		<!-- Delete the existing ZIP file if it exists -->
+		<Delete Files="$(OutputDir)\$(ZipFileName)" />
+
+		<!-- Copy published files to the temporary directory -->
+		<ItemGroup>
+			<PublishedFiles Include="$(OutputDir)**\*.*" />
+		</ItemGroup>
+		<Copy SourceFiles="@(PublishedFiles)" DestinationFolder="$(TempDir)\%(RecursiveDir)" />
+
+		<!-- Create a ZIP file from the temporary directory -->
+		<ZipDirectory SourceDirectory="$(TempDir)" DestinationFile="$(OutputDir)\$(ZipFileName)" Overwrite="true" />
+
+		<!-- Delete the temporary directory -->
+		<RemoveDir Directories="$(TempDir)" />
+
+		<!-- Clean up the publish directory -->
+		<ItemGroup>
+			<FilesToDelete Include="$(OutputDir)*.*" Exclude="$(OutputDir)\$(ZipFileName)" />
+			<DirsToDelete Include="$([System.IO.Directory]::GetDirectories(`$(OutputDir)`))" />
+		</ItemGroup>
+		<Message Text="Directories to delete: @(DirsToDelete)" Importance="high" />
+		<Delete Files="@(FilesToDelete)" />
+		<RemoveDir Directories="@(DirsToDelete)" />
+
+		<Message Text="##############  ZipedIt ##############" Importance="high" />
+
+	</Target>
+
 
 	<ItemGroup>
-	  <Compile Remove="NewFolder\**" />
-	  <EmbeddedResource Remove="NewFolder\**" />
-	  <None Remove="NewFolder\**" />
+		<Content Include="Icons\WinGPT_1.ico" />
+		<Content Include="installed.marker" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="Filetransfer\saveFile_Function.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Filetransfer\saveFile_system_message.md">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="OpenAI\ErrorCodes.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Filetransfer\save_link_system_message.md">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Taxonomy\function.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Taxonomy\system_message_template.md">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="webstuffs\custom_prism_plugin.js">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="webstuffs\index_template.html">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="webstuffs\my.css">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="webstuffs\prism_fancy.css">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="webstuffs\prism_fancy.js">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+		<PackageReference Include="Autoupdater.NET.Official" Version="1.8.4" />
+		<PackageReference Include="Markdig" Version="0.33.0" />
+		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2210.55" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.15" />
+		<PackageReference Include="Ookii.Dialogs.WinForms" Version="4.0.0" />
+		<PackageReference Include="WebStoating.Markdig.Prism" Version="1.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="Application Files\**" />
+		<Compile Remove="NewFolder\**" />
+		<EmbeddedResource Remove="Application Files\**" />
+		<EmbeddedResource Remove="NewFolder\**" />
+		<None Remove="Application Files\**" />
+		<None Remove="NewFolder\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Remove="installed.marker" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="Filetransfer\saveFile_Function.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Filetransfer\saveFile_system_message.md">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="FileTypes.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="OpenAI\ErrorCodes.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Filetransfer\save_link_system_message.md">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Taxonomy\function.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Taxonomy\system_message_template.md">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="webstuffs\custom_prism_plugin.js">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="webstuffs\index_template.html">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="webstuffs\my.css">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="webstuffs\prism_fancy.css">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="webstuffs\prism_fancy.js">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 </Project>

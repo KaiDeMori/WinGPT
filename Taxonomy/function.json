@@ -1,14 +1,12 @@
 {
-  "$type": "WinGPT.OpenAI.Chat.Function`1[[WinGPT.OpenAI.Chat.Taxonomy_Properties, WinGPT]], WinGPT",
-
   "name": "taxonomy",
-  "description": "Sets the summary, the filename and assigns the conversation to a category. If the category doesn't exist, a new category will be created. An 'null' category signals an error.",
+  "description": "Sets the summary, the filename and assigns the conversation to a category. If the category doesn't exist, a new category will be created.",
   "parameters": {
     "type": "object",
     "properties": {
       "summary": {
         "type": "string",
-        "description": "The newly generated summary of the conversation."
+		"description": "The newly generated summary of the conversation."
       },
       "filename": {
         "type": "string",

@@ -27,6 +27,8 @@ public class Conversation {
 
    public bool taxonomy_required = false;
 
+   public bool dirty = false;
+
    private Conversation() {
    }
 
@@ -98,7 +100,8 @@ public class Conversation {
 
       if (temporary_prompt is null) {
          foreach (var message in Messages) {
-            sb.AppendLine(message.ToString());
+            if (message is not null) //DRAGONS this should never be null, but when the API errors out, it is!
+               sb.AppendLine(message.ToString());
          }
       }
       else {
@@ -110,7 +113,19 @@ public class Conversation {
 
    public string Create_markf278down() {
       //we also need to replace the default newline /n with the system newline /r/n
-      string messages = string.Join("", Messages.Select(m => m.ToString().Replace("\n", Environment.NewLine)));
+      //string messages = string.Join("", Messages.Select(m => m.ToString().Replace("\n", Environment.NewLine)));
+      string messages = string.Join("", Messages.Select(m => m.ToString()));
+      //messages = messages.ReplaceLineEndings();
+      int index = 0;
+      while ((index = messages.IndexOf('\n', index)) != -1) {
+         if (index == 0 || messages[index - 1] != '\r') {
+            messages = messages[..index] + "\r" + messages[index..];
+         }
+
+         index++;
+      }
+
+
       return messages;
    }
 
@@ -122,6 +137,11 @@ public class Conversation {
          throw new Exception("HistoryFile must not be null!");
 
       var content = Create_history_file_content(null);
+      //first make sure that all directories exist
+      var directoryName = Path.GetDirectoryName(HistoryFile.FullName);
+      if (!Directory.Exists(directoryName))
+         Directory.CreateDirectory(directoryName!);
+
       File.WriteAllText(HistoryFile.FullName, content);
    }
 
@@ -194,9 +214,7 @@ public class Conversation {
       }
    }
 
-   public static FileUpdateLocationResult TryRenameFile(
-      string newFilename
-   ) {
+   public static FileUpdateLocationResult TryRenameFile(string newFilename) {
       if (Active == null)
          throw new Exception("There is no active conversation!");
 
@@ -226,16 +244,25 @@ public class Conversation {
       if (!Active.HistoryFile.Exists)
          return FileUpdateLocationResult.FileDoesNotExist;
 
+      if (Config.Preliminary_Conversations_Path.FullName == destinationDirectory.FullName) {
+         destinationDirectory = Config.History_Directory;
+      }
+
       FileInfo originalFile = Active.HistoryFile;
 
       // Create new FileInfo instance for the new file
-      FileInfo newFile = new FileInfo(Path.Combine(destinationDirectory.FullName, new_filename));
+      FileInfo newFile = new FileInfo(Path.Join(destinationDirectory.FullName, new_filename));
+
+      //check if the filename ends with the correct extension
+      if (newFile.Extension != Config.marf278down_extenstion) {
+         newFile = new FileInfo(Path.Join(destinationDirectory.FullName, $"{new_filename}{Config.marf278down_extenstion}"));
+      }
 
       // Check if the new file already exists
       if (newFile.Exists) {
          // Rename the file
          string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
-         newFile = new FileInfo(Path.Combine(destinationDirectory.FullName,
+         newFile = new FileInfo(Path.Join(destinationDirectory.FullName,
             $"{Path.GetFileNameWithoutExtension(new_filename)}_{timestamp}{newFile.Extension}"));
       }
 
@@ -307,14 +334,17 @@ public class Conversation {
    public static readonly Dictionary<FileUpdateLocationResult, string> ErrorMessages = new() {
       {FileUpdateLocationResult.Success, "The file was successfully moved."},
       {FileUpdateLocationResult.SuccessWithRename, "The file was successfully moved, but had to be renamed due to an existing file with the same name."},
-      {FileUpdateLocationResult.UserAborted, "The user aborted the operation."},
       {FileUpdateLocationResult.FileDoesNotExist, "The file you're trying to move does not exist."},
       {FileUpdateLocationResult.CategoryDoesNotExist, "The category you're trying to move the file to does not exist."},
       {FileUpdateLocationResult.CategoryExistsButShouldNot, "The category you're trying to create already exists."},
+      {FileUpdateLocationResult.FileCouldNotBeCreated, "The file could not be created."},
+      {FileUpdateLocationResult.FileCouldNotBeDeleted, "The file could not be deleted."},
+      {FileUpdateLocationResult.FunctionParametersFaulty, "The function parameters are faulty."},
+      {FileUpdateLocationResult.UserAborted, "The user aborted the operation."},
       {FileUpdateLocationResult.UnknownError, "An unknown error occurred while trying to move the file."},
    };
 
-   private static bool TryParseConversationHistoryFile(FileInfo historyFile, [NotNullWhen(true)] out Conversation? conversation) {
+   internal static bool TryParseConversationHistoryFile(FileInfo historyFile, [NotNullWhen(true)] out Conversation? conversation) {
       conversation = null;
 
       if (!historyFile.Exists)
@@ -333,7 +363,7 @@ public class Conversation {
       var currentSpan = memory.Span;
 
       // Process the ConversationHistory section and get the file name
-      if (!HistoryFileParser.TryParseHistoryHeader(ref currentSpan, out var info)) {
+      if (!HistoryFileParser.TryParseConversationInfo(ref currentSpan, out var info)) {
          return false; // Couldn't parse ConversationHistory
       }
 
@@ -389,5 +419,64 @@ public class Conversation {
       };
 
       return true;
+   }
+
+   public void update_message_from_string(string messages_string) {
+      var memory      = messages_string.AsMemory();
+      var currentSpan = memory.Span;
+      var messages    = new List<Message>();
+
+      // Continue with the rest of the parsing as before
+      while (!currentSpan.IsEmpty) {
+         int     firstDelimiterIndex = currentSpan.Length;
+         string? delimiterFound      = null;
+
+         foreach (var delimiter in SpecialTokens.To_API_Role.Keys) {
+            int index = currentSpan.IndexOf(delimiter.AsSpan());
+            if (index >= 0 && index < firstDelimiterIndex) {
+               firstDelimiterIndex = index;
+               delimiterFound      = delimiter;
+            }
+         }
+
+         // No delimiter found, break out of the loop
+         if (delimiterFound == null) {
+            break;
+         }
+
+         // Could throw an exception if the slice end index is out of range
+         var afterDelimiter     = currentSpan[(firstDelimiterIndex + delimiterFound.Length)..];
+         var nextDelimiterIndex = afterDelimiter.Length;
+
+         foreach (var delimiter in SpecialTokens.To_API_Role.Keys) {
+            int index = afterDelimiter.IndexOf(delimiter.AsSpan());
+            if (index >= 0 && index < nextDelimiterIndex) {
+               nextDelimiterIndex = index;
+            }
+         }
+
+         // Could throw an exception if the slice end index is out of range
+         var content = afterDelimiter[..nextDelimiterIndex].Trim();
+
+         // Could throw an exception if the Role key doesn't exist in the dictionary
+         messages.Add(new Message {
+            role    = SpecialTokens.To_API_Role[delimiterFound],
+            content = content.ToString()
+         });
+
+         // Could throw an exception if the slice start index is out of range
+         currentSpan = afterDelimiter[nextDelimiterIndex..];
+      }
+
+      Messages = messages;
+
+      var old_file_name = Conversation.Active.HistoryFile.Name;
+      var directory     = Conversation.Active.HistoryFile.DirectoryName;
+      var old_file_name_without_extension
+         = Path.GetFileNameWithoutExtension(old_file_name);
+      var new_file_name = $"{old_file_name_without_extension}-EDIT-{DateTime.Now:yyyy-MM-dd HH-mm-ss}{Config.marf278down_extenstion}";
+      var new_file      = new FileInfo(Path.Join(directory, new_file_name));
+
+      HistoryFile = new_file;
    }
 }

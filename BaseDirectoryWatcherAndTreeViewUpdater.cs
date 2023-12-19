@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace WinGPT;
+﻿namespace WinGPT;
 
 public class BaseDirectoryWatcherAndTreeViewUpdater : IDisposable {
    private readonly TreeView          _treeView;
@@ -15,19 +13,20 @@ public class BaseDirectoryWatcherAndTreeViewUpdater : IDisposable {
       this.baseDirectory = base_directory;
 
       treeView.Nodes.Clear();
+      treeView.ShowNodeToolTips = true;
       InitializeTreeView(base_directory);
       this.fileSystemWatcher = InitFileSystemWatcher(base_directory);
 
       this.treeViewPersistor = new TreeViewPersistor(treeView);
       treeViewPersistor.Load();
-
+      
       fileSystemWatcher.EnableRaisingEvents = true;
    }
 
    private FileSystemWatcher InitFileSystemWatcher(DirectoryInfo base_directory) {
       var watcher = new FileSystemWatcher {
-         Path                  = base_directory.FullName,
-         Filter                = Config.marf278down_filter,
+         Path = base_directory.FullName,
+         //Filter                = Config.marf278down_filter,
          NotifyFilter          = NotifyFilters.FileName | NotifyFilters.DirectoryName,
          IncludeSubdirectories = true
       };
@@ -44,20 +43,37 @@ public class BaseDirectoryWatcherAndTreeViewUpdater : IDisposable {
    private void OnCreated(object sender, FileSystemEventArgs e) {
       FileSystemInfo systemfileinfo = CreateFileSystemInfo(e.FullPath);
 
-      var new_node = new FileTreeNode(systemfileinfo);
+      var intermediateDirs = Tools.GetRelativeDirectories(baseDirectory, systemfileinfo);
       InvokeIfNeeded(() => {
-         GetParentNode(systemfileinfo)?.Nodes.Add(new_node);
-         //_treeView.Refresh();
+         //create all necessary subdirectories if they don't exist yet
+         var rootNode    = _treeView.Nodes[0];
+         var currentNode = rootNode;
+         foreach (var dir in intermediateDirs) {
+            var node = currentNode.Nodes.Find(dir.Name, false).FirstOrDefault();
+            if (node == null) {
+               node = new FileTreeNode(dir);
+               currentNode.Nodes.Add(node);
+            }
+
+            currentNode = node;
+         }
+
+         //if the filesysteminfo is a fileinfo, we need to add it to the treeview
+         //but only if its a markf278down file
+         if (systemfileinfo is FileInfo file && file.Name.EndsWith(Config.marf278down_extenstion)) {
+            currentNode.Nodes.Add(new FileTreeNode(file));
+         }
+
          check_if_new_file_should_be_selected(systemfileinfo);
       });
    }
 
    private void OnRenamed(object sender, RenamedEventArgs e) {
-      var old_file = CreateFileSystemInfo(e.OldFullPath);
+      //var old_file = CreateFileSystemInfo(e.OldFullPath);
       var new_file = CreateFileSystemInfo(e.FullPath);
 
       InvokeIfNeeded(() => {
-         var node = TreeViewHelper.FindNode(old_file, baseDirectory, _treeView);
+         var node = TreeViewHelper.FindNode(e.OldFullPath, baseDirectory, _treeView);
          if (node == null)
             return;
 
@@ -128,6 +144,7 @@ public class BaseDirectoryWatcherAndTreeViewUpdater : IDisposable {
    }
 
    public void Dispose() {
+      fileSystemWatcher.EnableRaisingEvents =false;
       fileSystemWatcher.Dispose();
    }
 
@@ -163,6 +180,11 @@ public class BaseDirectoryWatcherAndTreeViewUpdater : IDisposable {
 /// </summary>
 public class FileTreeNode : TreeNode {
    public FileTreeNode(FileSystemInfo fileSystemInfo) {
+      if (fileSystemInfo is FileInfo file) {
+         if (Conversation.TryParseConversationHistoryFile(file, out var conversation))
+            ToolTipText = conversation.Info.Summary ?? "";
+      }
+
       Text = fileSystemInfo.Name;
       Name = fileSystemInfo.Name;
       Tag  = fileSystemInfo;

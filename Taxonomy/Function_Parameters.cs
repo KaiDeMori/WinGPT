@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace WinGPT.Taxonomy;
+﻿namespace WinGPT.Taxonomy;
 
 public class Function_Parameters {
    public string? summary  { get; set; }

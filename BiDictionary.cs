@@ -1,28 +1,30 @@
 ﻿using System.Collections;
+// ReSharper disable ArrangeObjectCreationWhenTypeEvident
 
-public class BiDictionary<T1, T2> : IEnumerable<KeyValuePair<T1, T2>> {
-    private readonly Dictionary<T1, T2> _forward = new Dictionary<T1, T2>();
-    private readonly Dictionary<T2, T1> _reverse = new Dictionary<T2, T1>();
+namespace WinGPT; 
 
-    public void Add(T1 first, T2 second) {
-        _forward.Add(first, second);
-        _reverse.Add(second, first);
-    }
+public class BiDictionary<T1, T2> : IEnumerable<KeyValuePair<T1, T2>> where T1 : notnull where T2 : notnull {
+   private readonly Dictionary<T1, T2> _forward = new Dictionary<T1, T2>();
+   private readonly Dictionary<T2, T1> _reverse = new Dictionary<T2, T1>();
 
-    public bool TryGetByFirst(T1 first, out T2 second) {
-        return _forward.TryGetValue(first, out second);
-    }
+   public void Add(T1 first, T2 second) {
+      _forward.Add(first, second);
+      _reverse.Add(second, first);
+   }
 
-    public bool TryGetBySecond(T2 second, out T1 first) {
-        return _reverse.TryGetValue(second, out first);
-    }
+   public bool TryGetByFirst(T1 first, out T2 second) {
+      return _forward.TryGetValue(first, out second);
+   }
 
-    public IEnumerator<KeyValuePair<T1, T2>> GetEnumerator() {
-        return _forward.GetEnumerator();
-    }
+   public bool TryGetBySecond(T2 second, out T1 first) {
+      return _reverse.TryGetValue(second, out first);
+   }
 
-    IEnumerator IEnumerable.GetEnumerator() {
-        return GetEnumerator();
-    }
+   public IEnumerator<KeyValuePair<T1, T2>> GetEnumerator() {
+      return _forward.GetEnumerator();
+   }
 
+   IEnumerator IEnumerable.GetEnumerator() {
+      return GetEnumerator();
+   }
 }

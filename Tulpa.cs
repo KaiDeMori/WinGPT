@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Text;
 using Newtonsoft.Json;
+using WinGPT.OpenAI;
 using WinGPT.OpenAI.Chat;
 using Message = WinGPT.OpenAI.Chat.Message;
 
@@ -33,7 +34,10 @@ public class Tulpa : InterTulpa {
       }
 
       //var name   = Path.GetFileNameWithoutExtension(file.Name);
-      var text   = System.IO.File.ReadAllText(file.FullName);
+      using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+      using var reader = new StreamReader(stream);
+      var       text   = reader.ReadToEnd();
+
       var result = TulpaParser.TryParse(text, file, out var tulpa);
       if (!result) {
          MessageBox.Show($"The file {file} could not be parsed.", "Error", MessageBoxButtons.OK);
@@ -61,54 +65,19 @@ public class Tulpa : InterTulpa {
       List<Message> tulpa_messages_togo =
          Messages.Select(m => m.Clone()).ToList();
 
+      //special case for tulpas with an example prompt
       remove_last_user_message(tulpa_messages_togo);
 
-      //DRAGONS not sure if we want to do this always
-      //get the first system message or create a new one
-      Message first_system_message = tulpa_messages_togo.FirstOrDefault(m => m.role == Role.system) ?? new Message {role = Role.system};
-
-      //It's a StringBuilder. You can append to it. What do expect?
-      //Just don't enumerate it.
-      var tuned_up_system_message_content = new StringBuilder();
-
-      //add the content of the old system message to the new one
-      tuned_up_system_message_content.Append(first_system_message.content);
-
-      // "Upload"
-      add_associated_files_to_system_message(associated_files, tuned_up_system_message_content);
-
-      // if the save_function is null, the parameter will just be ignored
-      Function<SaveParameters>? save_function = null;
-      if (Config.Active.UIable.Use_Save_Function)
-         save_function = Enable_Save_via_Prompt_Function();
-
-      if (Config.Active.UIable.Use_Save_Link)
-         add_save_link(tuned_up_system_message_content);
-
-      var new_system_message = new Message {
-         role    = Role.system,
-         content = tuned_up_system_message_content.ToString(),
-      };
-
-      //replace the first system message with the new one, make sure its at the same position as the old one
-      tulpa_messages_togo.Remove(first_system_message);
-      tulpa_messages_togo.Insert(Math.Max(tulpa_messages_togo.IndexOf(first_system_message), 0), new_system_message);
-
-      // concatenate the Tulpa_Messages and the conversation messages and the new prompt as a user message.
-      List<Message> all_messages = new();
-      all_messages.AddRange(tulpa_messages_togo);
-      all_messages.AddRange(conversation.Messages);
-      if (conversation.useSysMsgHack)
-         all_messages.Add(new_system_message);
-      all_messages.Add(user_message);
-      var all_immutable = all_messages.ToImmutableList();
-
-      Request request = new() {
-         messages    = all_immutable,
-         model       = Config.Active.LanguageModel,
-         temperature = Configuration.Temperature,
-         functions   = save_function is not null ? new IFunction[] {save_function} : null
-      };
+      Request request;
+      if (Tools.isVisionModel()) {
+         request = Create_Vision_Request(user_message, associated_files);
+      }
+      //else if (Tools.isImageGenerationModel()) {
+      //   //DRAGONS not sure how to do it yet and cost calculation is also non-trivial in this case
+      //}
+      else {
+         request = Create_Textual_Request(user_message, conversation, associated_files, tulpa_messages_togo);
+      }
 
       // done with Pre-Production
       /////////////////////////////
@@ -164,19 +133,8 @@ public class Tulpa : InterTulpa {
             }
 
             Debug.WriteLine($"saveFunctionCall: {save_CallArguments}");
-            //see if the file is in the associated files
-            var file_to_save =
-               associated_files?.FirstOrDefault(f => f.Name == save_CallArguments.filename)
-               ?? new FileInfo(Path.Join(Config.AdHoc_Downloads_Path.FullName, save_CallArguments.filename));
-            string dummy_assistant_content;
-            try {
-               //save the file
-               System.IO.File.WriteAllText(file_to_save.FullName, save_CallArguments.text_content);
-               dummy_assistant_content = $"File {file_to_save.Name} was saved successfully.";
-            }
-            catch (Exception e) {
-               dummy_assistant_content = $"File {file_to_save.Name} could not be saved.\r\n{e.Message}";
-            }
+            //see if the file is in the associated files use the new AssociatedFilesSaver
+            AssociatedFilesSaver.SaveFile(save_CallArguments.filename, save_CallArguments.text_content, associated_files, out var dummy_assistant_content);
 
             //in case we have no content for the user, provide some feedback
             if (response_message.content is null) {
@@ -194,6 +152,77 @@ public class Tulpa : InterTulpa {
       return response_message;
    }
 
+   private Request Create_Vision_Request(Message userMessage, FileInfo[]? associatedFiles) {
+      VisionMessage newVisionMessage = VisionPreviewHelper.add_vision_preview_user_message(userMessage.content, associatedFiles);
+
+      var all_messages = new List<Message> {
+         newVisionMessage
+      };
+
+      var all_immutable = all_messages.ToImmutableList();
+
+      Request request = new() {
+         messages    = all_immutable,
+         model       = Config.Active.LanguageModel,
+         temperature = Configuration.Temperature,
+         max_tokens  = Config.Active.UIable.Vision_Max_Tokens
+      };
+      return request;
+   }
+
+   private Request Create_Textual_Request(Message user_message, Conversation conversation, FileInfo[]? associated_files, List<Message> tulpa_messages_togo) {
+      //DRAGONS not sure if we want to do this always
+      //get the first system message or create a new one
+      Message first_system_message = tulpa_messages_togo.FirstOrDefault(m => m.role == Role.system) ?? new Message {role = Role.system};
+
+      //It's a StringBuilder. You can append to it. What do expect?
+      //Just don't enumerate it.
+      var tuned_up_system_message_content = new StringBuilder();
+
+      //add the content of the old system message to the new one
+      tuned_up_system_message_content.Append(first_system_message.content);
+
+      if (Config.Active.UIable.Use_Save_Via_Link)
+         add_save_link_preprompt(tuned_up_system_message_content);
+
+      // "Upload"
+      add_associated_files_to_system_message(associated_files, tuned_up_system_message_content);
+
+      // if the save_function is null, the parameter will just be ignored
+      Function<SaveParameters>? save_function = null;
+      if (Config.Active.UIable.Use_Save_Via_Prompt)
+         save_function = Enable_Save_via_Prompt_Function();
+
+      var new_system_message = new Message {
+         role    = Role.system,
+         content = tuned_up_system_message_content.ToString(),
+      };
+
+      //replace the first system message with the new one, make sure its at the same position as the old one
+      tulpa_messages_togo.Remove(first_system_message);
+      tulpa_messages_togo.Insert(Math.Max(tulpa_messages_togo.IndexOf(first_system_message), 0), new_system_message);
+
+      // concatenate the Tulpa_Messages and the conversation messages and the new prompt as a user message.
+      List<Message> all_messages = new();
+      all_messages.AddRange(tulpa_messages_togo);
+      all_messages.AddRange(conversation.Messages);
+      if (conversation.useSysMsgHack)
+         all_messages.Add(new_system_message);
+
+      all_messages.Add(user_message);
+
+      var all_immutable = all_messages.ToImmutableList();
+
+      Request request = new() {
+         messages    = all_immutable,
+         model       = Config.Active.LanguageModel,
+         temperature = Configuration.Temperature,
+         functions   = save_function is not null ? new IFunction[] {save_function} : null,
+         max_tokens  = Config.Active.UIable.Max_Tokens
+      };
+      return request;
+   }
+
    private static Function<SaveParameters>? Enable_Save_via_Prompt_Function() {
       var saveFile_function_json = System.IO.File.ReadAllText("Filetransfer/saveFile_Function.json");
       Function<SaveParameters>? saveFile_function =
@@ -205,20 +234,20 @@ public class Tulpa : InterTulpa {
       return saveFile_function;
    }
 
-   private void add_associated_files_to_system_message(FileInfo[]? associated_files, StringBuilder tuned_up_system_message_content) {
-      if (associated_files is not null) {
-         //add the associated files to the system message
-         foreach (var file in associated_files) {
-            var markdown_codeblock = create_markdown_code_block(file);
-            tuned_up_system_message_content.AppendLine(Tools.nl);
-            tuned_up_system_message_content.AppendLine("-----");
-            tuned_up_system_message_content.AppendLine(Tools.nl);
-            tuned_up_system_message_content.AppendLine(markdown_codeblock);
-         }
+   private static void add_associated_files_to_system_message(
+      FileInfo[]?   associated_files,
+      StringBuilder tuned_up_system_message_content) {
+
+      if (associated_files is null)
+         return;
+
+      //add the associated files to the system message
+      foreach (var file in associated_files) {
+         Markf278DownHelper.create_markdown_for_file(tuned_up_system_message_content, file);
       }
    }
 
-   private static void add_save_link(StringBuilder tuned_up_system_message_content) {
+   private static void add_save_link_preprompt(StringBuilder tuned_up_system_message_content) {
       var system_message = System.IO.File.ReadAllText("Filetransfer/save_link_system_message.md");
       tuned_up_system_message_content.AppendLine(Tools.nl);
       tuned_up_system_message_content.AppendLine(system_message);
@@ -232,21 +261,5 @@ public class Tulpa : InterTulpa {
       var last_message = tulpa_messages_togo.LastOrDefault();
       if (last_message?.role == Role.user)
          tulpa_messages_togo.Remove(last_message);
-   }
-
-   private static string create_markdown_code_block(FileInfo file) {
-      var file_content = System.IO.File.ReadAllText(file.FullName);
-      var markdown     = new StringBuilder();
-      markdown.Append("### ");
-      markdown.Append(file.Name);
-      markdown.Append("{.external-filename}");
-      markdown.Append(Tools.nl);
-      markdown.Append("```");
-      markdown.Append(Tools.nl);
-      markdown.Append(file_content);
-      markdown.Append(Tools.nl);
-      markdown.Append("```");
-      markdown.Append(Tools.nl);
-      return markdown.ToString();
    }
 }

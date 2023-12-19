@@ -1,103 +1,106 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
+    <meta charset="utf-8">
 
-	<script>
-		function scrollToLastPlaceholder() {
-			var paragraphs = document.getElementsByTagName('p');
-			var lastParagraphWithPlaceholder = null;
+    <script>
+        //%%CONSTANTS%%
+    </script>
 
-			for (var i = 0; i < paragraphs.length; i++) {
-				if (paragraphs[i].textContent === "🤖Assistant") {
-					lastParagraphWithPlaceholder = paragraphs[i];
-				}
-			}
+    <script>
+        function scrollToLastPlaceholder() {
+            var lastParagraphWithPlaceholder = null;
 
-			if (lastParagraphWithPlaceholder) {
-				lastParagraphWithPlaceholder.scrollIntoView(/*{ behavior: "smooth" }*/);
-			}
-		}
+            var paragraphs = document.getElementsByTagName('p');
+            for (var i = 0; i < paragraphs.length; i++) {
+                if (paragraphs[i].innerHTML.startsWith("🤖Assistant<br>")) {
+                    lastParagraphWithPlaceholder = paragraphs[i];
+                }
+            }
 
-		window.onload = function() {
-			scrollToLastPlaceholder();
-		};
-	</script>
+            if (lastParagraphWithPlaceholder) {
+                lastParagraphWithPlaceholder.scrollIntoView(/*{ behavior: "smooth" }*/);
+            }
+        }
 
-	<script>
+    </script>
 
-		//native interop
-		function sendMessage(message) {
-			if (window.chrome && window.chrome.webview)
-				window.chrome.webview.postMessage(message);
-			else {
-				//TADA here we need the polyfill for CEFSharp
-			}
-		}
+    <script>
 
-		// Header tags we're going to look for.
-		const headerTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+        //native interop
+        function sendMessage(message) {
+            if (window.chrome && window.chrome.webview)
+                window.chrome.webview.postMessage(message);
+            else {
+                //TADA here we need the polyfill for CEFSharp
+            }
+        }
 
-		function addClickHandler(header) {
-			header.style.cursor = "pointer";
-			header.title = "Save file to original location";
+        // Header tags we're going to look for.
+        const headerTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
 
-			// Add onclick event listener to each header.
-			header.addEventListener('click',
-				() => {
-					const codeContent = getCodeContent(header);
+        function addClickHandler(header) {
+            header.style.cursor = "pointer";
+            header.title = "Save file";
 
-					if (codeContent) {
-						// Get the file name and code content.
-						const fileName = header.textContent;
-						const message = {
-							file_name: fileName,
-							code_content: codeContent
-						}
-						// Call the sendMessage function.
-						sendMessage(message);
-					}
-				});
-		}
+            // Add onclick event listener to each header.
+            header.addEventListener('click',
+                () => {
+                    const codeContent = getCodeContent(header);
 
-		function getCodeContent(header) {
-			// Get next sibling and check if it's a <div> element.
-			const nextElement = header.nextElementSibling;
+                    if (codeContent) {
+                        // Get the file name and code content.
+                        const fileName = header.textContent;
+                        const message = {
+                            file_name: fileName,
+                            code_content: codeContent
+                        }
+                        // Call the sendMessage function.
+                        sendMessage(message);
+                    }
+                });
+        }
 
-			if (nextElement && nextElement.tagName.toLowerCase() === 'div') {
-				// Inside <div>, look for a single <pre> element.
-				const preElements = nextElement.getElementsByTagName('pre');
+        function getCodeContent(header) {
+            // Get next sibling and check if it's a <div> element.
+            const nextElement = header.nextElementSibling;
 
-				if (preElements.length === 1) {
-					// Inside <pre>, look for the <code> element.
-					const codeElements = preElements[0].getElementsByTagName('code');
+            if (nextElement && nextElement.tagName.toLowerCase() === 'div') {
+                // Inside <div>, look for a single <pre> element.
+                const preElements = nextElement.getElementsByTagName('pre');
 
-					if (codeElements.length === 1) {
-						// Get the code content.
-						return codeElements[0].textContent;
-					}
-				}
-			}
+                if (preElements.length === 1) {
+                    // Inside <pre>, look for the <code> element.
+                    const codeElements = preElements[0].getElementsByTagName('code');
 
-			return null;
-		}
+                    if (codeElements.length === 1) {
+                        // Get the code content.
+                        return codeElements[0].textContent;
+                    }
+                }
+            }
 
-
-		window.onload = function() {
-			headerTags.forEach((tag) => {
-				// Query all header elements with the "external-filename" class.
-				const headers = document.querySelectorAll(`${tag}.external-filename`);
-				headers.forEach(addClickHandler);
-			});
-		}
+            return null;
+        }
 
 
-	</script>
+        window.onload = function() {
+            headerTags.forEach((tag) => {
+                // Query all header elements with the "external-filename" class.
+                const headers = document.querySelectorAll(`${tag}.external-filename`);
+                headers.forEach(addClickHandler);
+            });
+            if (typeof auto_scroll !== 'undefined' && auto_scroll)
+                scrollToLastPlaceholder();
+        }
 
-	<link rel="stylesheet" href="my.css">
-	<link rel="stylesheet" href="prism_fancy.css">
-	<script src="prism_fancy.js"></script>
-	<script src="custom_prism_plugin.js"></script>
+
+    </script>
+
+    <link rel="stylesheet" href="my.css">
+    <link rel="stylesheet" href="prism_fancy.css">
+    <script src="prism_fancy.js"></script>
+    <script src="custom_prism_plugin.js"></script>
 
 </head>
 <body class="line-numbers match-braces">

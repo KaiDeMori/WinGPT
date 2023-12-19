@@ -5,7 +5,7 @@ Old–School WinForms GPT interface.
 This is a simple WinForms interface for the OpenAI GPT API.
 
 ## How to use?
-There are 3 Levels of WinGPT usage:
+[News & Docs](https://wiki.peopleoftheprompt.org/)
 
 ### Level 0
 - Start the application  
@@ -21,10 +21,9 @@ Once you have sent the request, it might take a moment. We will practice patienc
 - Enjoy.  
 You managed Level 0! Congratualations!! You have officially used AI now.
 
-
 ### Level 1
-Open the `Settings` menu and select `Show Tulpas`.
-
+Find the `Tulpa` folder in your base directory.
+Create a new `*.md` file, write your Persona/Character/whatever and save.
 
 # What is a Tulpa?
 A Tulpa is a file that can represent many use-cases of the AI chat model.

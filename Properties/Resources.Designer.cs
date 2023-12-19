@@ -83,9 +83,79 @@ namespace WinGPT.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap FolderOpened {
+            get {
+                object obj = ResourceManager.GetObject("FolderOpened", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Interwebs {
+            get {
+                object obj = ResourceManager.GetObject("Interwebs", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap RefreshConversationHistory {
+            get {
+                object obj = ResourceManager.GetObject("RefreshConversationHistory", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap SwitchDirectory {
+            get {
+                object obj = ResourceManager.GetObject("SwitchDirectory", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap TokenCounter {
             get {
                 object obj = ResourceManager.GetObject("TokenCounter", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Tulpas {
+            get {
+                object obj = ResourceManager.GetObject("Tulpas", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap UpdateAnimation {
+            get {
+                object obj = ResourceManager.GetObject("UpdateAnimation", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap WinGPT_64x64_ {
+            get {
+                object obj = ResourceManager.GetObject("WinGPT_64x64_", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

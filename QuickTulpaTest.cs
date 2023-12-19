@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Text;
 using Newtonsoft.Json;
 using Message = WinGPT.OpenAI.Chat.Message;
 

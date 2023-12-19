@@ -7,4 +7,3 @@ You will be presented with a conversation history.
 {{existing_categories}}
 
 If the conversation does not fit in any of the predefined categories, create a new category that is appropriate for the topic.
-If you can not find a fitting category or a title, set it to null.

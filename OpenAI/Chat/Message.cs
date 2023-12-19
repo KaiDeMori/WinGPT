@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace WinGPT.OpenAI.Chat;
@@ -15,10 +15,10 @@ public class Message {
    [JsonConverter(typeof(StringEnumConverter))]
    public Role role { get; init; }
 
-   public string? content { get; init; } = null!;
+   public string content { get; init; } = null!;
 
    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-   public string? name { get; init; } = null!;
+   public string? name { get; init; }
 
    /// <summary>
    /// **Not** the same thing as <see cref="Request.function_call"/>.
@@ -28,8 +28,8 @@ public class Message {
 
 
    public override string ToString() {
-      var    specialToken = role.ToSpecialToken();
-      string text         = specialToken + content + "\r\n";
+      var specialToken = role.ToSpecialToken();
+      var text         = specialToken + content + "\r\n";
       return text;
    }
 

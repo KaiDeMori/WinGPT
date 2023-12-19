@@ -13,8 +13,8 @@ internal class Config {
 
    public Config_UIable UIable { get; set; } = new();
 
-   private const  string Config_filename  = "Config.json";
-   internal const string tulpas_directory = "Characters";
+   private const   string        tulpas_directory = "Tulpas";
+   internal static DirectoryInfo Tulpa_Directory => new(Path.Join(Active.BaseDirectory, tulpas_directory));
 
    private const   string        history_directory = "Conversation_History";
    internal static DirectoryInfo History_Directory => new(Path.Join(Active.BaseDirectory, history_directory));
@@ -26,28 +26,43 @@ internal class Config {
    internal static readonly string my_css;
    internal static readonly string prism_js;
 
+   private const string        WebstuffsPrismFancyCss              = "webstuffs/prism_fancy.css";
+   private const string        WebstuffsPrismFancyJs               = "webstuffs/prism_fancy.js";
+   private const string        WebstuffsMyCss                      = "webstuffs/my.css";
+   private const string        Preliminary_Conversations_Directory = "tmp";
+   private const string        AdHoc_Downloads_Directory           = "Downloads";
+   public const  string        DefaultAssistant_Filename           = "Default_Assistant.md";
+   public static DirectoryInfo Preliminary_Conversations_Path => new(Path.Join(Active.BaseDirectory, Preliminary_Conversations_Directory));
+   public static DirectoryInfo AdHoc_Downloads_Path           => new(Path.Join(Active.BaseDirectory, AdHoc_Downloads_Directory));
 
-   internal const string        conversation_title_prompt           = "Generate an ultra short title for this conversation.";
-   private const  string        WebstuffsPrismFancyCss              = "webstuffs/prism_fancy.css";
-   private const  string        WebstuffsPrismFancyJs               = "webstuffs/prism_fancy.js";
-   private const  string        WebstuffsMyCss                      = "webstuffs/my.css";
-   private const  string        Preliminary_Conversations_Directory = "tmp";
-   private const  string        AdHoc_Downloads_Directory           = "Downloads";
-   public const   string        DefaultAssistant_Filename           = "Default_Assistant.md";
-   public static  DirectoryInfo Preliminary_Conversations_Path => new(Path.Join(Active.BaseDirectory, Preliminary_Conversations_Directory));
-   public static  DirectoryInfo AdHoc_Downloads_Path           => new(Path.Join(Active.BaseDirectory, AdHoc_Downloads_Directory));
+   public const string WIKI_URL = "https://wiki.peopleoftheprompt.org";
 
    private static readonly object _lock   = new();
    public static           bool   loading = false;
 
-   public string? BaseDirectory  { get; set; }
-   public string  OpenAI_API_Key { get; set; } = "";
-   public string  LanguageModel  { get; set; } = "gpt-4";
-   public string  LastUsedTulpa  { get; set; } = DefaultAssistant_Filename;
-
+   /// <summary>
+   /// This is the internal bookkeeping of the number of tokens used in total since the last reset.
+   /// </summary>
    public TokenCounter TokenCounter { get; set; } = new();
 
+   /// <summary>
+   /// This is the interval used for the tokenizer call in milliseconds.
+   /// </summary>
+   public static int count_tokens_timer_interval = 500;
+
+   public string? BaseDirectory  { get; set; }
+   public string  OpenAI_API_Key { get; set; } = "";
+   public string  LanguageModel  { get; set; } = "gpt-4-1106-preview";
+   public string  LastUsedTulpa  { get; set; } = DefaultAssistant_Filename;
+
+   public double            MainSplitter_relative_position { get; set; } = .2;
+   public double            TextSplitter_relative_position { get; set; } = .5;
+   public WindowParameters? WindowParameters               { get; set; }
+
+
    static Config() {
+      Application_Paths.Config_File.Directory.Create();
+
       try {
          prism_css = File.ReadAllText(WebstuffsPrismFancyCss);
          prism_js  = File.ReadAllText(WebstuffsPrismFancyJs);
@@ -71,9 +86,7 @@ internal class Config {
          loading = true;
       }
 
-      var configfile = Path.Join(Application.StartupPath, Config_filename);
-
-      if (!File.Exists(configfile)) {
+      if (!Application_Paths.Config_File.Exists) {
          ConfigErrorCase(false);
          loading = false;
          return;
@@ -82,8 +95,9 @@ internal class Config {
       JsonSerializerSettings settings = new() {
          ObjectCreationHandling = ObjectCreationHandling.Replace,
       };
-      Config? loadedConfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText(configfile), settings);
-      if (Tools.HasNullProperties(loadedConfig)) {
+      Config? loadedConfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Application_Paths.Config_File.FullName), settings);
+      //if (Tools.HasNullProperties(loadedConfig)) {
+      if (loadedConfig is null) {
          ConfigErrorCase();
       }
       else {
@@ -105,10 +119,9 @@ internal class Config {
       if (string.IsNullOrWhiteSpace(Active.OpenAI_API_Key))
          throw new Exception("OpenAI API Key is empty.");
 
-      var configfile = Path.Join(Application.StartupPath, Config_filename);
       try {
          var contents = JsonConvert.SerializeObject(Active, Formatting.Indented);
-         File.WriteAllText(configfile, contents);
+         File.WriteAllText(Application_Paths.Config_File.FullName, contents);
       }
       catch (Exception e) {
          MessageBox.Show($"Error while saving configuration file: {e.Message}", "Error", MessageBoxButtons.OK,
@@ -123,4 +136,12 @@ internal class Config {
       Active = new Config();
       Save();
    }
+}
+
+internal class WindowParameters {
+   public FormStartPosition StartPosition { get; set; } = FormStartPosition.Manual;
+   public FormWindowState   WindowState   { get; set; } = FormWindowState.Normal;
+
+   public Point Location { get; set; }
+   public Size  Size     { get; set; }
 }

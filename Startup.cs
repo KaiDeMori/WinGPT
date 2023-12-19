@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.IO.Compression;
 
 namespace WinGPT;
 
@@ -30,9 +31,7 @@ internal static class Startup {
    }
 
    private static bool AssertSubdirectories() {
-      var tulpas_directory = new DirectoryInfo(Path.Join(Config.Active.BaseDirectory, Config.tulpas_directory));
-      CreateDirectoryIfNotExists(tulpas_directory);
-
+      CreateDirectoryIfNotExists(Config.Tulpa_Directory);
       CreateDirectoryIfNotExists(Config.History_Directory);
       CreateDirectoryIfNotExists(Config.Preliminary_Conversations_Path);
       CreateDirectoryIfNotExists(Config.AdHoc_Downloads_Path);
@@ -94,14 +93,24 @@ internal static class Startup {
          return false;
       }
 
+      // Check if it's the same
+      if (selectedDirectory == Config.Active.BaseDirectory) {
+         // If it's the same, just return
+         return true;
+      }
+
       // Check if directory selected by the user is not empty
       if (Directory.EnumerateFileSystemEntries(selectedDirectory).Any()) {
          // Ask user for confirmation if directory is not empty
          DialogResult dialogResult = MessageBox.Show("The selected directory is not empty. Are you sure you want to use this directory?", "Confirmation",
             MessageBoxButtons.YesNo);
          if (dialogResult == DialogResult.Yes) {
-            // If user confirms, update the BaseDirectory
+            // If user confirms, use the already existing one.
+            // don't create the subdirectories, we assume they already exist
             Config.Active.BaseDirectory = selectedDirectory;
+            AssertSubdirectories();
+            Config.Save();
+            return true;
          }
          else {
             DialogResult openExplorerResult =
@@ -119,30 +128,28 @@ internal static class Startup {
          }
       }
       else {
-         // If directory is empty, just update the BaseDirectory
          Config.Active.BaseDirectory = selectedDirectory;
+         AssertSubdirectories();
+      }
+
+      //create default Tulpas from resources
+      var tulpas_zipped = WinGPT.Properties.Resources.Tulpas;
+
+      using MemoryStream zipStream = new MemoryStream(tulpas_zipped);
+      using ZipArchive   archive   = new ZipArchive(zipStream, ZipArchiveMode.Read);
+      foreach (ZipArchiveEntry entry in archive.Entries) {
+         string fullname = Path.Join(Config.Tulpa_Directory.FullName, entry.FullName);
+         try {
+            entry.ExtractToFile(fullname, false);
+         }
+         catch {
+            // ignored
+         }
       }
 
       // Save the updated configuration
       Config.Save();
 
       return true;
-   }
-
-   public static List<Tulpa> CreateAllTulpas() {
-      //read all *.md files in the tulpas directory
-      var directory = new DirectoryInfo(Path.Join(Config.Active.BaseDirectory, Config.tulpas_directory));
-      var files     = directory.GetFiles(Config.marf278down_filter);
-
-      //I think this is a buhg in LINQ, as there should be a way to do this without the null assertion
-      //List<Tulpa> tulpas = files
-      //   .Select(Tulpa.CreateFrom)
-      //   .Where(t => t != null)
-      //   .Select(t => t!) // This line asserts that the elements aren't null.
-      //   .ToList();
-
-      var tulpas = files.Select(Tulpa.CreateFrom).NotNull().ToList();
-
-      return tulpas;
    }
 }

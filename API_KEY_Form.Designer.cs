@@ -42,19 +42,19 @@
             groupBox1.Controls.Add(api_key_textBox);
             groupBox1.Location = new Point(12, 12);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(483, 53);
+            groupBox1.Size = new Size(486, 67);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "OpenAI API Key";
             // 
             // api_key_textBox
             // 
-            api_key_textBox.Dock = DockStyle.Fill;
-            api_key_textBox.Location = new Point(3, 19);
+            api_key_textBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            api_key_textBox.Location = new Point(6, 22);
             api_key_textBox.MaxLength = 52;
             api_key_textBox.Name = "api_key_textBox";
             api_key_textBox.PlaceholderText = "sk-ccccccccccccccccccaaaaaaaaaaafffffffffeeeeeeeeee";
-            api_key_textBox.Size = new Size(477, 23);
+            api_key_textBox.Size = new Size(474, 23);
             api_key_textBox.TabIndex = 0;
             api_key_textBox.TextAlign = HorizontalAlignment.Center;
             // 

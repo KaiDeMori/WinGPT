@@ -1,10 +1,17 @@
 ﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using WinGPT.OpenAI;
 
 namespace WinGPT;
 
 public static class Tools {
+   public static Font RoundFontSize(Font font) {
+      var rounded_size = (float) Math.Round(font.Size, MidpointRounding.AwayFromZero);
+      var f            = new Font(font.FontFamily, rounded_size, font.Style, font.Unit);
+      return f;
+   }
+
    public readonly struct ErrorOr<SUCCESS_TYPE, ERROR_TYPE> {
       private readonly SUCCESS_TYPE result;
       private readonly ERROR_TYPE?  error;
@@ -120,7 +127,7 @@ public static class Tools {
          // If the file path starts with the base directory path, get the relative path
          // by removing the base directory path from the start of the file path.
          // Also remove any leading directory separator that might remain after the removal.
-         return filePath.Substring(baseDirPath.Length).TrimStart(Path.DirectorySeparatorChar);
+         return filePath[baseDirPath.Length..].TrimStart(Path.DirectorySeparatorChar);
       }
       else {
          // If the file path doesn't start with the base directory path, it's not possible to get a relative path.
@@ -130,4 +137,42 @@ public static class Tools {
    }
 
    public static readonly string nl = Environment.NewLine;
+
+   public static DirectoryInfo[] GetRelativeDirectories(DirectoryInfo baseDirectory, FileSystemInfo fileSystemInfo) {
+      List<DirectoryInfo> intermediateDirectories = new();
+
+      DirectoryInfo? currentDirectory;
+      if (fileSystemInfo is FileInfo fileInfo) {
+         currentDirectory = fileInfo.Directory;
+      }
+      else {
+         currentDirectory = fileSystemInfo as DirectoryInfo;
+      }
+
+      while (currentDirectory != null && baseDirectory.FullName.Length < currentDirectory.FullName.Length) {
+         if (currentDirectory.FullName.StartsWith(baseDirectory.FullName, StringComparison.OrdinalIgnoreCase)) {
+            intermediateDirectories.Insert(0, currentDirectory); // Insert at the beginning to maintain order.
+         }
+
+         currentDirectory = currentDirectory.Parent;
+      }
+
+      return intermediateDirectories.ToArray();
+   }
+
+   public static bool isVisionModel() {
+      return Config.Active.LanguageModel switch {
+         Models.gpt_4_vision_preview => true,
+         _                           => false
+      };
+   }
+
+   public static bool isImageGenerationModel() {
+      return Config.Active.LanguageModel switch {
+         Models.dall_e_3 => true,
+         _               => false
+      };
+   }
+
+   public static Version Version => Assembly.GetExecutingAssembly().GetName().Version!;
 }

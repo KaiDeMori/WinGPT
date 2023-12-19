@@ -1,7 +1,7 @@
 ﻿namespace WinGPT;
 
 internal static class HistoryFileParser {
-   public static bool TryParseHistoryHeader(ref ReadOnlySpan<char> currentSpan, out Conversation_Info conversation_info) {
+   public static bool TryParseConversationInfo(ref ReadOnlySpan<char> currentSpan, out Conversation_Info conversation_info) {
       var conversationHistoryDelimiter = SpecialTokens.ConversationHistory.AsSpan();
 
       conversation_info = new Conversation_Info();
