@@ -26,7 +26,7 @@ public class TokenCounter {
          if (Config.loading)
             return;
          Config.Save();
-         if (value >= Token_Limit) {
+         if (value >= Token_Limit && Show_Message) {
             LimitReached?.Invoke();
          }
 
@@ -34,10 +34,12 @@ public class TokenCounter {
       }
    }
 
+   public bool Show_Message { get; set; } = false;
+
    private void SanityCheck() {
       if (Prompt_Tokens + Completion_Tokens != Total_Tokens) {
          //throw new Exception("TokenCounter: Sanity check failed.");
-         MessageBox.Show("TokenCounter: Sanity check failed. Some forgot how to add!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+         MessageBox.Show("TokenCounter: Sanity check failed. Someone forgot how to add!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
       }
    }
 

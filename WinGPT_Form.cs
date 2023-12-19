@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using WinGPT.OpenAI;
 using WinGPT.Taxonomy;
 using Message = WinGPT.OpenAI.Chat.Message;
+using Timer = System.Windows.Forms.Timer;
 
 namespace WinGPT;
 
@@ -180,6 +181,34 @@ public partial class WinGPT_Form : Form {
             conversation_history_treeView
          );
 
+      Associated_files.ListChanged += (sender, args) => {
+         var listChangedType = args.ListChangedType;
+         switch (listChangedType) {
+            case ListChangedType.Reset:
+               break;
+            case ListChangedType.ItemAdded:
+               break;
+            case ListChangedType.ItemDeleted:
+               break;
+            case ListChangedType.ItemMoved:
+               break;
+            case ListChangedType.ItemChanged:
+               break;
+            case ListChangedType.PropertyDescriptorAdded:
+               break;
+            case ListChangedType.PropertyDescriptorDeleted:
+               break;
+            case ListChangedType.PropertyDescriptorChanged:
+               break;
+            default:
+               throw new ArgumentOutOfRangeException();
+         }
+
+         //uploaded_files_comboBox.DataSource = null;
+         //uploaded_files_comboBox.DataSource = Associated_files;
+         //uploaded_files_comboBox.DisplayMember = "Name";
+         //uploaded_files_comboBox.ValueMember   = "FullName";
+      };
 
       Enabled = true;
       Set_status_bar(false, "Let's go!");
@@ -355,6 +384,9 @@ public partial class WinGPT_Form : Form {
          e.Handled          = true;
          e.SuppressKeyPress = true;
          send_prompt_button_Click(sender, e);
+      }
+      else {
+         TimedTokenizer.Reset();
       }
    }
 
