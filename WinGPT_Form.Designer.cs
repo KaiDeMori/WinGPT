@@ -45,7 +45,7 @@
             prompt_buttons_panel = new Panel();
             remove_file_button = new Button();
             uploaded_files_comboBox = new ComboBox();
-            upload_button = new Button();
+            attach_button = new Button();
             send_prompt_button = new Button();
             tulpa_textBox = new TextBox();
             toggle_RIGHT_button = new Button();
@@ -74,6 +74,7 @@
             open_AdHoc_Directory_ToolStripMenuItem = new ToolStripMenuItem();
             open_Tulpas_Directory_ToolStripMenuItem = new ToolStripMenuItem();
             open_Downloads_Directory_ToolStripMenuItem = new ToolStripMenuItem();
+            refresh_ConversationHistory_ToolStripMenuItem = new ToolStripMenuItem();
             help_ToolStripMenuItem = new ToolStripMenuItem();
             about_ToolStripMenuItem = new ToolStripMenuItem();
             goTo_WinGPT_Wiki_ToolStripMenuItem = new ToolStripMenuItem();
@@ -87,7 +88,6 @@
             main_toolStripProgressBar = new ToolStripProgressBar();
             base_directory_vistaFolderBrowserDialog = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog();
             upload_vistaOpenFileDialog = new Ookii.Dialogs.WinForms.VistaOpenFileDialog();
-            refresh_ConversationHistory_ToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)text_splitContainer).BeginInit();
             text_splitContainer.Panel1.SuspendLayout();
             text_splitContainer.Panel2.SuspendLayout();
@@ -201,7 +201,7 @@
             prompt_buttons_panel.Controls.Add(clear_button);
             prompt_buttons_panel.Controls.Add(remove_file_button);
             prompt_buttons_panel.Controls.Add(uploaded_files_comboBox);
-            prompt_buttons_panel.Controls.Add(upload_button);
+            prompt_buttons_panel.Controls.Add(attach_button);
             prompt_buttons_panel.Controls.Add(send_prompt_button);
             prompt_buttons_panel.Controls.Add(autoclear_checkBox);
             prompt_buttons_panel.Dock = DockStyle.Bottom;
@@ -232,17 +232,17 @@
             uploaded_files_comboBox.Size = new Size(121, 23);
             uploaded_files_comboBox.TabIndex = 3;
             // 
-            // upload_button
+            // attach_button
             // 
-            upload_button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            upload_button.FlatStyle = FlatStyle.System;
-            upload_button.Location = new Point(0, 38);
-            upload_button.Name = "upload_button";
-            upload_button.Size = new Size(113, 25);
-            upload_button.TabIndex = 2;
-            upload_button.Text = "Upload File(s)";
-            upload_button.UseVisualStyleBackColor = true;
-            upload_button.Click += upload_button_Click;
+            attach_button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            attach_button.FlatStyle = FlatStyle.System;
+            attach_button.Location = new Point(0, 38);
+            attach_button.Name = "attach_button";
+            attach_button.Size = new Size(113, 25);
+            attach_button.TabIndex = 2;
+            attach_button.Text = "Attach File(s)";
+            attach_button.UseVisualStyleBackColor = true;
+            attach_button.Click += upload_button_Click;
             // 
             // send_prompt_button
             // 
@@ -505,8 +505,8 @@
             open_AdHoc_Directory_ToolStripMenuItem.Image = Properties.Resources.FolderOpened;
             open_AdHoc_Directory_ToolStripMenuItem.Name = "open_AdHoc_Directory_ToolStripMenuItem";
             open_AdHoc_Directory_ToolStripMenuItem.Size = new Size(227, 22);
-            open_AdHoc_Directory_ToolStripMenuItem.Text = "Open Ad-Hoc Directory";
-            open_AdHoc_Directory_ToolStripMenuItem.ToolTipText = "Opens the directory where the temporary conversations are stored.";
+            open_AdHoc_Directory_ToolStripMenuItem.Text = "Open tmp Directory";
+            open_AdHoc_Directory_ToolStripMenuItem.ToolTipText = "Opens the directory where the ad-hoc conversations are stored.";
             open_AdHoc_Directory_ToolStripMenuItem.Click += open_AdHoc_Directory_ToolStripMenuItem_Click;
             // 
             // open_Tulpas_Directory_ToolStripMenuItem
@@ -524,6 +524,14 @@
             open_Downloads_Directory_ToolStripMenuItem.Size = new Size(227, 22);
             open_Downloads_Directory_ToolStripMenuItem.Text = "Open Downloads Directory";
             open_Downloads_Directory_ToolStripMenuItem.Click += open_Downloads_Directory_ToolStripMenuItem_Click;
+            // 
+            // refresh_ConversationHistory_ToolStripMenuItem
+            // 
+            refresh_ConversationHistory_ToolStripMenuItem.Image = Properties.Resources.RefreshConversationHistory;
+            refresh_ConversationHistory_ToolStripMenuItem.Name = "refresh_ConversationHistory_ToolStripMenuItem";
+            refresh_ConversationHistory_ToolStripMenuItem.Size = new Size(227, 22);
+            refresh_ConversationHistory_ToolStripMenuItem.Text = "Refresh Conversation History";
+            refresh_ConversationHistory_ToolStripMenuItem.Click += refresh_ConversationHistory_ToolStripMenuItem_Click;
             // 
             // help_ToolStripMenuItem
             // 
@@ -639,14 +647,6 @@
             upload_vistaOpenFileDialog.SupportMultiDottedExtensions = true;
             upload_vistaOpenFileDialog.Title = "Choose wisely!";
             // 
-            // refresh_ConversationHistory_ToolStripMenuItem
-            // 
-            refresh_ConversationHistory_ToolStripMenuItem.Image = Properties.Resources.RefreshConversationHistory;
-            refresh_ConversationHistory_ToolStripMenuItem.Name = "refresh_ConversationHistory_ToolStripMenuItem";
-            refresh_ConversationHistory_ToolStripMenuItem.Size = new Size(227, 22);
-            refresh_ConversationHistory_ToolStripMenuItem.Text = "Refresh Conversation History";
-            refresh_ConversationHistory_ToolStripMenuItem.Click += refresh_ConversationHistory_ToolStripMenuItem_Click;
-            // 
             // WinGPT_Form
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -722,7 +722,7 @@
         private TabPage webview2_tabPage;
         private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
         private Panel prompt_buttons_panel;
-        private Button upload_button;
+        private Button attach_button;
         private ComboBox uploaded_files_comboBox;
         private Ookii.Dialogs.WinForms.VistaOpenFileDialog upload_vistaOpenFileDialog;
         internal Button clear_button;

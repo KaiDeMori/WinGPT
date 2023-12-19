@@ -26,21 +26,29 @@ internal class Config {
    internal static readonly string my_css;
    internal static readonly string prism_js;
 
-   private const  string        WebstuffsPrismFancyCss              = "webstuffs/prism_fancy.css";
-   private const  string        WebstuffsPrismFancyJs               = "webstuffs/prism_fancy.js";
-   private const  string        WebstuffsMyCss                      = "webstuffs/my.css";
-   private const  string        Preliminary_Conversations_Directory = "tmp";
-   private const  string        AdHoc_Downloads_Directory           = "Downloads";
-   public const   string        DefaultAssistant_Filename           = "Default_Assistant.md";
-   public static  DirectoryInfo Preliminary_Conversations_Path => new(Path.Join(Active.BaseDirectory, Preliminary_Conversations_Directory));
-   public static  DirectoryInfo AdHoc_Downloads_Path           => new(Path.Join(Active.BaseDirectory, AdHoc_Downloads_Directory));
+   private const string        WebstuffsPrismFancyCss              = "webstuffs/prism_fancy.css";
+   private const string        WebstuffsPrismFancyJs               = "webstuffs/prism_fancy.js";
+   private const string        WebstuffsMyCss                      = "webstuffs/my.css";
+   private const string        Preliminary_Conversations_Directory = "tmp";
+   private const string        AdHoc_Downloads_Directory           = "Downloads";
+   public const  string        DefaultAssistant_Filename           = "Default_Assistant.md";
+   public static DirectoryInfo Preliminary_Conversations_Path => new(Path.Join(Active.BaseDirectory, Preliminary_Conversations_Directory));
+   public static DirectoryInfo AdHoc_Downloads_Path           => new(Path.Join(Active.BaseDirectory, AdHoc_Downloads_Directory));
 
    public const string WIKI_URL = "https://wiki.peopleoftheprompt.org";
 
    private static readonly object _lock   = new();
    public static           bool   loading = false;
 
+   /// <summary>
+   /// This is the internal bookkeeping of the number of tokens used in total since the last reset.
+   /// </summary>
    public TokenCounter TokenCounter { get; set; } = new();
+
+   /// <summary>
+   /// This is the interval used for the tokenizer call in milliseconds.
+   /// </summary>
+   public static int count_tokens_timer_interval = 500;
 
    public string? BaseDirectory  { get; set; }
    public string  OpenAI_API_Key { get; set; } = "";

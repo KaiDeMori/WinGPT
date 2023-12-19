@@ -65,7 +65,9 @@ public class Tulpa : InterTulpa {
       List<Message> tulpa_messages_togo =
          Messages.Select(m => m.Clone()).ToList();
 
+      //special case for tulpas with an example prompt
       remove_last_user_message(tulpa_messages_togo);
+
       Request request;
       if (Tools.isVisionModel()) {
          request = Create_Vision_Request(user_message, associated_files);
@@ -232,34 +234,16 @@ public class Tulpa : InterTulpa {
       return saveFile_function;
    }
 
-   private static void add_associated_files_to_system_message(FileInfo[]? associated_files, StringBuilder tuned_up_system_message_content) {
+   private static void add_associated_files_to_system_message(
+      FileInfo[]?   associated_files,
+      StringBuilder tuned_up_system_message_content) {
+
       if (associated_files is null)
          return;
 
       //add the associated files to the system message
       foreach (var file in associated_files) {
-         //now we want to add code files in a code block, text files with the simple filename wrapper and all other files not at all
-         //use the shiny new FileTypeIdentifier
-         var fileType = FileTypeIdentifier.GetFileType(file.FullName);
-         switch (fileType) {
-            case FileType.Code:
-               var markdown_codeblock = Markf278DownHelper.create_markdown_code_block(file);
-               tuned_up_system_message_content.AppendLine(markdown_codeblock);
-               break;
-            case FileType.Text:
-               var markdown_textblock = Markf278DownHelper.create_markdown_text_block(file);
-               tuned_up_system_message_content.AppendLine(markdown_textblock);
-               break;
-            case FileType.Image:
-               //not available. We need to use the Vision API for that!
-               break;
-            case FileType.Other:
-               //not available. Maybe we can add a link to the file?
-               //or do some Base64 encoding?
-               break;
-            default:
-               throw new ArgumentOutOfRangeException();
-         }
+         Markf278DownHelper.create_markdown_for_file(tuned_up_system_message_content, file);
       }
    }
 
