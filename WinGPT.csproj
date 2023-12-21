@@ -110,6 +110,7 @@
 	<ItemGroup>
 		<PackageReference Include="Autoupdater.NET.Official" Version="1.8.4" />
 		<PackageReference Include="Markdig" Version="0.33.0" />
+		<PackageReference Include="Microsoft.DeepDev.TokenizerLib" Version="1.3.2" />
 		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2210.55" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.15" />
@@ -166,6 +167,15 @@
 		</None>
 		<None Update="Taxonomy\system_message_template.md">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Tokenizer\cl100k_base.tiktoken">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Tokenizer\p50k_base.tiktoken">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Tokenizer\r50k_base.tiktoken">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="webstuffs\custom_prism_plugin.js">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

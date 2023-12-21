@@ -8,24 +8,26 @@ namespace WinGPT.OpenAI;
 /// which will count the number of tokens in the prompt, including the attached files.
 /// </summary>
 internal static class TimedTokenizer {
-    private static readonly Timer timer = new();
-    // Language selection for the message box (default is French)
-    public static string Language { get; set; } = "French";
+   private static readonly Timer timer = new();
 
-    static TimedTokenizer() {
-        timer.Interval = Config.count_tokens_timer_interval;
-        timer.Tick += (sender, args) => {
-            timer.Stop();
-            //TODO: Count tokens
-            
-        };
-    }
+   //a callback to call after the timer has elapsed
+   public static Action Callback { get; set; }
 
-    /// <summary>
-    /// Resets and restarts the timer.
-    /// </summary>
-    public static void Reset() {
-        timer.Stop();
-        timer.Start();
-    }
+   static TimedTokenizer() {
+      Callback       = () => { };
+      timer.Interval = Config.Active.UIable.count_tokens_timer_interval;
+      timer.Tick += (sender, args) => {
+         timer.Stop();
+         //TODO: Count tokens
+         Callback();
+      };
+   }
+
+   /// <summary>
+   /// Resets and restarts the timer.
+   /// </summary>
+   public static void Reset() {
+      timer.Stop();
+      timer.Start();
+   }
 }

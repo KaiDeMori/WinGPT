@@ -25,12 +25,12 @@ public class Config_UIable {
    [Description("This controls the font of the prompt text-box.")]
    public Font Prompt_Font { get; set; } = new Font("Arial", 12);
 
-    [Category("markf278down text-box")]
-    [DisplayName("Font")]
-    [Description("This controls the font of the raw markf278down response text-box.")]
-    //[Category("Base"), Description("The font")]
-    //[Editor(typeof(CustomFontEditor), typeof(UITypeEditor))]
-    public Font markf278down_Font { get; set; } = new Font("Arial", 12);
+   [Category("markf278down text-box")]
+   [DisplayName("Font")]
+   [Description("This controls the font of the raw markf278down response text-box.")]
+   //[Category("Base"), Description("The font")]
+   //[Editor(typeof(CustomFontEditor), typeof(UITypeEditor))]
+   public Font markf278down_Font { get; set; } = new Font("Arial", 12);
 
    // the corrected version would be
    [Category("markf278down text-box")]
@@ -45,6 +45,11 @@ public class Config_UIable {
    [DisplayName("Use Auto-Scroll")]
    [Description("If true, the response text-box is scrolled to the last response. ")]
    public bool Auto_Scroll { get; set; } = true;
+
+   [Category("Performance")]
+   [DisplayName("Show live token count.")]
+   [Description("Shows the locally computed token count in various places.")]
+   public bool Show_Live_Token_Count { get; set; } = false;
 
    [Category("Experimental")]
    [DisplayName("Remove toggle buttons")]
@@ -61,6 +66,13 @@ public class Config_UIable {
    [Description("Sets the AutoScaleMode. Needs app restart!")]
    public AutoScaleMode Auto_Scale_Mode { get; set; } = AutoScaleMode.Font;
 
+   /// <summary>
+   /// This is the interval used for the tokenizer call in milliseconds.
+   /// </summary>
+   [Category("Performance")]
+   [DisplayName("Prompt Token-Counter interval")]
+   [Description("This is the interval used for the tokenizer call for the prompt text box in  milliseconds. After each keystroke, we wait this many ms before calling the tokenizer.")]
+   public int count_tokens_timer_interval { get; set; } = 2000;
 }
 
 /// <summary>
@@ -75,23 +87,21 @@ public class CustomFontEditor : UITypeEditor {
    }
 
    public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value) {
-        //FontDialog dlg = new FontDialog();
-        //dlg = new FontDialog();
+      //FontDialog dlg = new FontDialog();
+      //dlg = new FontDialog();
 
-        //if (value is Font font)
-        //{
-        //    dlg.Font = font;
-        //}
+      //if (value is Font font)
+      //{
+      //    dlg.Font = font;
+      //}
 
-        //if (dlg.ShowDialog() == DialogResult.OK)
-        //    return dlg.Font;
+      //if (dlg.ShowDialog() == DialogResult.OK)
+      //    return dlg.Font;
 
-        var nativeFontDialog = new NativeFontDialog();
-        var font = nativeFontDialog.open((Font)value);
+      var nativeFontDialog = new NativeFontDialog();
+      var font             = nativeFontDialog.open((Font) value);
 
-        //return base.EditValue(context, provider, value);
-        return font;
+      //return base.EditValue(context, provider, value);
+      return font;
    }
 }
-
-
