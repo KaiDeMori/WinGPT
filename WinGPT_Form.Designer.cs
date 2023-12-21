@@ -38,6 +38,8 @@
             main_toolTip = new ToolTip(components);
             associated_files_token_sum_label = new Label();
             label1 = new Label();
+            prompt_token_count_label = new Label();
+            total_request_token_count_label = new Label();
             history_file_name_textBox = new TextBox();
             autoclear_checkBox = new CheckBox();
             clear_button = new Button();
@@ -45,8 +47,6 @@
             toggle_LEFT_button = new Button();
             prompt_textBox = new TextBox();
             prompt_buttons_panel = new Panel();
-            prompt_token_count_label = new Label();
-            total_request_token_count_label = new Label();
             remove_file_button = new Button();
             uploaded_files_comboBox = new ComboBox();
             attach_button = new Button();
@@ -118,7 +118,7 @@
             associated_files_token_sum_label.TabIndex = 7;
             associated_files_token_sum_label.Text = "128.000";
             associated_files_token_sum_label.TextAlign = ContentAlignment.MiddleRight;
-            main_toolTip.SetToolTip(associated_files_token_sum_label, "Total number of tokens.");
+            main_toolTip.SetToolTip(associated_files_token_sum_label, "Total number of tokens in the files.");
             associated_files_token_sum_label.Click += associated_files_token_sum_label_Click;
             // 
             // label1
@@ -131,6 +131,28 @@
             label1.Text = "128.000";
             label1.TextAlign = ContentAlignment.MiddleRight;
             main_toolTip.SetToolTip(label1, "Total number of tokens.");
+            // 
+            // prompt_token_count_label
+            // 
+            prompt_token_count_label.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            prompt_token_count_label.Location = new Point(165, 6);
+            prompt_token_count_label.Name = "prompt_token_count_label";
+            prompt_token_count_label.Size = new Size(53, 25);
+            prompt_token_count_label.TabIndex = 9;
+            prompt_token_count_label.Text = "128.000";
+            prompt_token_count_label.TextAlign = ContentAlignment.MiddleLeft;
+            main_toolTip.SetToolTip(prompt_token_count_label, "Number of Tokens in the Prompt.");
+            // 
+            // total_request_token_count_label
+            // 
+            total_request_token_count_label.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            total_request_token_count_label.Location = new Point(248, 6);
+            total_request_token_count_label.Name = "total_request_token_count_label";
+            total_request_token_count_label.Size = new Size(53, 25);
+            total_request_token_count_label.TabIndex = 8;
+            total_request_token_count_label.Text = "128.000";
+            total_request_token_count_label.TextAlign = ContentAlignment.MiddleRight;
+            main_toolTip.SetToolTip(total_request_token_count_label, "Total number of tokens in the complete request.");
             // 
             // history_file_name_textBox
             // 
@@ -240,28 +262,6 @@
             prompt_buttons_panel.Name = "prompt_buttons_panel";
             prompt_buttons_panel.Size = new Size(448, 63);
             prompt_buttons_panel.TabIndex = 3;
-            // 
-            // prompt_token_count_label
-            // 
-            prompt_token_count_label.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            prompt_token_count_label.Location = new Point(165, 6);
-            prompt_token_count_label.Name = "prompt_token_count_label";
-            prompt_token_count_label.Size = new Size(53, 25);
-            prompt_token_count_label.TabIndex = 9;
-            prompt_token_count_label.Text = "128.000";
-            prompt_token_count_label.TextAlign = ContentAlignment.MiddleLeft;
-            main_toolTip.SetToolTip(prompt_token_count_label, "Number of Tokens in the Prompt.");
-            // 
-            // total_request_token_count_label
-            // 
-            total_request_token_count_label.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            total_request_token_count_label.Location = new Point(248, 6);
-            total_request_token_count_label.Name = "total_request_token_count_label";
-            total_request_token_count_label.Size = new Size(53, 25);
-            total_request_token_count_label.TabIndex = 8;
-            total_request_token_count_label.Text = "128.000";
-            total_request_token_count_label.TextAlign = ContentAlignment.MiddleRight;
-            main_toolTip.SetToolTip(total_request_token_count_label, "Total number of tokesn in the complete request.");
             // 
             // remove_file_button
             // 

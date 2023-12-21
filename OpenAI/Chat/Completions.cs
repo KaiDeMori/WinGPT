@@ -24,7 +24,7 @@ public class Completions {
       //replace all "system" by "System" -> Bad Request
       //jsonRequest = jsonRequest.Replace("\"system\"", "\"System\"");
 
-      Response? response = null;
+      Response? response;
 
       // Create thae HttpContent for the form to be posted.
       StringContent content = new(request_content_json, Encoding.UTF8, "application/json");

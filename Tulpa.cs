@@ -4,6 +4,7 @@ using System.Text;
 using Newtonsoft.Json;
 using WinGPT.OpenAI;
 using WinGPT.OpenAI.Chat;
+using WinGPT.Tokenizer;
 using Message = WinGPT.OpenAI.Chat.Message;
 
 // ReSharper disable MethodHasAsyncOverload
@@ -16,6 +17,8 @@ namespace WinGPT;
 /// https://en.wikipedia.org/wiki/Tulpa
 /// </summary>
 public class Tulpa : InterTulpa {
+   public int Token_Count { get; private set; }
+
    [JsonIgnore]
    public FileInfo? File { get; set; }
 
@@ -44,7 +47,56 @@ public class Tulpa : InterTulpa {
          return null;
       }
 
+      //why do we need this? somehow the [MaybeNullWhen(false)] attribute is not working
+      if (tulpa is null)
+         return null;
+
+      //this isnt working, we need to refactore some stuff first
+      //var dummy_request = tulpa.CreateRequest(
+      //   new Message (Role.user, String.Empty),
+      //   new Conversation(), 
+      //   new FileInfo[] { });
+
+      //in the end, we just want the token count for this tulpa, without any messages or conversations or files
+      //just the raw tulpa messages without the last user message as a string
+
+      // get a copy of the tulpa messages but without a last user message
+      var tulpa_messages_togo = tulpa.Messages.Select(m => m.Clone()).ToList();
+      remove_last_user_message(tulpa_messages_togo);
+
+      // concatenate the content
+      string all_messages_content = string.Join("", tulpa_messages_togo.Select(m => m.content));
+      tulpa.Token_Count = DeepTokenizer.count_tokens(all_messages_content, Config.Active.LanguageModel);
+
       return tulpa;
+   }
+
+   public Request CreateRequest(
+      Message      user_message,
+      Conversation conversation,
+      FileInfo[]?  associated_files = null) {
+      // Pre-Production
+      /////////////////////////
+
+      // Create a copy of the messages
+      List<Message> tulpa_messages_togo =
+         Messages.Select(m => m.Clone()).ToList();
+
+      // Special case for tulpas with an example prompt
+      remove_last_user_message(tulpa_messages_togo);
+
+      Request request;
+      if (Tools.isVisionModel()) {
+         request = Create_Vision_Request(user_message, associated_files);
+      }
+      else {
+         request = Create_Textual_Request(user_message, conversation, associated_files, tulpa_messages_togo);
+      }
+
+      // Done with Pre-Production
+      /////////////////////////////
+
+      return request;
    }
 
    /// <summary>
@@ -58,26 +110,10 @@ public class Tulpa : InterTulpa {
       Message      user_message,
       Conversation conversation,
       FileInfo[]?  associated_files = null) {
-      //  Pre-Production
-      /////////////////////////
+      ////  Pre-Production
+      ///////////////////////////
 
-      //create a copy of the messages
-      List<Message> tulpa_messages_togo =
-         Messages.Select(m => m.Clone()).ToList();
-
-      //special case for tulpas with an example prompt
-      remove_last_user_message(tulpa_messages_togo);
-
-      Request request;
-      if (Tools.isVisionModel()) {
-         request = Create_Vision_Request(user_message, associated_files);
-      }
-      //else if (Tools.isImageGenerationModel()) {
-      //   //DRAGONS not sure how to do it yet and cost calculation is also non-trivial in this case
-      //}
-      else {
-         request = Create_Textual_Request(user_message, conversation, associated_files, tulpa_messages_togo);
-      }
+      Request request = CreateRequest(user_message, conversation, associated_files);
 
       // done with Pre-Production
       /////////////////////////////
@@ -237,7 +273,6 @@ public class Tulpa : InterTulpa {
    private static void add_associated_files_to_system_message(
       FileInfo[]?   associated_files,
       StringBuilder tuned_up_system_message_content) {
-
       if (associated_files is null)
          return;
 

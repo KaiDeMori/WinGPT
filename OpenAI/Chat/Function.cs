@@ -26,12 +26,13 @@ public interface ICallArguments {
 }
 
 public abstract class Parameters {
-   public string       type     { get; init; }
-   public List<string> required { get; init; }
+   public string                              type       { get; init; }
+   public List<string>                        required   { get; init; }
+   public Dictionary<string, ParameterDetail> properties { get; init; }
 }
 
 public class TaxonomyParameters : Parameters {
-   public Taxonomy_Properties properties { get; init; }
+   public new Taxonomy_Properties properties { get; init; }
 }
 
 public class Taxonomy_Properties {
@@ -47,8 +48,9 @@ public class Taxonomy_CallArguments : ICallArguments {
 }
 
 public class ParameterDetail {
-   public string type        { get; init; }
-   public string description { get; init; }
+   public string        type        { get; init; }
+   public string        description { get; init; }
+   public List<string>? enumValues  { get; init; } // Optional field for enum values
 }
 
 public class Example {
@@ -56,7 +58,7 @@ public class Example {
 }
 
 public class SaveParameters : Parameters {
-   public Save_Properties properties { get; init; }
+   public new Save_Properties properties { get; init; }
 }
 
 public class Save_Properties {
