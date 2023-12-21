@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using Markdig;
 //using Markdig.SyntaxHighlighting;
 using Microsoft.Web.WebView2.Core;
@@ -19,7 +20,7 @@ public partial class WinGPT_Form : Form {
 
    private readonly TaskCompletionSource<bool> stupid_edge_mumble_mumble = new();
 
-   private readonly BindingList<FileInfo> Associated_files = new();
+   private readonly BindingList<AssociatedFile> Associated_files = new();
 
    private int treeview_width;
    private int main_splitter_position;
@@ -61,8 +62,8 @@ public partial class WinGPT_Form : Form {
       uploaded_files_comboBox.Items.Clear();
       uploaded_files_comboBox.DataSource    = Associated_files;
       uploaded_files_comboBox.DisplayMember = "Name";
-      uploaded_files_comboBox.ValueMember   = "FullName";
-      submit_edits_button.Visible           = false;
+      //uploaded_files_comboBox.ValueMember   = "FullName";
+      submit_edits_button.Visible = false;
 
       prompt_textBox.DragEnter += prompt_textBox_DragEnter;
       prompt_textBox.DragDrop  += prompt_textBox_DragDrop;
@@ -78,6 +79,10 @@ public partial class WinGPT_Form : Form {
       open_Downloads_Directory_ToolStripMenuItem.Image = FolderBitmap;
 
       update_wingpt_ToolStripMenuItem.Enabled = false;
+
+      associated_files_token_sum_label.Text = string.Empty;
+      total_request_token_count_label.Text  = string.Empty;
+      prompt_token_count_label.Text         = string.Empty;
    }
 
    [Obsolete("We were trying to figure out how to make the toggle buttons persist.")]
@@ -98,7 +103,7 @@ public partial class WinGPT_Form : Form {
 
       foreach (string filename in files) {
          var file = new FileInfo(filename);
-         Associated_files.Add(file);
+         Associated_files.Add(new(file));
       }
    }
 
@@ -181,34 +186,15 @@ public partial class WinGPT_Form : Form {
             conversation_history_treeView
          );
 
-      Associated_files.ListChanged += (sender, args) => {
-         var listChangedType = args.ListChangedType;
-         switch (listChangedType) {
-            case ListChangedType.Reset:
-               break;
-            case ListChangedType.ItemAdded:
-               break;
-            case ListChangedType.ItemDeleted:
-               break;
-            case ListChangedType.ItemMoved:
-               break;
-            case ListChangedType.ItemChanged:
-               break;
-            case ListChangedType.PropertyDescriptorAdded:
-               break;
-            case ListChangedType.PropertyDescriptorDeleted:
-               break;
-            case ListChangedType.PropertyDescriptorChanged:
-               break;
-            default:
-               throw new ArgumentOutOfRangeException();
-         }
-
-         //uploaded_files_comboBox.DataSource = null;
-         //uploaded_files_comboBox.DataSource = Associated_files;
-         //uploaded_files_comboBox.DisplayMember = "Name";
-         //uploaded_files_comboBox.ValueMember   = "FullName";
+      Associated_files.ListChanged += (sender_list, args) => {
+         Associated_Files_Helper.handle_associated_files_list_event(sender_list, args, associated_files_token_sum_label_CALLBACK);
       };
+
+      TimedTokenizer.Callback = () => {
+         //for now debug
+         Set_status_bar(false, DateTime.Now.ToString("HH:mm:ss")); 
+      };
+      TimedTokenizer.Reset();
 
       Enabled = true;
       Set_status_bar(false, "Let's go!");
@@ -219,6 +205,24 @@ public partial class WinGPT_Form : Form {
       if (Debugger.IsAttached) {
          prompt_textBox.Text = "What is bigger than a town?";
       }
+   }
+
+   private void associated_files_token_sum_label_CALLBACK() {
+      var sum        = Associated_files.Sum(f => f.TokenCount);
+      var sum_string = sum.ToString("N0", CultureInfo.CurrentCulture);
+      associated_files_token_sum_label.Text = sum_string;
+   }
+
+   private void refresh_total_request_token_count_label() {
+      //add'em up
+      var total_sum = 0;
+      // tulpa tokens
+
+
+      // prompt tokens
+
+      // associated files tokens
+      total_sum += Associated_files.Sum(f => f.TokenCount);
    }
 
    private void WinGPT_Form_Closing(object? sender, CancelEventArgs e) {
@@ -264,13 +268,16 @@ public partial class WinGPT_Form : Form {
       //check all Associated_files for existence
       //if a file doesnt exist, show an error and remove it from the list
       for (int i = Associated_files.Count - 1; i >= 0; i--) {
-         if (!Associated_files[i].Exists) {
+         if (!Associated_files[i].File.Exists) {
             MessageBox.Show($"File {Associated_files[i].Name} does not exist and will be removed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             Associated_files.RemoveAt(i);
          }
       }
 
-      var response_message = await Config.ActiveTulpa.SendAsync(user_message, Conversation.Active, Associated_files.ToArray());
+      var response_message = await Config.ActiveTulpa.SendAsync(
+         user_message,
+         Conversation.Active,
+         Associated_files.Select(f => f.File).ToArray());
 
       this.FlashNotification();
 
@@ -415,14 +422,12 @@ public partial class WinGPT_Form : Form {
 
       DialogResult result = upload_vistaOpenFileDialog.ShowDialog(this);
 
-      if (result == DialogResult.OK) {
+      if (result == DialogResult.OK)
          foreach (string file in upload_vistaOpenFileDialog.FileNames) {
             FileInfo fileInfo = new(file);
-            if (fileInfo.Exists) {
-               Associated_files.Add(fileInfo);
-            }
+            if (fileInfo.Exists)
+               Associated_files.Add(new(fileInfo));
          }
-      }
    }
 
    private void clear_button_Click(object sender, EventArgs e) {
@@ -454,8 +459,8 @@ public partial class WinGPT_Form : Form {
    }
 
    private void del_button_Click(object sender, EventArgs e) {
-      if (uploaded_files_comboBox.SelectedItem is FileInfo fileInfo)
-         Associated_files.Remove(fileInfo);
+      if (uploaded_files_comboBox.SelectedItem is AssociatedFile associatedFile)
+         Associated_files.Remove(associatedFile);
    }
 
    #endregion
@@ -784,15 +789,14 @@ public partial class WinGPT_Form : Form {
 
       if (file_name is not null && code_content is not null) {
          //find the file in the Associated_files
-         var fileinfo = Associated_files.FirstOrDefault(f => f.Name == file_name);
-         if (fileinfo is null || !fileinfo.Exists) {
+         var associated_file = Associated_files.FirstOrDefault(f => f.Name == file_name);
+         if (associated_file is null || !associated_file.File.Exists)
             //if the file does not exist, create it in the AdHoc_Downloads_Path
-            fileinfo = new FileInfo(Path.Join(Config.AdHoc_Downloads_Path.FullName, file_name));
-         }
+            associated_file = new(new FileInfo(Path.Join(Config.AdHoc_Downloads_Path.FullName, file_name)));
 
          //write the code_content to the file
-         File.WriteAllText(fileinfo.FullName, code_content);
-         Invoke(() => main_toolStripStatusLabel.Text = $"File {fileinfo.Name} saved to {fileinfo.DirectoryName}");
+         File.WriteAllText(associated_file.File.FullName, code_content);
+         Invoke(() => main_toolStripStatusLabel.Text = $"File {associated_file.Name} saved to {associated_file.File.DirectoryName}");
       }
    }
 
@@ -964,5 +968,14 @@ public partial class WinGPT_Form : Form {
 
    private void refresh_ConversationHistory_ToolStripMenuItem_Click(object sender, EventArgs e) {
       baseDirectoryWatcherAndTreeViewUpdater?.RefreshTreeView();
+   }
+
+   private void associated_files_token_sum_label_Click(object sender, EventArgs e) {
+      //update token count for all associated files
+      foreach (var associated_file in Associated_files) {
+         associated_file.UpdateTokenCount();
+      }
+
+      associated_files_token_sum_label_CALLBACK();
    }
 }

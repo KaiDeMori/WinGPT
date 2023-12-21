@@ -45,11 +45,6 @@ internal class Config {
    /// </summary>
    public TokenCounter TokenCounter { get; set; } = new();
 
-   /// <summary>
-   /// This is the interval used for the tokenizer call in milliseconds.
-   /// </summary>
-   public static int count_tokens_timer_interval = 500;
-
    public string? BaseDirectory  { get; set; }
    public string  OpenAI_API_Key { get; set; } = "";
    public string  LanguageModel  { get; set; } = "gpt-4-1106-preview";
