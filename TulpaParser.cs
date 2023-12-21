@@ -13,7 +13,7 @@ public static class TulpaParser {
       {SpecialTokens.Function, Role.function},
    };
 
-   public static bool TryParse(string content, FileInfo file, [NotNullWhen(true)] out Tulpa? tulpa) {
+   public static bool TryParse(string content, FileInfo file, [MaybeNullWhen(false)] out Tulpa tulpa) {
       var contentMemory = content.AsMemory();
       var currentRole   = Role.system; // Default role.
       var messageStart  = 0;

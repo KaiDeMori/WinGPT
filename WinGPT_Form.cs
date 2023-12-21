@@ -8,6 +8,7 @@ using Microsoft.Web.WebView2.WinForms;
 using Newtonsoft.Json.Linq;
 using WinGPT.OpenAI;
 using WinGPT.Taxonomy;
+using WinGPT.Tokenizer;
 using Message = WinGPT.OpenAI.Chat.Message;
 using Timer = System.Windows.Forms.Timer;
 
@@ -28,6 +29,8 @@ public partial class WinGPT_Form : Form {
 
    private readonly Bitmap?               FolderBitmap = SystemIconsHelper.GetFileIcon(null, true)?.ToBitmap();
    private          TulpaDirectoryWatcher tulpa_DirectoryWatcher;
+
+   private int last_prompt_token_count;
 
    // This makes the "virtual member call in constructor" warning go away, but I don't understand why this should be any better.
    //public sealed override string Text => base.Text;
@@ -191,8 +194,18 @@ public partial class WinGPT_Form : Form {
       };
 
       TimedTokenizer.Callback = () => {
-         //for now debug
-         Set_status_bar(false, DateTime.Now.ToString("HH:mm:ss")); 
+         var prompt = prompt_textBox.Text;
+         last_prompt_token_count       = DeepTokenizer.count_tokens(prompt, Config.Active.LanguageModel);
+         prompt_token_count_label.Text = last_prompt_token_count.ToString("N0", CultureInfo.CurrentCulture);
+         if (Conversation.Active is null) {
+            Conversation.Create_Conversation(new Message {
+               role    = Role.user,
+               content = prompt,
+            }, Config.ActiveTulpa);
+         }
+
+         //refresh_total_request_token_count_label_fast();
+         refresh_total_request_token_count_label_complete();
       };
       TimedTokenizer.Reset();
 
@@ -213,16 +226,40 @@ public partial class WinGPT_Form : Form {
       associated_files_token_sum_label.Text = sum_string;
    }
 
-   private void refresh_total_request_token_count_label() {
+   private void refresh_total_request_token_count_label_fast() {
       //add'em up
       var total_sum = 0;
       // tulpa tokens
-
+      total_sum += Config.ActiveTulpa.Token_Count;
 
       // prompt tokens
+      total_sum += last_prompt_token_count;
 
       // associated files tokens
       total_sum += Associated_files.Sum(f => f.TokenCount);
+
+      // set the label
+      total_request_token_count_label.Text = total_sum.ToString("N0", CultureInfo.CurrentCulture);
+   }
+
+   //so here we create an actual dummy request
+   //and then we count the tokens
+   //this is slow, but it is the only way to get the correct number
+   private void refresh_total_request_token_count_label_complete() {
+      string prompt = prompt_textBox.Text;
+
+      Message user_message = new() {
+         role    = Role.user,
+         content = prompt,
+      };
+      if (Conversation.Active == null)
+         return;
+
+      var request = Config.ActiveTulpa.CreateRequest(user_message, Conversation.Active,
+         Associated_files.Select(f => f.File).ToArray());
+
+      var total_request_token_count = Custom_OpenAI_Tokenizer_Take_Two.count_tokens(request.messages, request.functions);
+      total_request_token_count_label.Text = total_request_token_count.ToString("N0", CultureInfo.CurrentCulture);
    }
 
    private void WinGPT_Form_Closing(object? sender, CancelEventArgs e) {
@@ -311,6 +348,9 @@ public partial class WinGPT_Form : Form {
 
    private void new_conversation_button_Click(object sender, EventArgs e) {
       Debug.WriteLine("new_conversation_button_Click");
+      //save first
+      if (Conversation.Active != null)
+         Conversation.Active.Save();
       conversation_history_treeView.SelectedNode = null;
       Conversation.Clear();
       ResetUI();
@@ -507,7 +547,7 @@ public partial class WinGPT_Form : Form {
    }
 
    private void ActivateTulpa(Tulpa tulpa) {
-      SetCharacterTextBox(tulpa);
+      Set_Tulpa_TextBox(tulpa);
       SetActiveTulpaAndSaveConversation(tulpa);
    }
 
@@ -548,11 +588,12 @@ public partial class WinGPT_Form : Form {
       webView21.NavigateToString(htmlFromFile);
    }
 
-   private void SetCharacterTextBox(Tulpa tulpa) {
-      tulpa_textBox.Text     = tulpa.Configuration.Name;
+   private void Set_Tulpa_TextBox(Tulpa tulpa) {
+      tulpa_textBox.Text     = $"{tulpa.Configuration.Name}" + (Config.Active.UIable.Show_Live_Token_Count ? $" ({tulpa.Token_Count})" : string.Empty);
       tulpa_textBox.Enabled  = true;
       tulpa_textBox.ReadOnly = true;
       main_toolTip.SetToolTip(tulpa_textBox, tulpa.Configuration.Description);
+      refresh_total_request_token_count_label_fast();
    }
 
    private void SetActiveTulpaAndSaveConversation(Tulpa tulpa) {

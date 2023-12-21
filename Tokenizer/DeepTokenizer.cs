@@ -24,6 +24,11 @@ internal class DeepTokenizer {
       return tokenizer.Encode(text, new List<string>()).Count;
    }
 
+   public static Func<string, int> count_tokens(string modelName) {
+      var tokenizer = GetTokenizer(modelName);
+      return text => tokenizer.Encode(text, new List<string>()).Count;
+   }
+
    /// <summary>
    /// Whatever. This code is so bad, doesn't even deserve to copy-paste the comments
    /// </summary>
@@ -207,5 +212,17 @@ internal class DeepTokenizer {
       string                           pattern,
       int                              cacheSize = 8192) {
       return (ITokenizer) new TikTokenizer(tikTokenBpeFileStream, specialTokensEncoder, pattern, cacheSize);
+   }
+
+   public void the_way_openai_counts_tokens(List<OpenAI.Chat.Message> messages, string model_name) {
+      int token_count = 0;
+      foreach (var message in messages) {
+         token_count += 3; //added by OpenAI API
+         token_count += count_tokens(message.role.ToString(), model_name);
+         token_count += count_tokens(message.content,         model_name);
+         if (message.name != null) 
+            token_count += count_tokens(message.name, model_name);
+      }
+      token_count += 3; // Add tokens to account for ending
    }
 }

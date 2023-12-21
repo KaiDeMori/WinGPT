@@ -18,7 +18,6 @@ internal static class TimedTokenizer {
       timer.Interval = Config.Active.UIable.count_tokens_timer_interval;
       timer.Tick += (sender, args) => {
          timer.Stop();
-         //TODO: Count tokens
          Callback();
       };
    }
