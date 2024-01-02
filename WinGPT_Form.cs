@@ -31,6 +31,7 @@ public partial class WinGPT_Form : Form {
    private          TulpaDirectoryWatcher tulpa_DirectoryWatcher;
 
    private int last_prompt_token_count;
+   private int last_calculated_request_token_count;
 
    // This makes the "virtual member call in constructor" warning go away, but I don't understand why this should be any better.
    //public sealed override string Text => base.Text;
@@ -86,6 +87,10 @@ public partial class WinGPT_Form : Form {
       associated_files_token_sum_label.Text = string.Empty;
       total_request_token_count_label.Text  = string.Empty;
       prompt_token_count_label.Text         = string.Empty;
+
+      response_input_token_count_label.Text  = string.Empty;
+      response_output_token_count_label.Text = string.Empty;
+      response_total_token_count_label.Text  = string.Empty;
    }
 
    [Obsolete("We were trying to figure out how to make the toggle buttons persist.")]
@@ -190,7 +195,8 @@ public partial class WinGPT_Form : Form {
          );
 
       Associated_files.ListChanged += (sender_list, args) => {
-         Associated_Files_Helper.handle_associated_files_list_event(sender_list, args, associated_files_token_sum_label_CALLBACK);
+         Associated_Files_Helper.handle_associated_files_list_event(sender_list, args, refresh_associated_files_token_sum_label);
+         refresh_total_request_token_count_label();
       };
 
       TimedTokenizer.Callback = () => {
@@ -204,8 +210,7 @@ public partial class WinGPT_Form : Form {
             }, Config.ActiveTulpa);
          }
 
-         //refresh_total_request_token_count_label_fast();
-         refresh_total_request_token_count_label_complete();
+         refresh_total_request_token_count_label();
       };
       TimedTokenizer.Reset();
 
@@ -220,10 +225,14 @@ public partial class WinGPT_Form : Form {
       }
    }
 
-   private void associated_files_token_sum_label_CALLBACK() {
+   private void refresh_associated_files_token_sum_label() {
       var sum        = Associated_files.Sum(f => f.TokenCount);
       var sum_string = sum.ToString("N0", CultureInfo.CurrentCulture);
       associated_files_token_sum_label.Text = sum_string;
+   }
+
+   private void refresh_total_request_token_count_label() {
+      refresh_total_request_token_count_label_complete();
    }
 
    private void refresh_total_request_token_count_label_fast() {
@@ -259,6 +268,7 @@ public partial class WinGPT_Form : Form {
          Associated_files.Select(f => f.File).ToArray());
 
       var total_request_token_count = Custom_OpenAI_Tokenizer_Take_Two.count_tokens(request.messages, request.functions);
+      last_calculated_request_token_count  = total_request_token_count;
       total_request_token_count_label.Text = total_request_token_count.ToString("N0", CultureInfo.CurrentCulture);
    }
 
@@ -323,6 +333,17 @@ public partial class WinGPT_Form : Form {
          Set_status_bar(false);
          return;
       }
+
+      int prompt_tokens     = Config.Active.TokenCounter.Last_Response_Usage.prompt_tokens;
+      int delta_token_count = prompt_tokens - last_calculated_request_token_count;
+      var detla_msg         = string.Empty;
+      if (delta_token_count != 0) {
+         detla_msg = $" ({delta_token_count:+#;-#;0})";
+      }
+
+      response_input_token_count_label.Text  = prompt_tokens.ToString("N0", CultureInfo.CurrentCulture) + detla_msg;
+      response_output_token_count_label.Text = Config.Active.TokenCounter.Last_Response_Usage.completion_tokens.ToString("N0", CultureInfo.CurrentCulture);
+      response_total_token_count_label.Text  = Config.Active.TokenCounter.Last_Response_Usage.total_tokens.ToString("N0", CultureInfo.CurrentCulture);
 
       if (autoclear_checkBox.Checked)
          prompt_textBox.Clear();
@@ -593,7 +614,7 @@ public partial class WinGPT_Form : Form {
       tulpa_textBox.Enabled  = true;
       tulpa_textBox.ReadOnly = true;
       main_toolTip.SetToolTip(tulpa_textBox, tulpa.Configuration.Description);
-      refresh_total_request_token_count_label_fast();
+      refresh_total_request_token_count_label();
    }
 
    private void SetActiveTulpaAndSaveConversation(Tulpa tulpa) {
@@ -633,7 +654,10 @@ public partial class WinGPT_Form : Form {
       //webView21.NavigateToString(string.Empty); //works
       //webView21.Source = new Uri("about:blank"); //no works
       webView21.CoreWebView2.Navigate("about:blank"); //works
-      history_file_name_textBox.BackColor = SystemColors.Info;
+      history_file_name_textBox.BackColor    = SystemColors.Info;
+      response_input_token_count_label.Text  = string.Empty;
+      response_output_token_count_label.Text = string.Empty;
+      response_total_token_count_label.Text  = string.Empty;
       prompt_textBox.Focus();
    }
 
@@ -1017,6 +1041,10 @@ public partial class WinGPT_Form : Form {
          associated_file.UpdateTokenCount();
       }
 
-      associated_files_token_sum_label_CALLBACK();
+      refresh_associated_files_token_sum_label();
+   }
+
+   private void total_request_token_count_label_Click(object sender, EventArgs e) {
+      refresh_total_request_token_count_label();
    }
 }

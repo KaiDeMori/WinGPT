@@ -3,7 +3,7 @@ using Formatting = Newtonsoft.Json.Formatting;
 
 namespace WinGPT;
 
-internal class Config {
+public class Config {
    public static Config Active      = new();
    public static Tulpa  ActiveTulpa = new();
 
@@ -133,7 +133,7 @@ internal class Config {
    }
 }
 
-internal class WindowParameters {
+public class WindowParameters {
    public FormStartPosition StartPosition { get; set; } = FormStartPosition.Manual;
    public FormWindowState   WindowState   { get; set; } = FormWindowState.Normal;
 

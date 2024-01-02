@@ -62,7 +62,10 @@ internal class DeepTokenizer {
                {FIM_PREFIX, 100258},
                {FIM_MIDDLE, 100259},
                {FIM_SUFFIX, 100260},
-               {ENDOFPROMPT, 100276}
+               {ENDOFPROMPT, 100276},
+               {IM_START, 100264},
+               {IM_SEP, 100266},
+               {IM_END, 100265},
             };
             if (extraSpecialTokens is not null) {
                specialTokens = specialTokens.Concat(extraSpecialTokens)
@@ -195,11 +198,15 @@ internal class DeepTokenizer {
          {"gpt2", "gpt2"}
       };
 
-   private const string ENDOFTEXT   = "<|endoftext|>";
-   private const string FIM_PREFIX  = "<|fim_prefix|>";
-   private const string FIM_MIDDLE  = "<|fim_middle|>";
-   private const string FIM_SUFFIX  = "<|fim_suffix|>";
-   private const string ENDOFPROMPT = "<|endofprompt|>";
+   const string ENDOFTEXT   = "<|endoftext|>";
+   const string FIM_PREFIX  = "<|fim_prefix|>";
+   const string FIM_MIDDLE  = "<|fim_middle|>";
+   const string FIM_SUFFIX  = "<|fim_suffix|>";
+   const string ENDOFPROMPT = "<|endofprompt|>";
+
+   const string IM_START = "<|im_start|>";
+   const string IM_END   = "<|im_end|>";
+   const string IM_SEP   = "<|im_sep|>";
 
    private const string cl100k_base_BPE_Rank_File_name = "Tokenizer/cl100k_base.tiktoken";
    private const string p50k_base_BPE_Rank_File_name   = "Tokenizer/p50k_base.tiktoken";
@@ -220,9 +227,10 @@ internal class DeepTokenizer {
          token_count += 3; //added by OpenAI API
          token_count += count_tokens(message.role.ToString(), model_name);
          token_count += count_tokens(message.content,         model_name);
-         if (message.name != null) 
+         if (message.name != null)
             token_count += count_tokens(message.name, model_name);
       }
+
       token_count += 3; // Add tokens to account for ending
    }
 }

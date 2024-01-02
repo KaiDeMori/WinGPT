@@ -11,6 +11,8 @@ public class TokenCounter {
    [JsonIgnore]
    public Action? LimitReached;
 
+   public Usage Last_Response_Usage { get; set; } = new();
+
    public int Prompt_Tokens     { get; set; }
    public int Completion_Tokens { get; set; }
    public int Token_Limit       { get; set; } = 1000;
@@ -50,8 +52,9 @@ public class TokenCounter {
    }
 
    public void Increment(Response response) {
-      Prompt_Tokens     += response.Usage.prompt_tokens;
-      Completion_Tokens += response.Usage.completion_tokens;
-      Total_Tokens      += response.Usage.total_tokens;
+      Prompt_Tokens       += response.Usage.prompt_tokens;
+      Completion_Tokens   += response.Usage.completion_tokens;
+      Total_Tokens        += response.Usage.total_tokens;
+      Last_Response_Usage =  response.Usage;
    }
 }

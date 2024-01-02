@@ -5,7 +5,7 @@ VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinGPT", "WinGPT.csproj", "{DB9CB837-3625-4259-98DC-4E46BFEA559B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinGPTTests", "..\WinGPTTests\WinGPTTests.csproj", "{C923C935-B53E-498D-B72C-104194292703}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinGPT.Tests", "..\WinGPTTests\WinGPT.Tests.csproj", "{C923C935-B53E-498D-B72C-104194292703}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JSON_Schema_Trials", "..\JSON_Schema_Trials\JSON_Schema_Trials.csproj", "{58B62319-9FAD-48B5-AF9D-3E6D91E3E948}"
 EndProject

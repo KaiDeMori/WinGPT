@@ -218,6 +218,7 @@ public class Tulpa : InterTulpa {
       //add the content of the old system message to the new one
       tuned_up_system_message_content.Append(first_system_message.content);
 
+      //not a function! just a pre-prompt for markf278down
       if (Config.Active.UIable.Use_Save_Via_Link)
          add_save_link_preprompt(tuned_up_system_message_content);
 
@@ -229,14 +230,16 @@ public class Tulpa : InterTulpa {
       if (Config.Active.UIable.Use_Save_Via_Prompt)
          save_function = Enable_Save_via_Prompt_Function();
 
+      var system_message_content = tuned_up_system_message_content.ToString();
       var new_system_message = new Message {
          role    = Role.system,
-         content = tuned_up_system_message_content.ToString(),
+         content = system_message_content,
       };
-
-      //replace the first system message with the new one, make sure its at the same position as the old one
-      tulpa_messages_togo.Remove(first_system_message);
-      tulpa_messages_togo.Insert(Math.Max(tulpa_messages_togo.IndexOf(first_system_message), 0), new_system_message);
+      if (!string.IsNullOrEmpty(system_message_content)) {
+         //replace the first system message with the new one, make sure its at the same position as the old one
+         tulpa_messages_togo.Remove(first_system_message);
+         tulpa_messages_togo.Insert(Math.Max(tulpa_messages_togo.IndexOf(first_system_message), 0), new_system_message);
+      }
 
       // concatenate the Tulpa_Messages and the conversation messages and the new prompt as a user message.
       List<Message> all_messages = new();
