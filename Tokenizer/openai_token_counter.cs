@@ -9,7 +9,7 @@ public static class openai_token_counter {
       Func<string, int> count_tokens = DeepTokenizer.count_tokens(language_model);
 
       var messages     = request.messages;
-      var functions    = request.functions ?? Array.Empty<IFunction>();
+      var functions    = request.functions ?? Array.Empty<Function>();
       var functionCall = request.function_call;
 
       bool paddedSystem = false;
@@ -87,7 +87,7 @@ public static class openai_token_counter {
       return tokens;
    }
 
-   private static int estimate_tokens_in_functions(IEnumerable<IFunction> functions, Func<string, int> count_tokens) {
+   private static int estimate_tokens_in_functions(IEnumerable<Function> functions, Func<string, int> count_tokens) {
       // Convert the function definitions to a string using the format logic from Python
       var promptDefinition = function_formatter.format_function_definitions(functions);
       int tokens           = count_tokens(promptDefinition);

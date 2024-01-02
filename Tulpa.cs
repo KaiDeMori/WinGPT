@@ -226,7 +226,7 @@ public class Tulpa : InterTulpa {
       add_associated_files_to_system_message(associated_files, tuned_up_system_message_content);
 
       // if the save_function is null, the parameter will just be ignored
-      Function<SaveParameters>? save_function = null;
+      Function? save_function = null;
       if (Config.Active.UIable.Use_Save_Via_Prompt)
          save_function = Enable_Save_via_Prompt_Function();
 
@@ -256,16 +256,16 @@ public class Tulpa : InterTulpa {
          messages    = all_immutable,
          model       = Config.Active.LanguageModel,
          temperature = Configuration.Temperature,
-         functions   = save_function is not null ? new IFunction[] {save_function} : null,
+         functions   = save_function is not null ? new Function[] {save_function} : null,
          max_tokens  = Config.Active.UIable.Max_Tokens
       };
       return request;
    }
 
-   private static Function<SaveParameters>? Enable_Save_via_Prompt_Function() {
+   private static Function? Enable_Save_via_Prompt_Function() {
       var saveFile_function_json = System.IO.File.ReadAllText("Filetransfer/saveFile_Function.json");
-      Function<SaveParameters>? saveFile_function =
-         JsonConvert.DeserializeObject<Function<SaveParameters>>(saveFile_function_json);
+      //Function<SaveParameters>? saveFile_function = JsonConvert.DeserializeObject<Function<SaveParameters>>(saveFile_function_json);
+      Function? saveFile_function = JsonConvert.DeserializeObject<Function>(saveFile_function_json);
 
       //Let's see if we can get away with the function only.
       //var saveFile_function_sysmsg = System.IO.File.ReadAllText("Filetransfer/saveFile_system_message.md");
