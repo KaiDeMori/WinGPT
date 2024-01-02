@@ -10,9 +10,10 @@ public interface IFunction {
 
 // Generic class representing a function with typed parameters.
 public class Function {
-   public string        name        { get; init; }
-   public string        description { get; init; }
-   public Parameters   parameters  { get; init; }
+   public string name        { get; init; }
+   public string description { get; init; }
+
+   public Parameters parameters { get; init; }
    //Parameters IFunction.parameters  => parameters;
 }
 
@@ -54,25 +55,17 @@ public interface ICallArguments {
 
 // Class representing the parameters for a taxonomy function.
 public class TaxonomyParameters : Parameters {
-   public new TaxonomyProperties properties { get; init; }
+   //public new TaxonomyProperties properties { get; init; }
 }
 
-// Class containing the properties specific to taxonomy parameters.
-public class TaxonomyProperties {
+public class Taxonomy_CallArguments : ICallArguments {
    // Summary of the taxonomy
-   public ParameterDetail summary { get; init; }
+   public string summary { get; init; }
 
    // Filename associated with the taxonomy
-   public ParameterDetail filename { get; init; }
+   public string filename { get; init; }
 
    // Category of the taxonomy
-   public ParameterDetail category { get; init; }
-}
-
-// Class representing the call arguments for a taxonomy function.
-public class Taxonomy_CallArguments : ICallArguments {
-   public string summary  { get; init; }
-   public string filename { get; init; }
    public string category { get; init; }
 }
 
