@@ -4,7 +4,7 @@ using WinGPT.OpenAI.Chat;
 namespace WinGPT.Tokenizer;
 
 public static class function_formatter {
-   public static string format_function_definitions(IEnumerable<IFunction> functions) {
+   public static string format_function_definitions(IEnumerable<Function> functions) {
       var sb = new StringBuilder();
       sb.AppendLine("namespace functions {");
       sb.AppendLine();

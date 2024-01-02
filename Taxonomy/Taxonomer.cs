@@ -36,7 +36,7 @@ public static class Taxonomer {
       var    sysmsg_template          = File.ReadAllText("Taxonomy/system_message_template.md");
       string sysmsg                   = sysmsg_template.Replace($"{{{{{nameof(existing_categories)}}}}}", existing_categories_json);
 
-      OpenAI.Chat.Function<TaxonomyParameters>? function = JsonConvert.DeserializeObject<OpenAI.Chat.Function<TaxonomyParameters>>(FunctionJson);
+      OpenAI.Chat.Function? function = JsonConvert.DeserializeObject<OpenAI.Chat.Function>(FunctionJson);
       if (function is null)
          return null;
 
@@ -56,7 +56,7 @@ public static class Taxonomer {
       //Let's get the request ready
       var request = new Request() {
          messages      = all_immutable,
-         functions     = new IFunction[] {function},
+         functions     = new Function[] {function},
          function_call = new FunctionCallSettings("taxonomy"),
          model         = Models.gpt_3_5_turbo_16k,
          temperature   = 0.0

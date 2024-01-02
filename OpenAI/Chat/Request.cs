@@ -8,7 +8,7 @@ public class Request {
    public ImmutableList<Message> messages { get; init; }
 
    [JsonProperty("functions", NullValueHandling = NullValueHandling.Ignore)]
-   public IFunction[]? functions { get; init; }
+   public Function[]? functions { get; init; }
 
    /// <summary>
    /// "none", "auto" or your function name like this

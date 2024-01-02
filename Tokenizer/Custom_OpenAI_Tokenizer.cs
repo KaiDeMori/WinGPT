@@ -1,6 +1,5 @@
 using WinGPT.OpenAI;
 using WinGPT.OpenAI.Chat;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using Message = WinGPT.OpenAI.Chat.Message;
 
 namespace WinGPT.Tokenizer;
@@ -8,7 +7,7 @@ namespace WinGPT.Tokenizer;
 internal class Custom_OpenAI_Tokenizer {
 
     // This method calculates the token count for messages and functions based on the model
-   public static int count_tokens(List<Message> messages, List<IFunction> functions) {
+   public static int count_tokens(List<Message> messages, List<Function> functions) {
       // Initialize message settings to 0
       int msg_init = 0;
       int msg_name = 0;
