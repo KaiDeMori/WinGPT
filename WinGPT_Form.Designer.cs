@@ -29,17 +29,20 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            TreeNode treeNode6 = new TreeNode("Node2");
-            TreeNode treeNode7 = new TreeNode("Chat1", new TreeNode[] { treeNode6 });
-            TreeNode treeNode8 = new TreeNode("Node3");
-            TreeNode treeNode9 = new TreeNode("Node4");
-            TreeNode treeNode10 = new TreeNode("Conversation History Root", new TreeNode[] { treeNode7, treeNode8, treeNode9 });
+            TreeNode treeNode1 = new TreeNode("Node2");
+            TreeNode treeNode2 = new TreeNode("Chat1", new TreeNode[] { treeNode1 });
+            TreeNode treeNode3 = new TreeNode("Node3");
+            TreeNode treeNode4 = new TreeNode("Node4");
+            TreeNode treeNode5 = new TreeNode("Conversation History Root", new TreeNode[] { treeNode2, treeNode3, treeNode4 });
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WinGPT_Form));
             main_toolTip = new ToolTip(components);
             associated_files_token_sum_label = new Label();
             label1 = new Label();
             prompt_token_count_label = new Label();
             total_request_token_count_label = new Label();
+            response_input_token_count_label = new Label();
+            response_output_token_count_label = new Label();
+            response_total_token_count_label = new Label();
             history_file_name_textBox = new TextBox();
             autoclear_checkBox = new CheckBox();
             clear_button = new Button();
@@ -59,7 +62,9 @@
             markf278down_tabPage = new TabPage();
             response_textBox = new TextBox();
             submit_edits_button = new Button();
+            response_bottom_panel = new Panel();
             new_conversation_button = new Button();
+            response_token_counts_tableLayoutPanel = new TableLayoutPanel();
             conversation_history_treeView = new TreeView();
             history_contextMenuStrip = new ContextMenuStrip(components);
             openToolStripMenuItem = new ToolStripMenuItem();
@@ -101,6 +106,8 @@
             webview2_tabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)webView21).BeginInit();
             markf278down_tabPage.SuspendLayout();
+            response_bottom_panel.SuspendLayout();
+            response_token_counts_tableLayoutPanel.SuspendLayout();
             history_contextMenuStrip.SuspendLayout();
             main_menuStrip.SuspendLayout();
             main_panel.SuspendLayout();
@@ -153,6 +160,39 @@
             total_request_token_count_label.Text = "128.000";
             total_request_token_count_label.TextAlign = ContentAlignment.MiddleRight;
             main_toolTip.SetToolTip(total_request_token_count_label, "Total number of tokens in the complete request.");
+            total_request_token_count_label.Click += total_request_token_count_label_Click;
+            // 
+            // response_input_token_count_label
+            // 
+            response_input_token_count_label.AutoSize = true;
+            response_input_token_count_label.Location = new Point(3, 0);
+            response_input_token_count_label.Name = "response_input_token_count_label";
+            response_input_token_count_label.Size = new Size(37, 15);
+            response_input_token_count_label.TabIndex = 0;
+            response_input_token_count_label.Text = "12345";
+            main_toolTip.SetToolTip(response_input_token_count_label, "Number of Input tokens");
+            // 
+            // response_output_token_count_label
+            // 
+            response_output_token_count_label.Anchor = AnchorStyles.Top;
+            response_output_token_count_label.AutoSize = true;
+            response_output_token_count_label.Location = new Point(201, 0);
+            response_output_token_count_label.Name = "response_output_token_count_label";
+            response_output_token_count_label.Size = new Size(37, 15);
+            response_output_token_count_label.TabIndex = 1;
+            response_output_token_count_label.Text = "12345";
+            main_toolTip.SetToolTip(response_output_token_count_label, "Number of Output tokens");
+            // 
+            // response_total_token_count_label
+            // 
+            response_total_token_count_label.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            response_total_token_count_label.AutoSize = true;
+            response_total_token_count_label.Location = new Point(401, 0);
+            response_total_token_count_label.Name = "response_total_token_count_label";
+            response_total_token_count_label.Size = new Size(37, 15);
+            response_total_token_count_label.TabIndex = 1;
+            response_total_token_count_label.Text = "12345";
+            main_toolTip.SetToolTip(response_total_token_count_label, "Total number of tokens in last response.");
             // 
             // history_file_name_textBox
             // 
@@ -210,8 +250,8 @@
             text_splitContainer.Panel2.BackColor = SystemColors.Control;
             text_splitContainer.Panel2.Controls.Add(toggle_RIGHT_button);
             text_splitContainer.Panel2.Controls.Add(preview_tabControl);
-            text_splitContainer.Panel2.Controls.Add(new_conversation_button);
             text_splitContainer.Panel2.Controls.Add(history_file_name_textBox);
+            text_splitContainer.Panel2.Controls.Add(response_bottom_panel);
             text_splitContainer.Panel2.Padding = new Padding(12);
             text_splitContainer.Size = new Size(944, 316);
             text_splitContainer.SplitterDistance = 472;
@@ -342,7 +382,7 @@
             preview_tabControl.Multiline = true;
             preview_tabControl.Name = "preview_tabControl";
             preview_tabControl.SelectedIndex = 0;
-            preview_tabControl.Size = new Size(441, 244);
+            preview_tabControl.Size = new Size(441, 219);
             preview_tabControl.TabIndex = 4;
             // 
             // webview2_tabPage
@@ -351,7 +391,7 @@
             webview2_tabPage.Location = new Point(4, 24);
             webview2_tabPage.Name = "webview2_tabPage";
             webview2_tabPage.Padding = new Padding(3);
-            webview2_tabPage.Size = new Size(433, 216);
+            webview2_tabPage.Size = new Size(433, 191);
             webview2_tabPage.TabIndex = 2;
             webview2_tabPage.Text = "WebView2";
             webview2_tabPage.UseVisualStyleBackColor = true;
@@ -364,7 +404,7 @@
             webView21.Dock = DockStyle.Fill;
             webView21.Location = new Point(3, 3);
             webView21.Name = "webView21";
-            webView21.Size = new Size(427, 210);
+            webView21.Size = new Size(427, 185);
             webView21.TabIndex = 0;
             webView21.ZoomFactor = 1D;
             // 
@@ -375,7 +415,7 @@
             markf278down_tabPage.Location = new Point(4, 24);
             markf278down_tabPage.Name = "markf278down_tabPage";
             markf278down_tabPage.Padding = new Padding(3);
-            markf278down_tabPage.Size = new Size(433, 216);
+            markf278down_tabPage.Size = new Size(433, 191);
             markf278down_tabPage.TabIndex = 1;
             markf278down_tabPage.Text = "markf278down";
             markf278down_tabPage.UseVisualStyleBackColor = true;
@@ -389,7 +429,7 @@
             response_textBox.PlaceholderText = "Conversation";
             response_textBox.ReadOnly = true;
             response_textBox.ScrollBars = ScrollBars.Both;
-            response_textBox.Size = new Size(427, 187);
+            response_textBox.Size = new Size(427, 162);
             response_textBox.TabIndex = 1;
             response_textBox.Enter += response_textBox_Enter;
             response_textBox.Leave += response_textBox_Leave;
@@ -405,18 +445,46 @@
             submit_edits_button.UseVisualStyleBackColor = true;
             submit_edits_button.Click += submit_edit_button_Click;
             // 
+            // response_bottom_panel
+            // 
+            response_bottom_panel.AutoSize = true;
+            response_bottom_panel.Controls.Add(new_conversation_button);
+            response_bottom_panel.Controls.Add(response_token_counts_tableLayoutPanel);
+            response_bottom_panel.Dock = DockStyle.Bottom;
+            response_bottom_panel.Location = new Point(12, 254);
+            response_bottom_panel.Name = "response_bottom_panel";
+            response_bottom_panel.Size = new Size(441, 50);
+            response_bottom_panel.TabIndex = 6;
+            // 
             // new_conversation_button
             // 
             new_conversation_button.AutoSize = true;
             new_conversation_button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             new_conversation_button.Dock = DockStyle.Bottom;
-            new_conversation_button.Location = new Point(12, 279);
+            new_conversation_button.Location = new Point(0, 25);
             new_conversation_button.Name = "new_conversation_button";
             new_conversation_button.Size = new Size(441, 25);
             new_conversation_button.TabIndex = 2;
             new_conversation_button.Text = "New Conversation";
             new_conversation_button.UseVisualStyleBackColor = true;
             new_conversation_button.Click += new_conversation_button_Click;
+            // 
+            // response_token_counts_tableLayoutPanel
+            // 
+            response_token_counts_tableLayoutPanel.ColumnCount = 3;
+            response_token_counts_tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            response_token_counts_tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333359F));
+            response_token_counts_tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333359F));
+            response_token_counts_tableLayoutPanel.Controls.Add(response_input_token_count_label, 0, 0);
+            response_token_counts_tableLayoutPanel.Controls.Add(response_output_token_count_label, 1, 0);
+            response_token_counts_tableLayoutPanel.Controls.Add(response_total_token_count_label, 2, 0);
+            response_token_counts_tableLayoutPanel.Dock = DockStyle.Top;
+            response_token_counts_tableLayoutPanel.Location = new Point(0, 0);
+            response_token_counts_tableLayoutPanel.Name = "response_token_counts_tableLayoutPanel";
+            response_token_counts_tableLayoutPanel.RowCount = 1;
+            response_token_counts_tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            response_token_counts_tableLayoutPanel.Size = new Size(441, 25);
+            response_token_counts_tableLayoutPanel.TabIndex = 3;
             // 
             // conversation_history_treeView
             // 
@@ -426,17 +494,17 @@
             conversation_history_treeView.Indent = 10;
             conversation_history_treeView.Location = new Point(0, 37);
             conversation_history_treeView.Name = "conversation_history_treeView";
-            treeNode6.Name = "Node2";
-            treeNode6.Text = "Node2";
-            treeNode7.Name = "Node1";
-            treeNode7.Text = "Chat1";
-            treeNode8.Name = "Node3";
-            treeNode8.Text = "Node3";
-            treeNode9.Name = "Node4";
-            treeNode9.Text = "Node4";
-            treeNode10.Name = "RootNode";
-            treeNode10.Text = "Conversation History Root";
-            conversation_history_treeView.Nodes.AddRange(new TreeNode[] { treeNode10 });
+            treeNode1.Name = "Node2";
+            treeNode1.Text = "Node2";
+            treeNode2.Name = "Node1";
+            treeNode2.Text = "Chat1";
+            treeNode3.Name = "Node3";
+            treeNode3.Text = "Node3";
+            treeNode4.Name = "Node4";
+            treeNode4.Text = "Node4";
+            treeNode5.Name = "RootNode";
+            treeNode5.Text = "Conversation History Root";
+            conversation_history_treeView.Nodes.AddRange(new TreeNode[] { treeNode5 });
             conversation_history_treeView.PathSeparator = "/";
             conversation_history_treeView.Size = new Size(161, 316);
             conversation_history_treeView.TabIndex = 0;
@@ -726,6 +794,10 @@
             ((System.ComponentModel.ISupportInitialize)webView21).EndInit();
             markf278down_tabPage.ResumeLayout(false);
             markf278down_tabPage.PerformLayout();
+            response_bottom_panel.ResumeLayout(false);
+            response_bottom_panel.PerformLayout();
+            response_token_counts_tableLayoutPanel.ResumeLayout(false);
+            response_token_counts_tableLayoutPanel.PerformLayout();
             history_contextMenuStrip.ResumeLayout(false);
             main_menuStrip.ResumeLayout(false);
             main_menuStrip.PerformLayout();
@@ -800,5 +872,10 @@
         private Label total_request_token_count_label;
         private Label label1;
         private Label prompt_token_count_label;
+        private Panel response_bottom_panel;
+        private TableLayoutPanel response_token_counts_tableLayoutPanel;
+        private Label response_input_token_count_label;
+        private Label response_output_token_count_label;
+        private Label response_total_token_count_label;
     }
 }

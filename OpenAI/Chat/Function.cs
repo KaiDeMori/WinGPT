@@ -1,72 +1,90 @@
-﻿// ReSharper disable UnusedMember.Global
-
-#pragma warning disable IDE1006
-#pragma warning disable CS8618
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 namespace WinGPT.OpenAI.Chat;
 
-public interface IFunction {
+// Interface for a function, providing the name, description, and parameters.
+public interface IFunction<out TParameters> {
+   string      name        { get; }
+   string      description { get; }
+   TParameters parameters  { get; }
 }
 
-public class Function<T> : IFunction where T : Parameters {
-   public string name        { get; init; }
-   public string description { get; init; }
-   public T      parameters  { get; init; }
+// Generic class representing a function with typed parameters.
+public class Function<TParameters> : IFunction<TParameters> where TParameters : Parameters, new() {
+   public string        name        { get; init; }
+   public string        description { get; init; }
+   public TParameters   parameters  { get; init; }
+   //Parameters IFunction.parameters  => this.parameters;
 }
 
+// Interface for a function call, providing the name of the function.
 public interface IFunctionCall {
-   public string name { get; init; }
+   string name { get; init; }
 }
 
-public class FunctionCall<T> : IFunctionCall where T : ICallArguments {
-   public string name      { get; init; }
-   public T      arguments { get; init; }
+// Generic class representing a function call with typed arguments.
+public class FunctionCall<TArguments> : IFunctionCall where TArguments : ICallArguments {
+   public string     name      { get; init; }
+   public TArguments arguments { get; init; }
 }
 
+// Interface for call arguments.
 public interface ICallArguments {
 }
 
+// Abstract base class for function parameters, containing common properties.
 public abstract class Parameters {
    public string                              type       { get; init; }
    public List<string>                        required   { get; init; }
    public Dictionary<string, ParameterDetail> properties { get; init; }
 }
 
+// Class representing the parameters for a taxonomy function.
 public class TaxonomyParameters : Parameters {
-   public new Taxonomy_Properties properties { get; init; }
+   public new TaxonomyProperties properties { get; init; }
 }
 
-public class Taxonomy_Properties {
-   public ParameterDetail summary  { get; init; }
+// Class containing the properties specific to taxonomy parameters.
+public class TaxonomyProperties {
+   // Summary of the taxonomy
+   public ParameterDetail summary { get; init; }
+
+   // Filename associated with the taxonomy
    public ParameterDetail filename { get; init; }
+
+   // Category of the taxonomy
    public ParameterDetail category { get; init; }
 }
 
+// Class representing the call arguments for a taxonomy function.
 public class Taxonomy_CallArguments : ICallArguments {
    public string summary  { get; init; }
    public string filename { get; init; }
    public string category { get; init; }
 }
 
+// Class representing the details of a parameter.
 public class ParameterDetail {
    public string        type        { get; init; }
    public string        description { get; init; }
    public List<string>? enumValues  { get; init; } // Optional field for enum values
 }
 
-public class Example {
-   public Function<Parameters>[] functions { get; init; }
-}
-
+// Class representing the parameters for a save function.
 public class SaveParameters : Parameters {
-   public new Save_Properties properties { get; init; }
+   public new SaveProperties properties { get; init; }
 }
 
-public class Save_Properties {
-   public ParameterDetail filename     { get; init; }
+// Class containing the properties specific to save parameters.
+public class SaveProperties {
+   // Filename to save the content to
+   public ParameterDetail filename { get; init; }
+
+   // Text content to be saved
    public ParameterDetail text_content { get; init; }
 }
 
+// Class representing the call arguments for a save function.
 public class Save_CallArguments : ICallArguments {
-   public string filename     { get; init; }
+   public string filename    { get; init; }
    public string text_content { get; init; }
 }
