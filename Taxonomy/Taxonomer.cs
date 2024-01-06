@@ -56,7 +56,7 @@ public static class Taxonomer {
       //Let's get the request ready
       var request = new Request() {
          messages      = all_immutable,
-         functions     = new Function[] {function},
+         functions     = new List<Function> {function},
          function_call = new FunctionCallSettings("taxonomy"),
          model         = Models.gpt_3_5_turbo_16k,
          temperature   = 0.0

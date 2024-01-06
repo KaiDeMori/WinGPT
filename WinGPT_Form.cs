@@ -65,7 +65,7 @@ public partial class WinGPT_Form : Form {
       Initialize_Models_MenuItems();
       uploaded_files_comboBox.Items.Clear();
       uploaded_files_comboBox.DataSource    = Associated_files;
-      uploaded_files_comboBox.DisplayMember = "Name";
+      uploaded_files_comboBox.DisplayMember = "DisplayName";
       //uploaded_files_comboBox.ValueMember   = "FullName";
       submit_edits_button.Visible = false;
 

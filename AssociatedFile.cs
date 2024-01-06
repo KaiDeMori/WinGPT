@@ -13,19 +13,26 @@ public class AssociatedFile : INotifyPropertyChanged {
    }
 
    public void UpdateTokenCount() {
-      var text_content = System.IO.File.ReadAllText(File.FullName);
-      TokenCount = DeepTokenizer.count_tokens(
-         text_content,
-         Config.Active.LanguageModel);
-      OnPropertyChanged(nameof(Name));
+      try {
+         var text_content = System.IO.File.ReadAllText(File.FullName);
+         TokenCount = DeepTokenizer.count_tokens(
+            text_content,
+            Config.Active.LanguageModel);
+         OnPropertyChanged(nameof(Name));
+      }
+      catch (Exception) {
+         // ignored
+      }
    }
 
    protected virtual void OnPropertyChanged(string propertyName) {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
    }
 
-   //the name property should be the file name plus the token count
-   public string Name {
+   public string Name => File.Name;
+
+   //the display name property should be the file name plus the token count if the option is enabled
+   public string DisplayName {
       get {
          var s = File.Name +
                  (Config.Active.UIable.Show_Live_Token_Count ? $" ({TokenCount})" : String.Empty);
@@ -33,8 +40,8 @@ public class AssociatedFile : INotifyPropertyChanged {
       }
    }
 
-   public FileInfo File { get; }
+   public FileInfo File       { get; }
+   public int      TokenCount { get; private set; }
 
-   public int                                TokenCount { get; private set; }
    public event PropertyChangedEventHandler? PropertyChanged;
 }

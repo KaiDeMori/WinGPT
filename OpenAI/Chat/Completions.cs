@@ -14,7 +14,7 @@ public class Completions {
       //string request_content_json = JsonConvert.SerializeObject(request, Formatting.Indented, new JsonSerializerSettings {
       //   NullValueHandling = NullValueHandling.Ignore,
       //});
-      string request_content_json = JsonConvert.SerializeObject(request, Formatting.Indented, new JsonSerializerSettings {
+      string request_content_json = JsonConvert.SerializeObject(request, Formatting.None, new JsonSerializerSettings {
          //TypeNameHandling  = TypeNameHandling.Auto,
          NullValueHandling = NullValueHandling.Ignore,
       });
