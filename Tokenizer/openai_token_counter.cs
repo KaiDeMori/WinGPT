@@ -4,12 +4,16 @@ using Message = WinGPT.OpenAI.Chat.Message;
 
 namespace WinGPT.Tokenizer;
 
+/// <summary>
+/// Taken from <a href="https://github.com/hmarr/openai-chat-tokens">hmarr/openai-chat-tokens</a>
+/// and <a href="https://github.com/nyno-ai/openai-token-counter/">nyno-ai/openai-token-counter</a>
+/// </summary>
 public static class openai_token_counter {
    public static int estimate_token_count(Request request, string language_model) {
       Func<string, int> count_tokens = DeepTokenizer.count_tokens(language_model);
 
       var messages     = request.messages;
-      var functions    = request.functions ?? Array.Empty<Function>();
+      var functions    = request.functions ?? new List<Function>();
       var functionCall = request.function_call;
 
       bool paddedSystem = false;

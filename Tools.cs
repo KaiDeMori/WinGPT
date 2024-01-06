@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using Newtonsoft.Json;
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using WinGPT.OpenAI;
+using WinGPT.OpenAI.Chat;
 
 namespace WinGPT;
 
@@ -175,4 +177,10 @@ public static class Tools {
    }
 
    public static Version Version => Assembly.GetExecutingAssembly().GetName().Version!;
+
+   public static Function? Load_Function(FileInfo file) {
+      var functionJson = System.IO.File.ReadAllText(file.FullName);
+      Function? function = JsonConvert.DeserializeObject<Function>(functionJson);
+      return function;
+   }
 }

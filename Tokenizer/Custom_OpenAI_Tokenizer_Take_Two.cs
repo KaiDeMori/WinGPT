@@ -70,7 +70,7 @@ internal class Custom_OpenAI_Tokenizer_Take_Two {
    };
 
    // This method calculates the token count for messages and IFunction array based on the model
-   public static int count_tokens(ImmutableList<Message> messages, Function[]? functions) {
+   public static int count_tokens(ImmutableList<Message> messages, List<Function>? functions) {
       Special_Token_Counts? special_token_counts;
 
       if (gpt_4_models.Contains(Config.Active.LanguageModel))
@@ -96,7 +96,7 @@ internal class Custom_OpenAI_Tokenizer_Take_Two {
       msg_token_count += special_token_counts.req_postfix;
 
       var func_token_count = 0;
-      if (functions is not {Length: > 0}) {
+      if (functions is not {Count: > 0}) {
          return msg_token_count;
       }
 
