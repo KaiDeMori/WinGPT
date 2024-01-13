@@ -47,7 +47,8 @@ public class TokenCounter {
          if (function_call == "none") {
             tokens += 1;
          }
-         else if (function_call is Dictionary<string, object> && ((Dictionary<string, object>) function_call).ContainsKey("name")) {
+         else if (function_call is Dictionary<string, object> &&
+                  ((Dictionary<string, object>) function_call).ContainsKey("name")) {
             tokens += string_tokens((string) ((Dictionary<string, object>) function_call)["name"]) + 4;
          }
       }
@@ -100,19 +101,19 @@ public class TokenCounter {
 
    // Estimate token count for the functions
    public int estimate_tokens_in_functions(List<OpenAIFunction> functions) {
-      var prompt_definition = FormatFunctionDefinitions(functions);
+      var prompt_definition = Format.FormatFunctionDefinitions(functions);
       var tokens            = string_tokens(prompt_definition);
       tokens += 9; // Additional tokens for function definition
       return tokens;
    }
 
    // Placeholder for encoding methods
-   private Encoding EncodingForModel(string model) {
+   private ModelEncoding EncodingForModel(string model) {
       // Placeholder: Implement the actual encoding logic or integrate with an existing library
       throw new NotImplementedException();
    }
 
-   private Encoding GetEncoding(string encodingName) {
+   private ModelEncoding GetEncoding(string encodingName) {
       // Placeholder: Implement the actual encoding logic or integrate with an existing library
       throw new NotImplementedException();
    }
@@ -134,8 +135,16 @@ public class OpenAIMessage {
 
    // Method to create a deep copy of OpenAIMessage
    public OpenAIMessage DeepCopy() {
-      // Placeholder: Implement the actual deep copy logic
-      throw new NotImplementedException();
+      var copy = (OpenAIMessage) MemberwiseClone();
+      if (function_call != null) {
+         // Create a copy of function_call
+         copy.function_call = new OpenAIFunctionCall {
+            name      = function_call.name,
+            arguments = function_call.arguments
+         };
+      }
+
+      return copy;
    }
 }
 
@@ -146,9 +155,9 @@ public class OpenAIFunctionCall {
 
 // Placeholder for Encoding class
 // This should be implemented or replaced with an actual encoding class
-//public class Encoding {
-//   public int[] Encode(string str) {
-//      // Placeholder: Implement the actual encoding logic
-//      throw new NotImplementedException();
-//   }
-//}
+public class ModelEncoding {
+   public int[] Encode(string str) {
+      // Placeholder: Implement the actual encoding logic
+      throw new NotImplementedException();
+   }
+}
