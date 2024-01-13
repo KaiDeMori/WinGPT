@@ -70,8 +70,8 @@ public static class Markf278DownHelper {
             //not available. We need to use the Vision API for that!
             break;
          case FileType.Other:
-            //not available. Maybe we can add a link to the file?
-            //or do some Base64 encoding?
+            //show a message box that this file type is not supported
+            MessageBox.Show("File type not supported:\r\n" + file.Extension, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             break;
          default:
             throw new ArgumentOutOfRangeException();
