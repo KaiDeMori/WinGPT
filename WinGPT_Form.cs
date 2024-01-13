@@ -200,6 +200,9 @@ public partial class WinGPT_Form : Form {
       };
 
       TimedTokenizer.Callback = () => {
+         if (!Config.Active.UIable.Show_Live_Token_Count)
+            return;
+
          var prompt = prompt_textBox.Text;
          last_prompt_token_count       = DeepTokenizer.count_tokens(prompt, Config.Active.LanguageModel);
          prompt_token_count_label.Text = last_prompt_token_count.ToString("N0", CultureInfo.CurrentCulture);
@@ -699,6 +702,8 @@ public partial class WinGPT_Form : Form {
       prompt_textBox.Font       = Config.Active.UIable.Prompt_Font;
       response_textBox.Font     = Config.Active.UIable.markf278down_Font;
       response_textBox.ReadOnly = Config.Active.UIable.markf278down_readonly;
+      if (!Config.Active.UIable.Show_Live_Token_Count)
+         reset_token_counter_labels();
    }
 
    #endregion
@@ -1046,5 +1051,15 @@ public partial class WinGPT_Form : Form {
 
    private void total_request_token_count_label_Click(object sender, EventArgs e) {
       refresh_total_request_token_count_label();
+   }
+
+   private void reset_token_counter_labels() {
+      prompt_token_count_label.Text         = string.Empty;
+      total_request_token_count_label.Text  = string.Empty;
+      associated_files_token_sum_label.Text = string.Empty;
+
+      response_input_token_count_label.Text  = string.Empty;
+      response_output_token_count_label.Text = string.Empty;
+      response_total_token_count_label.Text  = string.Empty;
    }
 }

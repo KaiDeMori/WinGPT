@@ -1,11 +1,9 @@
-using WinGPT.OpenAI.Chat;
-
 namespace WinGPT.Tokenizer.lasttrythenigiveup;
 
 // Class containing methods to format function definitions
 public static class Format {
    // Format the function definitions to a string
-   public static string FormatFunctionDefinitions(List<Function> functions) {
+   public static string FormatFunctionDefinitions(List<OpenAIFunction> functions) {
       var lines = new List<string> {"namespace functions {", ""};
 
       foreach (var f in functions) {
@@ -13,8 +11,8 @@ public static class Format {
             lines.Add("// " + f.description);
          }
 
-         Parameters?                          parameters = f.parameters;
-         Dictionary<string, ParameterDetail>? properties = parameters != null ? parameters.properties : null;
+         var parameters = f.parameters;
+         var properties = parameters != null ? parameters.properties : null;
 
          if (properties == null || properties.Count == 0) {
             lines.Add("type " + f.name + " = () => any;");
@@ -86,20 +84,20 @@ public static class Format {
 
 // Placeholder classes for OpenAIFunction, ObjectProp, PropItem, and their subclasses
 // These should be implemented according to the structure expected by the formatting methods
-//public class OpenAIFunction
-//{
-//   public string     name        { get; set; }
-//   public string     description { get; set; }
-//   public ObjectProp parameters  { get; set; }
-//}
+public class OpenAIFunction {
+   public string     name        { get; set; }
+   public string     description { get; set; }
+   public ObjectProp parameters  { get; set; }
+}
 
-public class ObjectProp {
+public class ObjectProp : PropItem {
    public List<string>                 required   { get; set; }
    public Dictionary<string, PropItem> properties { get; set; }
 }
 
 public class PropItem {
    // Base class for property items
+   public string? description { get; set; }
 }
 
 public class StringProp : PropItem {
