@@ -29,11 +29,13 @@ public static class UpdateHelper {
 
          if (Version.TryParse(versionNode.InnerText, out Version? version)) {
             return version;
-         } else {
+         }
+         else {
             Debug.WriteLine("The version string in the XML is not in a valid format.");
             return null;
          }
-      } catch (Exception ex) {
+      }
+      catch (Exception ex) {
          Debug.WriteLine($"Exception occurred while getting version from URL: {ex.Message}");
          return null;
       }
@@ -57,19 +59,41 @@ public static class UpdateHelper {
 
          // Compare the versions
          return latestVersion > currentVersion;
-      } catch (Exception ex) {
+      }
+      catch (Exception ex) {
          Debug.WriteLine($"Exception occurred while checking if update is available: {ex.Message}");
          return false;
       }
    }
 
    public static void StartUpdate(Form form) {
+      if (!Environment.Is64BitProcess) {
+         MessageBox.Show(
+            "The update process can only be started from the 64-bit version of the application.",
+            "Update (Not!)",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Information
+         );
+         return;
+      }
+
+      if (Application_Paths.APP_MODE != Application_Paths.App_Modes.Portable) {
+         MessageBox.Show(
+            "The update process can only be started from the portable version of the application.",
+            "Update (Not!)",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Information
+         );
+         return;
+      }
+
       try {
          AutoUpdater.Icon = Resources.WinGPT_64x64_;
          AutoUpdater.SetOwner(form);
          AutoUpdater.HttpUserAgent = HTTP_Client.UserAgentString;
          AutoUpdater.Start(VersionUrl);
-      } catch (Exception ex) {
+      }
+      catch (Exception ex) {
          Debug.WriteLine($"Exception occurred while starting the update: {ex.Message}");
       }
    }

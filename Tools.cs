@@ -178,9 +178,11 @@ public static class Tools {
 
    public static Version Version => Assembly.GetExecutingAssembly().GetName().Version!;
 
+   public static string VersionString => $"{Version} {(Environment.Is64BitProcess ? "x64" : "x32")}";
+
    public static Function? Load_Function(FileInfo file) {
-      var functionJson = System.IO.File.ReadAllText(file.FullName);
-      Function? function = JsonConvert.DeserializeObject<Function>(functionJson);
+      var       functionJson = System.IO.File.ReadAllText(file.FullName);
+      Function? function     = JsonConvert.DeserializeObject<Function>(functionJson);
       return function;
    }
 }
