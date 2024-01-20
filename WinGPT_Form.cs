@@ -763,7 +763,8 @@ public partial class WinGPT_Form : Form {
       foreach (var model in Models.Supported) {
          var item = new ToolStripMenuItem(model);
          item.Click += (sender, args) => {
-            Config.Active.LanguageModel = model;
+            Config.Active.LanguageModel   = model;
+            models_ToolStripMenuItem.Text = $"{model}";
             Config.Save();
             foreach (ToolStripMenuItem oneitem in models_ToolStripMenuItem.DropDownItems)
                oneitem.Checked = oneitem == item;
@@ -777,6 +778,9 @@ public partial class WinGPT_Form : Form {
             item.Checked = true;
          }
       }
+
+      //and set the text of the main menu item
+      models_ToolStripMenuItem.Text = $"{Config.Active.LanguageModel}";
    }
 
    /// <summary>

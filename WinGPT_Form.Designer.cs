@@ -74,11 +74,11 @@
             open_Base_Directory_ToolStripMenuItem = new ToolStripMenuItem();
             changeBaseDirectoryToolStripMenuItem = new ToolStripMenuItem();
             settings_ToolStripMenuItem = new ToolStripMenuItem();
+            models_ToolStripMenuItem = new ToolStripMenuItem();
             tools_ToolStripMenuItem = new ToolStripMenuItem();
             openai_api_key_toolStripMenuItem = new ToolStripMenuItem();
             tokenCounter_ToolStripMenuItem = new ToolStripMenuItem();
             sysmsghack_ToolStripMenuItem = new ToolStripMenuItem();
-            models_ToolStripMenuItem = new ToolStripMenuItem();
             open_Config_Directory_ToolStripMenuItem = new ToolStripMenuItem();
             open_AdHoc_Directory_ToolStripMenuItem = new ToolStripMenuItem();
             open_Tulpas_Directory_ToolStripMenuItem = new ToolStripMenuItem();
@@ -536,7 +536,7 @@
             // 
             // main_menuStrip
             // 
-            main_menuStrip.Items.AddRange(new ToolStripItem[] { base_directory_toolStripMenuItem, settings_ToolStripMenuItem, tools_ToolStripMenuItem, help_ToolStripMenuItem });
+            main_menuStrip.Items.AddRange(new ToolStripItem[] { base_directory_toolStripMenuItem, settings_ToolStripMenuItem, models_ToolStripMenuItem, tools_ToolStripMenuItem, help_ToolStripMenuItem });
             main_menuStrip.Location = new Point(0, 0);
             main_menuStrip.Name = "main_menuStrip";
             main_menuStrip.ShowItemToolTips = true;
@@ -547,8 +547,9 @@
             // base_directory_toolStripMenuItem
             // 
             base_directory_toolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { open_Base_Directory_ToolStripMenuItem, changeBaseDirectoryToolStripMenuItem });
+            base_directory_toolStripMenuItem.Image = Properties.Resources.FolderOpened;
             base_directory_toolStripMenuItem.Name = "base_directory_toolStripMenuItem";
-            base_directory_toolStripMenuItem.Size = new Size(94, 20);
+            base_directory_toolStripMenuItem.Size = new Size(110, 20);
             base_directory_toolStripMenuItem.Text = "&Base Directory";
             // 
             // open_Base_Directory_ToolStripMenuItem
@@ -569,16 +570,25 @@
             // 
             // settings_ToolStripMenuItem
             // 
+            settings_ToolStripMenuItem.Image = Properties.Resources.Settings;
             settings_ToolStripMenuItem.Name = "settings_ToolStripMenuItem";
-            settings_ToolStripMenuItem.Size = new Size(61, 20);
+            settings_ToolStripMenuItem.Size = new Size(77, 20);
             settings_ToolStripMenuItem.Text = "Settings";
             settings_ToolStripMenuItem.Click += settings_ToolStripMenuItem_Click;
             // 
+            // models_ToolStripMenuItem
+            // 
+            models_ToolStripMenuItem.Image = Properties.Resources.ColumnGroup;
+            models_ToolStripMenuItem.Name = "models_ToolStripMenuItem";
+            models_ToolStripMenuItem.Size = new Size(74, 20);
+            models_ToolStripMenuItem.Text = "Models";
+            // 
             // tools_ToolStripMenuItem
             // 
-            tools_ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openai_api_key_toolStripMenuItem, tokenCounter_ToolStripMenuItem, sysmsghack_ToolStripMenuItem, models_ToolStripMenuItem, open_Config_Directory_ToolStripMenuItem, open_AdHoc_Directory_ToolStripMenuItem, open_Tulpas_Directory_ToolStripMenuItem, open_Downloads_Directory_ToolStripMenuItem, refresh_ConversationHistory_ToolStripMenuItem });
+            tools_ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openai_api_key_toolStripMenuItem, tokenCounter_ToolStripMenuItem, sysmsghack_ToolStripMenuItem, open_Config_Directory_ToolStripMenuItem, open_AdHoc_Directory_ToolStripMenuItem, open_Tulpas_Directory_ToolStripMenuItem, open_Downloads_Directory_ToolStripMenuItem, refresh_ConversationHistory_ToolStripMenuItem });
+            tools_ToolStripMenuItem.Image = Properties.Resources.ToolWindow;
             tools_ToolStripMenuItem.Name = "tools_ToolStripMenuItem";
-            tools_ToolStripMenuItem.Size = new Size(46, 20);
+            tools_ToolStripMenuItem.Size = new Size(62, 20);
             tools_ToolStripMenuItem.Text = "&Tools";
             // 
             // openai_api_key_toolStripMenuItem
@@ -605,13 +615,6 @@
             sysmsghack_ToolStripMenuItem.Size = new Size(227, 22);
             sysmsghack_ToolStripMenuItem.Text = "GPT4 sysmsghack";
             sysmsghack_ToolStripMenuItem.Click += sysmsghack_ToolStripMenuItem_Click;
-            // 
-            // models_ToolStripMenuItem
-            // 
-            models_ToolStripMenuItem.Image = Properties.Resources.ColumnGroup;
-            models_ToolStripMenuItem.Name = "models_ToolStripMenuItem";
-            models_ToolStripMenuItem.Size = new Size(227, 22);
-            models_ToolStripMenuItem.Text = "Models";
             // 
             // open_Config_Directory_ToolStripMenuItem
             // 
@@ -657,15 +660,16 @@
             // help_ToolStripMenuItem
             // 
             help_ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { about_ToolStripMenuItem, goTo_WinGPT_Wiki_ToolStripMenuItem, update_wingpt_ToolStripMenuItem });
+            help_ToolStripMenuItem.Image = Properties.Resources.HelpTableOfContents;
             help_ToolStripMenuItem.Name = "help_ToolStripMenuItem";
-            help_ToolStripMenuItem.Size = new Size(44, 20);
+            help_ToolStripMenuItem.Size = new Size(60, 20);
             help_ToolStripMenuItem.Text = "&Help";
             // 
             // about_ToolStripMenuItem
             // 
             about_ToolStripMenuItem.Image = (Image)resources.GetObject("about_ToolStripMenuItem.Image");
             about_ToolStripMenuItem.Name = "about_ToolStripMenuItem";
-            about_ToolStripMenuItem.Size = new Size(174, 22);
+            about_ToolStripMenuItem.Size = new Size(180, 22);
             about_ToolStripMenuItem.Text = "&About...";
             about_ToolStripMenuItem.Click += about_ToolStripMenuItem_Click;
             // 
@@ -673,7 +677,7 @@
             // 
             goTo_WinGPT_Wiki_ToolStripMenuItem.Image = Properties.Resources.Interwebs;
             goTo_WinGPT_Wiki_ToolStripMenuItem.Name = "goTo_WinGPT_Wiki_ToolStripMenuItem";
-            goTo_WinGPT_Wiki_ToolStripMenuItem.Size = new Size(174, 22);
+            goTo_WinGPT_Wiki_ToolStripMenuItem.Size = new Size(180, 22);
             goTo_WinGPT_Wiki_ToolStripMenuItem.Text = "Go to WinGPT Wiki";
             goTo_WinGPT_Wiki_ToolStripMenuItem.Click += goTo_WinGPT_Wiki_ToolStripMenuItem_Click;
             // 
@@ -681,7 +685,7 @@
             // 
             update_wingpt_ToolStripMenuItem.Image = Properties.Resources.UpdateAnimation;
             update_wingpt_ToolStripMenuItem.Name = "update_wingpt_ToolStripMenuItem";
-            update_wingpt_ToolStripMenuItem.Size = new Size(174, 22);
+            update_wingpt_ToolStripMenuItem.Size = new Size(180, 22);
             update_wingpt_ToolStripMenuItem.Text = "Update";
             update_wingpt_ToolStripMenuItem.Click += update_wingpt_ToolStripMenuItem_Click;
             // 
@@ -841,7 +845,6 @@
         internal ToolTip main_toolTip;
         private ToolStripMenuItem tokenCounter_ToolStripMenuItem;
         private ToolStripMenuItem sysmsghack_ToolStripMenuItem;
-        private ToolStripMenuItem models_ToolStripMenuItem;
         private TabControl preview_tabControl;
         private TabPage markf278down_tabPage;
         private TabPage webview2_tabPage;
@@ -877,5 +880,6 @@
         private Label response_input_token_count_label;
         private Label response_output_token_count_label;
         private Label response_total_token_count_label;
+        private ToolStripMenuItem models_ToolStripMenuItem;
     }
 }
