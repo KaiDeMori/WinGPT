@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Config_UI));
             config_ui_propertyGrid = new PropertyGrid();
             SuspendLayout();
             // 
@@ -46,8 +47,9 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(397, 299);
             Controls.Add(config_ui_propertyGrid);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Config_UI";
-            Text = "Config_UI";
+            Text = "Settings";
             ResumeLayout(false);
         }
 
