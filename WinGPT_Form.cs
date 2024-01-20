@@ -59,7 +59,7 @@ public partial class WinGPT_Form : Form {
       //HandleCreated += (sender, args) => 
       //   set_splitter_state();
 
-      Text += $" v{Tools.Version} › {Application_Paths.APP_MODE}";
+      Text += $" v{Tools.VersionString} › {Application_Paths.APP_MODE}";
 
       Set_status_bar(true, "Initializing available models.");
       Initialize_Models_MenuItems();
