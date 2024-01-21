@@ -11,7 +11,8 @@ namespace WinGPT;
 /// </summary>
 public static class UpdateHelper {
    // URL of the version file on the web server
-   private static readonly string VersionUrl = "https://peopleoftheprompt.org/secret_beta/binarisms/Version.xml";
+   //private static readonly string VersionUrl = "https://peopleoftheprompt.org/secret_beta/binarisms/Version.xml";
+   private static readonly string VersionUrl = "https://peopleoftheprompt.org/WinGPT/Version.xml";
 
    private static async Task<Version?> GetVersionFromUrlAsync() {
       try {
