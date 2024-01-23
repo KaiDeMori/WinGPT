@@ -5,7 +5,7 @@ namespace WinGPT;
 public enum FileType {
    Image,
    Code,
-   Text,
+   Documents,
    Other
 }
 

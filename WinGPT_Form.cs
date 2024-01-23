@@ -224,7 +224,8 @@ public partial class WinGPT_Form : Form {
       //select and activate the default tulpa
 
       if (Debugger.IsAttached) {
-         prompt_textBox.Text = "What is bigger than a town?";
+         //prompt_textBox.Text = "What is bigger than a town?";
+         prompt_textBox.Text = "Please translate the file to french.";
       }
    }
 

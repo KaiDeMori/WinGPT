@@ -21,16 +21,16 @@
     ".py",
     ".rb",
     ".ts",
+    ".txt",
     ".vb",
     ".xml"
   ],
-  "Text": [
+  "Documents": [
     ".doc",
     ".docx",
     ".pdf",
     ".ppt",
     ".pptx",
-    ".txt",
     ".xls",
     ".xlsx"
   ]
