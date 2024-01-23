@@ -61,7 +61,7 @@
                 });
         }
 
-        function getCodeContent(header) {
+        function getCodeContent_old(header) {
             // Get next sibling and check if it's a <div> element.
             const nextElement = header.nextElementSibling;
 
@@ -80,6 +80,28 @@
                 }
             }
 
+            return null;
+        }
+
+        function getCodeContent(element) {
+            // Get the next sibling element
+            var nextElement = element.nextElementSibling;
+
+            // Check if the next element is a div or pre
+            if (nextElement && (nextElement.tagName === 'DIV' || nextElement.tagName === 'PRE')) {
+                // If it's a div, it should contain the pre
+                var preElement = nextElement.tagName === 'DIV' ? nextElement.querySelector('pre') : nextElement;
+
+                // Inside the pre, we are looking for the <code>
+                var codeElement = preElement.querySelector('code');
+
+                // Return the content of the code element as a string
+                if (codeElement) {
+                    return codeElement.textContent;
+                }
+            }
+
+            // If no code element is found, return null
             return null;
         }
 
