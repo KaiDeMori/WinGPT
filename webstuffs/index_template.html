@@ -61,31 +61,9 @@
                 });
         }
 
-        function getCodeContent_old(header) {
-            // Get next sibling and check if it's a <div> element.
-            const nextElement = header.nextElementSibling;
-
-            if (nextElement && nextElement.tagName.toLowerCase() === 'div') {
-                // Inside <div>, look for a single <pre> element.
-                const preElements = nextElement.getElementsByTagName('pre');
-
-                if (preElements.length === 1) {
-                    // Inside <pre>, look for the <code> element.
-                    const codeElements = preElements[0].getElementsByTagName('code');
-
-                    if (codeElements.length === 1) {
-                        // Get the code content.
-                        return codeElements[0].textContent;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        function getCodeContent(element) {
+        function getCodeContent(header) {
             // Get the next sibling element
-            var nextElement = element.nextElementSibling;
+            var nextElement = header.nextElementSibling;
 
             // Check if the next element is a div or pre
             if (nextElement && (nextElement.tagName === 'DIV' || nextElement.tagName === 'PRE')) {

@@ -225,7 +225,8 @@ public partial class WinGPT_Form : Form {
 
       if (Debugger.IsAttached) {
          //prompt_textBox.Text = "What is bigger than a town?";
-         prompt_textBox.Text = "Please translate the file to french.";
+         //prompt_textBox.Text = "Please translate the file to french.";
+         prompt_textBox.Text = "Hi";
       }
    }
 
@@ -655,9 +656,9 @@ public partial class WinGPT_Form : Form {
       prompt_textBox.Clear();
       history_file_name_textBox.Clear();
       response_textBox.Clear();
-      //webView21.NavigateToString(string.Empty); //works
+      webView21.CoreWebView2.Navigate("about:blank"); //works on previous edge
+      webView21.NavigateToString(string.Empty); //works on recent edge
       //webView21.Source = new Uri("about:blank"); //no works
-      webView21.CoreWebView2.Navigate("about:blank"); //works
       history_file_name_textBox.BackColor    = SystemColors.Info;
       response_input_token_count_label.Text  = string.Empty;
       response_output_token_count_label.Text = string.Empty;

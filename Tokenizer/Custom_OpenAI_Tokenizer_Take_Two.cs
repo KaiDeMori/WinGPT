@@ -57,16 +57,23 @@ internal class Custom_OpenAI_Tokenizer_Take_Two {
    };
 
    private static readonly string[] gpt_4_models = {
-      Models.gpt_4_1106_preview,
       Models.gpt_4,
+      Models.gpt_4_0125_preview,
       Models.gpt_4_0613,
+      Models.gpt_4_1106_preview,
+      Models.gpt_4_turbo_preview,
+      Models.gpt_4_vision_preview,
    };
 
    private static readonly string[] gpt_3_5_turbo_models = {
       Models.gpt_3_5_turbo,
+      Models.gpt_3_5_turbo_0301,
       Models.gpt_3_5_turbo_0613,
+      Models.gpt_3_5_turbo_1106,
       Models.gpt_3_5_turbo_16k,
       Models.gpt_3_5_turbo_16k_0613,
+      Models.gpt_3_5_turbo_instruct,
+      Models.gpt_3_5_turbo_instruct_0914,
    };
 
    // This method calculates the token count for messages and IFunction array based on the model
