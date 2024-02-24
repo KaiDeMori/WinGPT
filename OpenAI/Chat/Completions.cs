@@ -89,46 +89,4 @@ public class Completions {
       }
    }
 
-   [Obsolete]
-   public static async Task<ErrorOr<Response, HttpResponseMessage>> POST_Async_old(Request request) {
-      var url = "https://api.openai.com/v1/chat/completions";
-
-      // Serialize the request object to JSON
-      string jsonRequest = JsonConvert.SerializeObject(request);
-
-      // Create the HttpContent for the form to be posted.
-      var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-
-      try {
-         // Make the request
-         HttpResponseMessage responseMessage = await HTTP_Client.Gimme().PostAsync(url, content);
-
-         if (responseMessage.IsSuccessStatusCode) {
-            // If the request was successful, parse the returned data
-            string    jsonResponse = await responseMessage.Content.ReadAsStringAsync();
-            Response? response     = JsonConvert.DeserializeObject<Response>(jsonResponse);
-
-            // Return a successful response
-            if (response == null)
-               throw new InvalidOperationException("We got unparsable JSON from the API");
-
-            Config.Active.TokenCounter.Increment(response);
-
-            return response;
-         }
-         else {
-            // If something went wrong, return the HttpResponseMessage as the error
-            return responseMessage;
-         }
-      }
-      catch (Exception ex) {
-         // In case of an exception, wrap the exception in an HttpResponseMessage and return as error
-         var errorResponse = new HttpResponseMessage {
-            StatusCode = HttpStatusCode.Unused,
-            Content    = new StringContent(ex.Message)
-         };
-
-         return errorResponse;
-      }
-   }
 }
