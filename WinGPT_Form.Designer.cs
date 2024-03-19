@@ -97,6 +97,7 @@
             main_toolStripProgressBar = new ToolStripProgressBar();
             base_directory_vistaFolderBrowserDialog = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog();
             upload_vistaOpenFileDialog = new Ookii.Dialogs.WinForms.VistaOpenFileDialog();
+            checkModelsToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)text_splitContainer).BeginInit();
             text_splitContainer.Panel1.SuspendLayout();
             text_splitContainer.Panel2.SuspendLayout();
@@ -585,7 +586,7 @@
             // 
             // tools_ToolStripMenuItem
             // 
-            tools_ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openai_api_key_toolStripMenuItem, tokenCounter_ToolStripMenuItem, sysmsghack_ToolStripMenuItem, open_Config_Directory_ToolStripMenuItem, open_AdHoc_Directory_ToolStripMenuItem, open_Tulpas_Directory_ToolStripMenuItem, open_Downloads_Directory_ToolStripMenuItem, refresh_ConversationHistory_ToolStripMenuItem });
+            tools_ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openai_api_key_toolStripMenuItem, tokenCounter_ToolStripMenuItem, sysmsghack_ToolStripMenuItem, open_Config_Directory_ToolStripMenuItem, open_AdHoc_Directory_ToolStripMenuItem, open_Tulpas_Directory_ToolStripMenuItem, open_Downloads_Directory_ToolStripMenuItem, refresh_ConversationHistory_ToolStripMenuItem, checkModelsToolStripMenuItem });
             tools_ToolStripMenuItem.Image = Properties.Resources.ToolWindow;
             tools_ToolStripMenuItem.Name = "tools_ToolStripMenuItem";
             tools_ToolStripMenuItem.Size = new Size(62, 20);
@@ -669,7 +670,7 @@
             // 
             about_ToolStripMenuItem.Image = (Image)resources.GetObject("about_ToolStripMenuItem.Image");
             about_ToolStripMenuItem.Name = "about_ToolStripMenuItem";
-            about_ToolStripMenuItem.Size = new Size(180, 22);
+            about_ToolStripMenuItem.Size = new Size(174, 22);
             about_ToolStripMenuItem.Text = "&About...";
             about_ToolStripMenuItem.Click += about_ToolStripMenuItem_Click;
             // 
@@ -677,7 +678,7 @@
             // 
             goTo_WinGPT_Wiki_ToolStripMenuItem.Image = Properties.Resources.Interwebs;
             goTo_WinGPT_Wiki_ToolStripMenuItem.Name = "goTo_WinGPT_Wiki_ToolStripMenuItem";
-            goTo_WinGPT_Wiki_ToolStripMenuItem.Size = new Size(180, 22);
+            goTo_WinGPT_Wiki_ToolStripMenuItem.Size = new Size(174, 22);
             goTo_WinGPT_Wiki_ToolStripMenuItem.Text = "Go to WinGPT Wiki";
             goTo_WinGPT_Wiki_ToolStripMenuItem.Click += goTo_WinGPT_Wiki_ToolStripMenuItem_Click;
             // 
@@ -685,7 +686,7 @@
             // 
             update_wingpt_ToolStripMenuItem.Image = Properties.Resources.UpdateAnimation;
             update_wingpt_ToolStripMenuItem.Name = "update_wingpt_ToolStripMenuItem";
-            update_wingpt_ToolStripMenuItem.Size = new Size(180, 22);
+            update_wingpt_ToolStripMenuItem.Size = new Size(174, 22);
             update_wingpt_ToolStripMenuItem.Text = "Update";
             update_wingpt_ToolStripMenuItem.Click += update_wingpt_ToolStripMenuItem_Click;
             // 
@@ -771,6 +772,14 @@
             upload_vistaOpenFileDialog.Multiselect = true;
             upload_vistaOpenFileDialog.SupportMultiDottedExtensions = true;
             upload_vistaOpenFileDialog.Title = "Choose wisely!";
+            // 
+            // checkModelsToolStripMenuItem
+            // 
+            checkModelsToolStripMenuItem.Name = "checkModelsToolStripMenuItem";
+            checkModelsToolStripMenuItem.Size = new Size(227, 22);
+            checkModelsToolStripMenuItem.Text = "CheckModels";
+            checkModelsToolStripMenuItem.ToolTipText = "Get the available models for this API key and disable missing ones.";
+            checkModelsToolStripMenuItem.Click += checkModelsToolStripMenuItem_Click;
             // 
             // WinGPT_Form
             // 
@@ -881,5 +890,6 @@
         private Label response_output_token_count_label;
         private Label response_total_token_count_label;
         private ToolStripMenuItem models_ToolStripMenuItem;
+        private ToolStripMenuItem checkModelsToolStripMenuItem;
     }
 }

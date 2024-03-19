@@ -1,6 +1,10 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using WinGPT.OpenAI.Chat;
+
 namespace WinGPT.OpenAI;
 
-public class Models {
+public static class Models {
    public static readonly string nl = "\n";
 
    public static readonly string[] Supported = {
@@ -38,4 +42,36 @@ public class Models {
 
    //and dall-e 3
    public const string dall_e_3 = "dall-e-3";
+
+   private const           string Endpoint          = "models";
+   private static readonly string Full_Endpoint_URL = HTTP_Client.Get_full_URL_for_endpoint(Endpoint);
+
+   public static string[] get_available_models_for_api_key() {
+      var http_client = HTTP_Client.Gimme();
+      var response    = http_client.GetAsync(Full_Endpoint_URL).Result;
+
+      string json;
+      using (var content = response.Content) {
+         json = content.ReadAsStringAsync().Result;
+      }
+
+      // Parse the JSON string into a JObject
+      var jObject = JObject.Parse(json);
+
+      // Extract the 'data' array
+      var data = jObject["data"];
+
+      // Check if 'data' is not null and is an array
+      if (data is not JArray dataArray) {
+         return null;
+      }
+
+      var models = 
+         dataArray.
+            Select(item => item["id"]?.ToString()).
+            OfType<string>().
+            ToArray();
+
+      return models;
+   }
 }
