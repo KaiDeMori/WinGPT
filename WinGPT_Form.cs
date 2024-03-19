@@ -657,7 +657,7 @@ public partial class WinGPT_Form : Form {
       history_file_name_textBox.Clear();
       response_textBox.Clear();
       webView21.CoreWebView2.Navigate("about:blank"); //works on previous edge
-      webView21.NavigateToString(string.Empty); //works on recent edge
+      webView21.NavigateToString(string.Empty);       //works on recent edge
       //webView21.Source = new Uri("about:blank"); //no works
       history_file_name_textBox.BackColor    = SystemColors.Info;
       response_input_token_count_label.Text  = string.Empty;
@@ -764,6 +764,7 @@ public partial class WinGPT_Form : Form {
       models_ToolStripMenuItem.DropDownItems.Clear();
       foreach (var model in Models.Supported) {
          var item = new ToolStripMenuItem(model);
+         item.Tag = model;
          item.Click += (sender, args) => {
             Config.Active.LanguageModel   = model;
             models_ToolStripMenuItem.Text = $"{model}";
@@ -1067,5 +1068,19 @@ public partial class WinGPT_Form : Form {
       response_input_token_count_label.Text  = string.Empty;
       response_output_token_count_label.Text = string.Empty;
       response_total_token_count_label.Text  = string.Empty;
+   }
+
+   private void checkModelsToolStripMenuItem_Click(object sender, EventArgs e) {
+      var available_models = Models.get_available_models_for_api_key();
+
+      var message  = available_models.Aggregate("Available models:\r\n", (current, model) => current + $"{model}\r\n");
+      var models_file = Path.Join(Config.AdHoc_Downloads_Path.FullName, Config.models_text_filename);
+      File.WriteAllText(models_file, message);
+      MessageBox.Show($"Available models written to\r\n{models_file}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+      var toolStripItemCollection = models_ToolStripMenuItem.DropDownItems;
+      foreach (ToolStripItem toolStripItem in toolStripItemCollection) {
+         toolStripItem.Enabled = available_models.Contains(toolStripItem.Tag);
+      }
    }
 }

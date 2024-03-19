@@ -26,6 +26,7 @@ public class Config {
    internal static readonly string my_css;
    internal static readonly string prism_js;
 
+   public const  string        models_text_filename                = "models.txt";
    private const string        WebstuffsPrismFancyCss              = "webstuffs/prism_fancy.css";
    private const string        WebstuffsPrismFancyJs               = "webstuffs/prism_fancy.js";
    private const string        WebstuffsMyCss                      = "webstuffs/my.css";
