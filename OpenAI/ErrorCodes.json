@@ -1,5 +1,25 @@
 ﻿[
   {
+    "Code": 400,
+    "Name": "Bad Request",
+    "Overview": {
+      "Cause": "Bad Request",
+      "Solution": "Make the request better :-)"
+    },
+    "Detail": {
+      "Description": "This error message is a very confusing one, since OpenAI also uses it when the maximum amount of tokens is exceeded.",
+      "Reasons": [
+        "The request contains actual errors and cannot be parsed by the server (highly unlikely!).",
+        "The request contains too many tokens for the current model.",
+        "The number of tokens in the reqest PLUS the Max_Tokens exceeed the token limit for the current model."
+      ],
+      "ResolveSteps": [
+        "Reduce the number of tokens in the request.",
+        "Change the Max_Tokens in settings."
+      ]
+    }
+  },
+  {
     "Code": 401,
     "Name": "Invalid Authentication",
     "Overview": {
@@ -7,8 +27,7 @@
       "Solution": "Ensure the correct API key and requesting organization are being used."
     },
     "Detail": {
-      "Description":
-        "This error message indicates that your authentication credentials are invalid. This could happen for several reasons.",
+      "Description": "This error message indicates that your authentication credentials are invalid. This could happen for several reasons.",
       "Reasons": [
         "You are using a revoked API key.",
         "You are using a different API key than the one assigned to the requesting organization.",
@@ -28,8 +47,7 @@
       "Solution": "Ensure the API key used is correct, clear your browser cache, or generate a new one."
     },
     "Detail": {
-      "Description":
-        "This error message indicates that the API key you are using in your request is not correct. This could happen for several reasons.",
+      "Description": "This error message indicates that the API key you are using in your request is not correct. This could happen for several reasons.",
       "Reasons": [
         "There is a typo or an extra space in your API key.",
         "You are using an API key that belongs to a different organization.",
@@ -48,12 +66,10 @@
     "Name": "You must be a member of an organization to use the API",
     "Overview": {
       "Cause": "Your account is not part of an organization.",
-      "Solution":
-        "Contact us to get added to a new organization or ask your organization manager to invite you to an organization."
+      "Solution": "Contact us to get added to a new organization or ask your organization manager to invite you to an organization."
     },
     "Detail": {
-      "Description":
-        "This error message indicates that your account is not part of an organization. This could happen for several reasons.",
+      "Description": "This error message indicates that your account is not part of an organization. This could happen for several reasons.",
       "Reasons": [
         "You have left or been removed from your previous organization.",
         "Your organization has been deleted."
@@ -73,8 +89,7 @@
       "Solution": "Pace your requests. Read the Rate limit guide."
     },
     "Detail": {
-      "Description":
-        "This error message indicates that you have hit your assigned rate limit for the API. This means that you have submitted too many tokens or requests in a short period of time and have exceeded the number of requests allowed. This could happen for several reasons.",
+      "Description": "This error message indicates that you have hit your assigned rate limit for the API. This means that you have submitted too many tokens or requests in a short period of time and have exceeded the number of requests allowed. This could happen for several reasons.",
       "Reasons": [
         "You are using a loop or a script that makes frequent or concurrent requests.",
         "You are sharing your API key with other users or applications.",
@@ -92,13 +107,11 @@
     "Code": 429,
     "Name": "You exceeded your current quota, please check your plan and billing details",
     "Overview": {
-      "Cause":
-        "You have hit your maximum monthly spend (hard limit) which you can view in the account billing section.",
+      "Cause": "You have hit your maximum monthly spend (hard limit) which you can view in the account billing section.",
       "Solution": "Apply for a quota increase."
     },
     "Detail": {
-      "Description":
-        "This error message indicates that you have hit your maximum monthly spend for the API. You can view your maximum monthly limit, under ‘hard limit’ in your [account billing settings](/account/billing/limits). This means that you have consumed all the credits allocated to your plan and have reached the limit of your current billing cycle. This could happen for several reasons.",
+      "Description": "This error message indicates that you have hit your maximum monthly spend for the API. You can view your maximum monthly limit, under ‘hard limit’ in your [account billing settings](/account/billing/limits). This means that you have consumed all the credits allocated to your plan and have reached the limit of your current billing cycle. This could happen for several reasons.",
       "Reasons": [
         "You are using a high-volume or complex service that consumes a lot of credits or tokens.",
         "Your limit is set too low for your organization’s usage."
@@ -131,8 +144,7 @@
       "Solution": "Please retry your requests after a brief wait."
     },
     "Detail": {
-      "Description":
-        "This error message indicates that our servers are experiencing high traffic and are unable to process your request at the moment. This could happen for several reasons.",
+      "Description": "This error message indicates that our servers are experiencing high traffic and are unable to process your request at the moment. This could happen for several reasons.",
       "Reasons": [
         "There is a sudden spike or surge in demand for our services.",
         "There is scheduled or unscheduled maintenance or update on our servers.",
