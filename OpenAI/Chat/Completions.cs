@@ -79,7 +79,7 @@ public class Completions {
       ErrorCode? errorCode = errorCodes.FirstOrDefault(errorCode => errorCode.Code == (int) statusCode);
       if (errorCode != null) {
          //we found a matching error code
-         ShowErrorMessage(errorCode);
+         show_known_errormessage(errorCode);
          //MessageBox.Show($"{errorCode.Overview.Cause}\r\n{errorCode.Overview.Solution}", $"Error {errorCode.Code}: {errorCode.Name}", MessageBoxButtons.OK);
       }
       else {
@@ -89,7 +89,7 @@ public class Completions {
       }
    }
 
-   private static void ShowErrorMessage(ErrorCode errorCode) {
+   private static void show_known_errormessage(ErrorCode errorCode) {
       // Prepare the message
       var message = new StringBuilder();
       message.AppendLine($"Error Code: {errorCode.Code}");
