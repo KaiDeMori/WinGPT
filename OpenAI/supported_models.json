@@ -1,0 +1,98 @@
+[
+  {
+    "id": "gpt-4-0125-preview",
+    "owned_by": "openai",
+    "context_window": 128000,
+    "is_alias": false
+  },
+  {
+    "id": "gpt-4-turbo-preview",
+    "owned_by": "openai",
+    "context_window": 128000,
+    "is_alias": false
+  },
+  {
+    "id": "gpt-4-1106-preview",
+    "owned_by": "openai",
+    "context_window": 128000,
+    "is_alias": false
+  },
+  {
+    "id": "gpt-4-vision-preview",
+    "owned_by": "openai",
+    "context_window": 128000,
+    "is_alias": false
+  },
+  {
+    "id": "gpt-4-1106-vision-preview",
+    "owned_by": "openai",
+    "context_window": 128000,
+    "is_alias": false
+  },
+  {
+    "id": "gpt-4",
+    "owned_by": "openai",
+    "context_window": 8192,
+    "is_alias": true
+  },
+  {
+    "id": "gpt-4-0613",
+    "owned_by": "openai",
+    "context_window": 8192,
+    "is_alias": false
+  },
+  {
+    "id": "gpt-4-32k",
+    "owned_by": "openai",
+    "context_window": 32768,
+    "is_alias": true
+  },
+  {
+    "id": "gpt-4-32k-0613",
+    "owned_by": "openai",
+    "context_window": 32768,
+    "is_alias": false
+  },
+  {
+    "id": "gpt-3.5-turbo-0125",
+    "owned_by": "openai",
+    "context_window": 16385,
+    "is_alias": false
+  },
+  {
+    "id": "gpt-3.5-turbo",
+    "owned_by": "openai",
+    "context_window": 16385,
+    "is_alias": true
+  },
+  {
+    "id": "gpt-3.5-turbo-1106",
+    "owned_by": "openai",
+    "context_window": 16385,
+    "is_alias": false
+  },
+  {
+    "id": "gpt-3.5-turbo-instruct",
+    "owned_by": "openai",
+    "context_window": 4096,
+    "is_alias": false
+  },
+  {
+    "id": "gpt-3.5-turbo-16k",
+    "owned_by": "openai",
+    "context_window": 16385,
+    "is_alias": true
+  },
+  {
+    "id": "gpt-3.5-turbo-0613",
+    "owned_by": "openai",
+    "context_window": 4096,
+    "is_alias": false
+  },
+  {
+    "id": "gpt-3.5-turbo-16k-0613",
+    "owned_by": "openai",
+    "context_window": 16385,
+    "is_alias": false
+  }
+]
