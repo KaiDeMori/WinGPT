@@ -79,8 +79,8 @@ public class Completions {
       ErrorCode? errorCode = errorCodes.FirstOrDefault(errorCode => errorCode.Code == (int) statusCode);
       if (errorCode != null) {
          //we found a matching error code
-         MessageBox.Show($"{errorCode.Overview.Cause}\r\n{errorCode.Overview.Solution}", $"Error {errorCode.Code}: {errorCode.Name}", MessageBoxButtons.OK);
-         //TADA we can do so much more here now!
+         ShowErrorMessage(errorCode);
+         //MessageBox.Show($"{errorCode.Overview.Cause}\r\n{errorCode.Overview.Solution}", $"Error {errorCode.Code}: {errorCode.Name}", MessageBoxButtons.OK);
       }
       else {
          //we did not find a matching error code
@@ -89,4 +89,29 @@ public class Completions {
       }
    }
 
+   private static void ShowErrorMessage(ErrorCode errorCode) {
+      // Prepare the message
+      var message = new StringBuilder();
+      message.AppendLine($"Error Code: {errorCode.Code}");
+      message.AppendLine($"Error Name: {errorCode.Name}");
+      message.AppendLine();
+      message.AppendLine("Overview:");
+      message.AppendLine($"Cause: {errorCode.Overview.Cause}");
+      message.AppendLine($"Solution: {errorCode.Overview.Solution}");
+      message.AppendLine();
+      message.AppendLine("Detail:");
+      message.AppendLine($"Description: {errorCode.Detail.Description}");
+      message.AppendLine("Reasons:");
+      foreach (var reason in errorCode.Detail.Reasons) {
+         message.AppendLine($"- {reason}");
+      }
+
+      message.AppendLine("Resolve Steps:");
+      foreach (var step in errorCode.Detail.ResolveSteps) {
+         message.AppendLine($"- {step}");
+      }
+
+      // Show the message box
+      MessageBox.Show(message.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+   }
 }

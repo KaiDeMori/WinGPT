@@ -1,8 +1,8 @@
 <Project>
 
 	<PropertyGroup>
-		<ApplicationVersion>1.2.0.0</ApplicationVersion>
-		<Version>1.2.0.0</Version>
+		<ApplicationVersion>1.2.1.0</ApplicationVersion>
+		<Version>1.2.1.0</Version>
 		<Title>WinGPT</Title>
 		<Authors>Kai De–Mori</Authors>
 		<Description>A simple Windows Froms Interface for OpenAI GPT-4&#13;&#10;a.k.a.&#13;&#10;Ancient meets Sci-Fi&#13;&#10;a.k.a.&#13;&#10;The Last WinForms Application</Description>
