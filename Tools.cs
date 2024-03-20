@@ -163,10 +163,7 @@ public static class Tools {
    }
 
    public static bool isVisionModel() {
-      return Config.Active.LanguageModel switch {
-         Models.gpt_4_vision_preview => true,
-         _                           => false
-      };
+      return Config.Active.LanguageModel.Contains("vision");
    }
 
    public static bool isImageGenerationModel() {

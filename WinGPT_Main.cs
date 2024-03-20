@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using WinGPT.OpenAI;
 
 namespace WinGPT;
 
@@ -10,6 +11,8 @@ internal static class WinGPT_Main {
 
       Config.Load();
       Application.SetHighDpiMode(HighDpiMode.DpiUnaware);
+
+      Models.read_supported_models();
 
       ApplicationConfiguration.Initialize();
       Application.Run(new WinGPT_Form());

@@ -275,6 +275,8 @@ public partial class WinGPT_Form : Form {
       var total_request_token_count = Custom_OpenAI_Tokenizer_Take_Two.count_tokens(request.messages, request.functions);
       last_calculated_request_token_count  = total_request_token_count;
       total_request_token_count_label.Text = total_request_token_count.ToString("N0", CultureInfo.CurrentCulture);
+
+      check_context_window();
    }
 
    private void WinGPT_Form_Closing(object? sender, CancelEventArgs e) {
@@ -762,28 +764,39 @@ public partial class WinGPT_Form : Form {
 
    private void Initialize_Models_MenuItems() {
       models_ToolStripMenuItem.DropDownItems.Clear();
+      models_ToolStripMenuItem.ToolTipText = "Model ID (context window size) * =is alias";
       foreach (var model in Models.Supported) {
-         var item = new ToolStripMenuItem(model);
+         var model_label = model.friendly_name;
+         var item        = new ToolStripMenuItem(model_label);
          item.Tag = model;
          item.Click += (sender, args) => {
-            Config.Active.LanguageModel   = model;
-            models_ToolStripMenuItem.Text = $"{model}";
+            Config.Active.LanguageModel   = model.id;
+            models_ToolStripMenuItem.Text = model_label;
             Config.Save();
             foreach (ToolStripMenuItem oneitem in models_ToolStripMenuItem.DropDownItems)
                oneitem.Checked = oneitem == item;
+            check_context_window();
          };
          models_ToolStripMenuItem.DropDownItems.Add(item);
       }
 
+      var current_model = Models.Supported.FirstOrDefault(m => m.id == Config.Active.LanguageModel);
+
+      if (current_model is null) {
+         current_model               = Models.Supported.First();
+         Config.Active.LanguageModel = current_model.id;
+         Config.Save();
+      }
+
       //now we have to set the checked property of the correct menu item
       foreach (ToolStripMenuItem item in models_ToolStripMenuItem.DropDownItems) {
-         if (item.Text == Config.Active.LanguageModel) {
+         if (item.Tag == current_model) {
             item.Checked = true;
          }
       }
 
       //and set the text of the main menu item
-      models_ToolStripMenuItem.Text = $"{Config.Active.LanguageModel}";
+      models_ToolStripMenuItem.Text = current_model.friendly_name;
    }
 
    /// <summary>
@@ -1073,7 +1086,7 @@ public partial class WinGPT_Form : Form {
    private void checkModelsToolStripMenuItem_Click(object sender, EventArgs e) {
       var available_models = Models.get_available_models_for_api_key();
 
-      var message  = available_models.Aggregate("Available models:\r\n", (current, model) => current + $"{model}\r\n");
+      var message     = available_models.Aggregate("Available models:\r\n", (current, model) => current + $"{model}\r\n");
       var models_file = Path.Join(Config.AdHoc_Downloads_Path.FullName, Config.models_text_filename);
       File.WriteAllText(models_file, message);
       MessageBox.Show($"Available models written to\r\n{models_file}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1081,6 +1094,18 @@ public partial class WinGPT_Form : Form {
       var toolStripItemCollection = models_ToolStripMenuItem.DropDownItems;
       foreach (ToolStripItem toolStripItem in toolStripItemCollection) {
          toolStripItem.Enabled = available_models.Contains(toolStripItem.Tag);
+      }
+   }
+
+   private void check_context_window() {
+      var current_model = Models.Supported.First(m => m.id == Config.Active.LanguageModel);
+      if (last_calculated_request_token_count > current_model.context_window) {
+         send_prompt_button.FlatStyle = FlatStyle.Standard;
+         send_prompt_button.BackColor = Color.Coral;
+      }
+      else {
+         send_prompt_button.FlatStyle = FlatStyle.System;
+         send_prompt_button.BackColor = SystemColors.Control;
       }
    }
 }

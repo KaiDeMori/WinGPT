@@ -21,8 +21,8 @@ internal class Custom_OpenAI_Tokenizer {
       int enum_item = 0;
       int func_end = 0;
 
-      // Check if the model is one of the specified ones and set the token counts accordingly
-      if (Models.Supported.Contains(Models.gpt_3_5_turbo_0613) || Models.Supported.Contains(Models.gpt_4_0613)) {
+      //TADA Check if the model is one of the specified ones and set the token counts accordingly
+      if (true) {
          // Set message settings for above models
          msg_init = 3;
          msg_name = 1;
