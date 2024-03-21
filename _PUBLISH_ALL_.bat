@@ -7,8 +7,8 @@ rem msbuild WinGPT.csproj -t:Publish -p:Configuration=Release -p:PublishProfile=
 rem "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" WinGPT.csproj -t:Publish -p:Configuration=Release -p:PublishProfile=selfsigned_ClickOnce
 rem dotnet publish WinGPT.csproj -c Release -p:PublishProfile=selfsigned_ClickOnce
 
-dotnet publish WinGPT.csproj -c Release -p:PublishProfile=LocalFolder
-dotnet publish WinGPT.csproj -c Release -p:PublishProfile=FolderProfile
+rem dotnet publish WinGPT.csproj -c Release -p:PublishProfile=LocalFolder
+rem dotnet publish WinGPT.csproj -c Release -p:PublishProfile=FolderProfile
 dotnet publish WinGPT.csproj -c Release -p:PublishProfile=x64
 dotnet publish WinGPT.csproj -c Release -p:PublishProfile=x86
 
