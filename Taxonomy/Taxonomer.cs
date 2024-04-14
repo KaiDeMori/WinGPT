@@ -58,7 +58,7 @@ public static class Taxonomer {
          messages      = all_immutable,
          functions     = new List<Function> {function},
          function_call = new FunctionCallSettings("taxonomy"),
-         model         = Models.gpt_3_5_turbo_16k,
+         model         = Config.Active.UIable.Taxonomy_Model,
          temperature   = 0.0
       };
 
