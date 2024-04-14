@@ -63,6 +63,8 @@ internal class Custom_OpenAI_Tokenizer_Take_Two {
       Models.gpt_4_1106_preview,
       Models.gpt_4_turbo_preview,
       Models.gpt_4_vision_preview,
+      Models.gpt_4_turbo,
+      Models.gpt_4_turbo_2024_04_09,
    };
 
    private static readonly string[] gpt_3_5_turbo_models = {

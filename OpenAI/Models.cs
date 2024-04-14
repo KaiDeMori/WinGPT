@@ -28,6 +28,9 @@ public static class Models {
    //};
 
    //We need to create const properties for every entry in the Supported
+   public const string gpt_4_turbo_2024_04_09      = "gpt-4-turbo-2024-04-09";
+   public const string gpt_4_turbo                 = "gpt-4-turbo";
+
    public const string gpt_3_5_turbo               = "gpt-3.5-turbo";
    public const string gpt_3_5_turbo_0301          = "gpt-3.5-turbo-0301";
    public const string gpt_3_5_turbo_0613          = "gpt-3.5-turbo-0613";
