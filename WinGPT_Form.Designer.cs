@@ -84,6 +84,7 @@
             open_Tulpas_Directory_ToolStripMenuItem = new ToolStripMenuItem();
             open_Downloads_Directory_ToolStripMenuItem = new ToolStripMenuItem();
             refresh_ConversationHistory_ToolStripMenuItem = new ToolStripMenuItem();
+            checkModelsToolStripMenuItem = new ToolStripMenuItem();
             help_ToolStripMenuItem = new ToolStripMenuItem();
             about_ToolStripMenuItem = new ToolStripMenuItem();
             goTo_WinGPT_Wiki_ToolStripMenuItem = new ToolStripMenuItem();
@@ -97,7 +98,6 @@
             main_toolStripProgressBar = new ToolStripProgressBar();
             base_directory_vistaFolderBrowserDialog = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog();
             upload_vistaOpenFileDialog = new Ookii.Dialogs.WinForms.VistaOpenFileDialog();
-            checkModelsToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)text_splitContainer).BeginInit();
             text_splitContainer.Panel1.SuspendLayout();
             text_splitContainer.Panel2.SuspendLayout();
@@ -579,7 +579,7 @@
             // 
             // models_ToolStripMenuItem
             // 
-            models_ToolStripMenuItem.Image = Properties.Resources.ColumnGroup;
+            models_ToolStripMenuItem.Image = Properties.Resources.MachineLearningModel;
             models_ToolStripMenuItem.Name = "models_ToolStripMenuItem";
             models_ToolStripMenuItem.Size = new Size(74, 20);
             models_ToolStripMenuItem.Text = "Models";
@@ -657,6 +657,15 @@
             refresh_ConversationHistory_ToolStripMenuItem.Size = new Size(227, 22);
             refresh_ConversationHistory_ToolStripMenuItem.Text = "Refresh Conversation History";
             refresh_ConversationHistory_ToolStripMenuItem.Click += refresh_ConversationHistory_ToolStripMenuItem_Click;
+            // 
+            // checkModelsToolStripMenuItem
+            // 
+            checkModelsToolStripMenuItem.Image = Properties.Resources.ColumnGroup;
+            checkModelsToolStripMenuItem.Name = "checkModelsToolStripMenuItem";
+            checkModelsToolStripMenuItem.Size = new Size(227, 22);
+            checkModelsToolStripMenuItem.Text = "CheckModels";
+            checkModelsToolStripMenuItem.ToolTipText = "Get the available models for this API key and disable missing ones.";
+            checkModelsToolStripMenuItem.Click += checkModelsToolStripMenuItem_Click;
             // 
             // help_ToolStripMenuItem
             // 
@@ -772,14 +781,6 @@
             upload_vistaOpenFileDialog.Multiselect = true;
             upload_vistaOpenFileDialog.SupportMultiDottedExtensions = true;
             upload_vistaOpenFileDialog.Title = "Choose wisely!";
-            // 
-            // checkModelsToolStripMenuItem
-            // 
-            checkModelsToolStripMenuItem.Name = "checkModelsToolStripMenuItem";
-            checkModelsToolStripMenuItem.Size = new Size(227, 22);
-            checkModelsToolStripMenuItem.Text = "CheckModels";
-            checkModelsToolStripMenuItem.ToolTipText = "Get the available models for this API key and disable missing ones.";
-            checkModelsToolStripMenuItem.Click += checkModelsToolStripMenuItem_Click;
             // 
             // WinGPT_Form
             // 
