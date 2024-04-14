@@ -10,6 +10,7 @@ public class Config_UIable {
    /// <summary>
    /// This controls the function that enables saving via prompt.
    /// </summary>
+   [Category("Features")]
    [DisplayName("Use Save via Prompt Function")]
    [Description("This controls the function that enables saving via prompt.")]
    public bool Use_Save_Via_Prompt { get; set; } = true;
@@ -17,10 +18,16 @@ public class Config_UIable {
    /// <summary>
    /// This controls the function that enables saving via link in the HTML-page.
    /// </summary>
+   [Category("Features")]
    [DisplayName("Use Save via Link Function")]
    [Description("This controls the function that enables saving via link in the HTML-page.")]
    public bool Use_Save_Via_Link { get; set; } = true;
 
+   [Category("Features")]
+   [DisplayName("Taxonomy Model")]
+   [Description("The ID of the model used by the Taxonomer.")]
+   public string Taxonomy_Model { get; set; } = "gpt-3.5-turbo-16k";
+    
    [DisplayName("Prompt Font")]
    [Description("This controls the font of the prompt text-box.")]
    public Font Prompt_Font { get; set; } = new Font("Arial", 12);

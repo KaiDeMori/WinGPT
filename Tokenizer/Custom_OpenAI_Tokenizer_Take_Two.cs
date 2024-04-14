@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Windows.Navigation;
 using WinGPT.OpenAI;
 using WinGPT.OpenAI.Chat;
 using Message = WinGPT.OpenAI.Chat.Message;
@@ -56,35 +57,13 @@ internal class Custom_OpenAI_Tokenizer_Take_Two {
       func_end    = 12,
    };
 
-   private static readonly string[] gpt_4_models = {
-      Models.gpt_4,
-      Models.gpt_4_0125_preview,
-      Models.gpt_4_0613,
-      Models.gpt_4_1106_preview,
-      Models.gpt_4_turbo_preview,
-      Models.gpt_4_vision_preview,
-      Models.gpt_4_turbo,
-      Models.gpt_4_turbo_2024_04_09,
-   };
-
-   private static readonly string[] gpt_3_5_turbo_models = {
-      Models.gpt_3_5_turbo,
-      Models.gpt_3_5_turbo_0301,
-      Models.gpt_3_5_turbo_0613,
-      Models.gpt_3_5_turbo_1106,
-      Models.gpt_3_5_turbo_16k,
-      Models.gpt_3_5_turbo_16k_0613,
-      Models.gpt_3_5_turbo_instruct,
-      Models.gpt_3_5_turbo_instruct_0914,
-   };
-
    // This method calculates the token count for messages and IFunction array based on the model
    public static int count_tokens(ImmutableList<Message> messages, List<Function>? functions) {
       Special_Token_Counts? special_token_counts;
 
-      if (gpt_4_models.Contains(Config.Active.LanguageModel))
+      if (Config.Active.LanguageModel.StartsWith("gpt-4"))
          special_token_counts = gpt_4;
-      else if (gpt_3_5_turbo_models.Contains(Config.Active.LanguageModel))
+      else if (Config.Active.LanguageModel.StartsWith("gpt-3.5-turbo"))
          special_token_counts = gpt_3_5_turbo;
       else
          throw new Exception("Model not supported");
