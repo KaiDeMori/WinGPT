@@ -1,5 +1,17 @@
 [
   {
+    "id": "gpt-4-turbo",
+    "owned_by": "openai",
+    "context_window": 128000,
+    "is_alias": true
+  },
+  {
+    "id": "gpt-4-turbo-2024-04-09",
+    "owned_by": "openai",
+    "context_window": 128000,
+    "is_alias": false
+  },
+  {
     "id": "gpt-4-0125-preview",
     "owned_by": "openai",
     "context_window": 128000,
