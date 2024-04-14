@@ -1093,7 +1093,9 @@ public partial class WinGPT_Form : Form {
 
       var toolStripItemCollection = models_ToolStripMenuItem.DropDownItems;
       foreach (ToolStripItem toolStripItem in toolStripItemCollection) {
-         toolStripItem.Enabled = available_models.Contains(toolStripItem.Tag);
+         var model     = toolStripItem.Tag as Model;
+         var available = available_models.Contains(model?.id);
+         toolStripItem.Enabled = available;
       }
    }
 
