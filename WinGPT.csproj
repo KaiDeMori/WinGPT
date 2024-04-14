@@ -25,6 +25,7 @@
 		<Company>peopleoftheprompt.org</Company>
 		<PackageProjectUrl>https://www.peopleoftheprompt.org</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/KaiDeMori/WinGPT</RepositoryUrl>
+		<ForceDesignerDPIUnaware>true</ForceDesignerDPIUnaware>
 	</PropertyGroup>
 
 	<Import Project="CustomBuild.targets" />
