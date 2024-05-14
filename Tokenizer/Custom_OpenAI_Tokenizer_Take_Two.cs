@@ -74,7 +74,8 @@ internal class Custom_OpenAI_Tokenizer_Take_Two {
       int msg_token_count = 0;
       foreach (var message in messages) {
          msg_token_count += special_token_counts.msg_prefix;
-         msg_token_count += count(message.content);
+         msg_token_count += message.content.OfType<Message.text_content_part>().Sum(content => count(content.text));
+
          if (message.name != null)
             msg_token_count += special_token_counts.msg_name; // Add tokens if name is set
 

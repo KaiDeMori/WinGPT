@@ -208,8 +208,12 @@ public partial class WinGPT_Form : Form {
          prompt_token_count_label.Text = last_prompt_token_count.ToString("N0", CultureInfo.CurrentCulture);
          if (Conversation.Active is null) {
             Conversation.Create_Conversation(new Message {
-               role    = Role.user,
-               content = prompt,
+               role = Role.user,
+               content = new List<Message.content_part> {
+                  new Message.text_content_part {
+                     text = prompt
+                  }
+               }
             }, Config.ActiveTulpa);
          }
 
@@ -264,13 +268,16 @@ public partial class WinGPT_Form : Form {
 
       Message user_message = new() {
          role    = Role.user,
-         content = prompt,
+         content = new List<Message.content_part> {new Message.text_content_part {text = prompt}},
       };
       if (Conversation.Active == null)
          return;
 
-      var request = Config.ActiveTulpa.CreateRequest(user_message, Conversation.Active,
-         Associated_files.Select(f => f.File).ToArray());
+      var request = Config.ActiveTulpa.Create_Multimodal_Request(
+         user_message,
+         Conversation.Active,
+         Associated_files.Select(f => f.File).ToArray()
+      );
 
       var total_request_token_count = Custom_OpenAI_Tokenizer_Take_Two.count_tokens(request.messages, request.functions);
       last_calculated_request_token_count  = total_request_token_count;
@@ -308,8 +315,12 @@ public partial class WinGPT_Form : Form {
       string prompt = prompt_textBox.Text;
 
       Message user_message = new() {
-         role    = Role.user,
-         content = prompt,
+         role = Role.user,
+         content = new List<Message.content_part> {
+            new Message.text_content_part {
+               text = prompt
+            }
+         }
       };
 
       if (Conversation.Active == null) {
@@ -631,7 +642,8 @@ public partial class WinGPT_Form : Form {
          var last_message = tulpa.Messages.LastOrDefault();
 
          if (last_message is not null && last_message.role == Role.user) {
-            prompt_textBox.Text = last_message.content;
+            //not entirely sure anymore what's happening here
+            prompt_textBox.Text = last_message.content.OfType<Message.text_content_part>().FirstOrDefault()?.text ?? string.Empty;
          }
          else {
             prompt_textBox.Text = string.Empty;

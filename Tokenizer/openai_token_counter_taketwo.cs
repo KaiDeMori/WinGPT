@@ -18,9 +18,11 @@ public static class openai_token_counter_taketwo {
       foreach (var message in messages) {
          var message_copy = message.Clone();
          if (message_copy.role == Role.system && functions.Any() && !padded_system) {
-            if (!string.IsNullOrEmpty(message.content)) {
-               // Create a new message with appended newline to content
-               message_copy = new Message(message_copy.role, message_copy.content + "\n");
+            //append \n to all text content parts
+            foreach (var content in message_copy.content) {
+               if (content is Message.text_content_part text_content) {
+                  text_content.text += "\n";
+               }
             }
 
             padded_system = true;
@@ -62,10 +64,8 @@ public static class openai_token_counter_taketwo {
       // Count tokens for the role
       tokens += count_tokens(message.role.ToString());
 
-      // Count tokens for the content
-      if (!string.IsNullOrEmpty(message.content)) {
-         tokens += count_tokens(message.content);
-      }
+      // Count tokens for the each text content part
+      tokens += message.content.OfType<Message.text_content_part>().Sum(content => count_tokens(content.text));
 
       // Count tokens for the name if it exists
       if (!string.IsNullOrEmpty(message.name)) {
