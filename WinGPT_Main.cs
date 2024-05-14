@@ -10,7 +10,8 @@ internal static class WinGPT_Main {
          return;
 
       Config.Load();
-      Application.SetHighDpiMode(HighDpiMode.DpiUnaware);
+      Application.SetHighDpiMode(Config.Active.UIable.High_DPI_Mode);
+      Application.SetCompatibleTextRenderingDefault(false);
 
       Models.read_supported_models();
 
