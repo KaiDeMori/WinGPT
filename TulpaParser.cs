@@ -66,32 +66,40 @@ public static class TulpaParser {
                string messageContent = contentMemory.Slice(messageStart, contentLength).ToString();
 
                if (!string.IsNullOrWhiteSpace(messageContent)) {
-                  messages.Add(new Message {role = currentRole, content = messageContent});
-               }
+                  messages.Add(new Message {
+                     role = currentRole, content = new List<Message.content_part>() {
+                        new Message.text_content_part {text = messageContent}
+                     }
+                  });
 
-               currentRole  =  specialToken.Value;
-               i            += specialToken.Key.Length;
-               messageStart =  i;
-               break;
+                  currentRole  =  specialToken.Value;
+                  i            += specialToken.Key.Length;
+                  messageStart =  i;
+                  break;
+               }
             }
          }
-      }
 
-      // Add the last message.
-      var lastMessage = contentMemory.Slice(messageStart).ToString();
-      if (!string.IsNullOrWhiteSpace(lastMessage)) {
-         //We have this edge case, where the first line is one of the role tokens and we have to remove that from the message.
-         //But the token will have a newline in front, so we first have to create a proper structure for that.
-         //We get all Role tokens, remove the first newline and create a list from that.
-         var roleTokens = specialTokens.Keys.Select(x => x[Environment.NewLine.Length..]).ToList();
-         //Then we check if the lastMessage starts with one of the role tokens.
-         var matchingToken = roleTokens.FirstOrDefault(lastMessage.StartsWith);
-         if (matchingToken != null) {
-            //If it does, we remove the token from the start of lastMessage.
-            lastMessage = lastMessage[matchingToken.Length..];
+         // Add the last message.
+         var lastMessage = contentMemory.Slice(messageStart).ToString();
+         if (!string.IsNullOrWhiteSpace(lastMessage)) {
+            //We have this edge case, where the first line is one of the role tokens and we have to remove that from the message.
+            //But the token will have a newline in front, so we first have to create a proper structure for that.
+            //We get all Role tokens, remove the first newline and create a list from that.
+            var roleTokens = specialTokens.Keys.Select(x => x[Environment.NewLine.Length..]).ToList();
+            //Then we check if the lastMessage starts with one of the role tokens.
+            var matchingToken = roleTokens.FirstOrDefault(lastMessage.StartsWith);
+            if (matchingToken != null) {
+               //If it does, we remove the token from the start of lastMessage.
+               lastMessage = lastMessage[matchingToken.Length..];
+            }
+
+            messages.Add(new Message {
+               role = currentRole, content = new List<Message.content_part>() {
+                  new Message.text_content_part {text = lastMessage}
+               }
+            });
          }
-
-         messages.Add(new Message {role = currentRole, content = lastMessage});
       }
 
       tulpa = new Tulpa {

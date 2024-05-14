@@ -403,8 +403,13 @@ public class Conversation {
 
          // Could throw an exception if the Role key doesn't exist in the dictionary
          messages.Add(new Message {
-            role    = SpecialTokens.To_API_Role[delimiterFound],
-            content = content.ToString()
+            role = SpecialTokens.To_API_Role[delimiterFound],
+            //content = content.ToString() old code content is a list now
+            content = new List<Message.content_part> {
+               new Message.text_content_part {
+                  text = content.ToString()
+               }
+            }
          });
 
          // Could throw an exception if the slice start index is out of range
@@ -460,8 +465,12 @@ public class Conversation {
 
          // Could throw an exception if the Role key doesn't exist in the dictionary
          messages.Add(new Message {
-            role    = SpecialTokens.To_API_Role[delimiterFound],
-            content = content.ToString()
+            role = SpecialTokens.To_API_Role[delimiterFound],
+            content = new List<Message.content_part> {
+               new Message.text_content_part {
+                  text = content.ToString()
+               }
+            }
          });
 
          // Could throw an exception if the slice start index is out of range

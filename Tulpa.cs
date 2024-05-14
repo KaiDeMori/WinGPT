@@ -71,32 +71,115 @@ public class Tulpa : InterTulpa {
       return tulpa;
    }
 
-   public Request CreateRequest(
-      Message      user_message,
-      Conversation conversation,
-      FileInfo[]?  associated_files = null) {
+   public Request Create_Multimodal_Request(Message user_message, Conversation conversation, FileInfo[]? associated_files = null) {
       // Pre-Production
       /////////////////////////
 
-      // Create a copy of the messages
-      List<Message> tulpa_messages_togo =
-         Messages.Select(m => m.Clone()).ToList();
-
+      var tulpa_messages_togo = Messages.Select(m => m.Clone()).ToList();
       // Special case for tulpas with an example prompt
       remove_last_user_message(tulpa_messages_togo);
 
-      Request request;
-      if (Tools.isVisionModel()) {
-         request = Create_Vision_Request(user_message, associated_files);
-      }
-      else {
-         request = Create_Textual_Request(user_message, conversation, associated_files, tulpa_messages_togo);
+      //DRAGONS not sure if we want to do this always
+      //get the first system message or create a new one
+      Message first_system_message = tulpa_messages_togo.FirstOrDefault(m => m.role == Role.system) ?? new Message {role = Role.system};
+
+      //It's a StringBuilder. You can append to it. What do expect?
+      //Just don't enumerate it.
+      var tuned_up_system_message_content = new StringBuilder();
+
+      //add the content of the old system message to the new one
+      tuned_up_system_message_content.Append(first_system_message.content);
+
+      //not a function! just a pre-prompt for markf278down
+      if (Config.Active.UIable.Use_Save_Via_Link)
+         add_save_link_preprompt(tuned_up_system_message_content);
+
+      // "Upload"
+      add_associated_files_to_system_message(associated_files, tuned_up_system_message_content);
+
+      // if the save_function is null, the parameter will just be ignored
+      Function? save_function = null;
+      if (Config.Active.UIable.Use_Save_Via_Prompt)
+         save_function = Enable_Save_via_Prompt_Function();
+
+      var system_message_content = tuned_up_system_message_content.ToString();
+      //content is a list now!
+      var new_system_message = new Message {
+         role = Role.system,
+         content = new List<Message.content_part> {
+            new Message.text_content_part {
+               text = system_message_content
+            }
+         }
+      };
+      if (!string.IsNullOrEmpty(system_message_content)) {
+         //replace the first system message with the new one, make sure its at the same position as the old one
+         tulpa_messages_togo.Remove(first_system_message);
+         tulpa_messages_togo.Insert(Math.Max(tulpa_messages_togo.IndexOf(first_system_message), 0), new_system_message);
       }
 
-      // Done with Pre-Production
-      /////////////////////////////
+      // concatenate the Tulpa_Messages and the conversation messages and the new prompt as a user message.
+      List<Message> all_messages = new();
+      all_messages.AddRange(tulpa_messages_togo);
+      all_messages.AddRange(conversation.Messages);
+      if (conversation.useSysMsgHack)
+         all_messages.Add(new_system_message);
+
+      add_images_to_user_message(user_message, associated_files);
+
+      all_messages.Add(user_message);
+
+      var all_immutable = all_messages.ToImmutableList();
+
+      Request request = new() {
+         messages    = all_immutable,
+         model       = Config.Active.LanguageModel,
+         temperature = Configuration.Temperature,
+         functions   = save_function is not null ? new List<Function> {save_function} : null,
+         max_tokens  = Config.Active.UIable.Max_Tokens
+      };
+      return request;
+
 
       return request;
+   }
+
+   private void add_images_to_user_message(Message user_message, FileInfo[] associated_files) {
+      foreach (var file in associated_files) {
+         if (FileTypeIdentifier.GetFileType(file.FullName) != FileType.Image)
+            continue;
+
+         string base64DataUrl = ImageHelper.GetBase64DataUrl(file.FullName);
+         var imageContent = new Message.image_content_part {
+            image_url = new Message.image_url {
+               url = base64DataUrl
+            }
+         };
+         user_message.content.Add(imageContent);
+      }
+   }
+
+   private static Function? Enable_Save_via_Prompt_Function() {
+      var saveFile_function_json = System.IO.File.ReadAllText("Filetransfer/saveFile_Function.json");
+      //Function<SaveParameters>? saveFile_function = JsonConvert.DeserializeObject<Function<SaveParameters>>(saveFile_function_json);
+      Function? saveFile_function = JsonConvert.DeserializeObject<Function>(saveFile_function_json);
+
+      //Let's see if we can get away with the function only.
+      //var saveFile_function_sysmsg = System.IO.File.ReadAllText("Filetransfer/saveFile_system_message.md");
+      //tuned_up_system_message_content.AppendLine(saveFile_function_sysmsg);
+      return saveFile_function;
+   }
+
+   private static void add_associated_files_to_system_message(
+      FileInfo[]?   associated_files,
+      StringBuilder tuned_up_system_message_content) {
+      if (associated_files is null)
+         return;
+
+      //add the associated files to the system message
+      foreach (var file in associated_files) {
+         Markf278DownHelper.create_markdown_for_file(tuned_up_system_message_content, file);
+      }
    }
 
    /// <summary>
@@ -113,7 +196,7 @@ public class Tulpa : InterTulpa {
       ////  Pre-Production
       ///////////////////////////
 
-      Request request = CreateRequest(user_message, conversation, associated_files);
+      Request request = Create_Multimodal_Request(user_message, conversation, associated_files);
 
       // done with Pre-Production
       /////////////////////////////
@@ -173,10 +256,14 @@ public class Tulpa : InterTulpa {
             AssociatedFilesSaver.SaveFile(save_CallArguments.filename, save_CallArguments.text_content, associated_files, out var dummy_assistant_content);
 
             //in case we have no content for the user, provide some feedback
-            if (response_message.content is null) {
+            if (response_message.content.Count == 0) {
                response_message = new Message {
-                  role    = Role.assistant,
-                  content = dummy_assistant_content
+                  role = Role.assistant,
+                  content = new List<Message.content_part> {
+                     new Message.text_content_part {
+                        text = dummy_assistant_content
+                     }
+                  }
                };
             }
          }
@@ -186,103 +273,6 @@ public class Tulpa : InterTulpa {
       ///////////////////
 
       return response_message;
-   }
-
-   private Request Create_Vision_Request(Message userMessage, FileInfo[]? associatedFiles) {
-      VisionMessage newVisionMessage = VisionPreviewHelper.add_vision_preview_user_message(userMessage.content, associatedFiles);
-
-      var all_messages = new List<Message> {
-         newVisionMessage
-      };
-
-      var all_immutable = all_messages.ToImmutableList();
-
-      Request request = new() {
-         messages    = all_immutable,
-         model       = Config.Active.LanguageModel,
-         temperature = Configuration.Temperature,
-         max_tokens  = Config.Active.UIable.Vision_Max_Tokens
-      };
-      return request;
-   }
-
-   private Request Create_Textual_Request(Message user_message, Conversation conversation, FileInfo[]? associated_files, List<Message> tulpa_messages_togo) {
-      //DRAGONS not sure if we want to do this always
-      //get the first system message or create a new one
-      Message first_system_message = tulpa_messages_togo.FirstOrDefault(m => m.role == Role.system) ?? new Message {role = Role.system};
-
-      //It's a StringBuilder. You can append to it. What do expect?
-      //Just don't enumerate it.
-      var tuned_up_system_message_content = new StringBuilder();
-
-      //add the content of the old system message to the new one
-      tuned_up_system_message_content.Append(first_system_message.content);
-
-      //not a function! just a pre-prompt for markf278down
-      if (Config.Active.UIable.Use_Save_Via_Link)
-         add_save_link_preprompt(tuned_up_system_message_content);
-
-      // "Upload"
-      add_associated_files_to_system_message(associated_files, tuned_up_system_message_content);
-
-      // if the save_function is null, the parameter will just be ignored
-      Function? save_function = null;
-      if (Config.Active.UIable.Use_Save_Via_Prompt)
-         save_function = Enable_Save_via_Prompt_Function();
-
-      var system_message_content = tuned_up_system_message_content.ToString();
-      var new_system_message = new Message {
-         role    = Role.system,
-         content = system_message_content,
-      };
-      if (!string.IsNullOrEmpty(system_message_content)) {
-         //replace the first system message with the new one, make sure its at the same position as the old one
-         tulpa_messages_togo.Remove(first_system_message);
-         tulpa_messages_togo.Insert(Math.Max(tulpa_messages_togo.IndexOf(first_system_message), 0), new_system_message);
-      }
-
-      // concatenate the Tulpa_Messages and the conversation messages and the new prompt as a user message.
-      List<Message> all_messages = new();
-      all_messages.AddRange(tulpa_messages_togo);
-      all_messages.AddRange(conversation.Messages);
-      if (conversation.useSysMsgHack)
-         all_messages.Add(new_system_message);
-
-      all_messages.Add(user_message);
-
-      var all_immutable = all_messages.ToImmutableList();
-
-      Request request = new() {
-         messages    = all_immutable,
-         model       = Config.Active.LanguageModel,
-         temperature = Configuration.Temperature,
-         functions   = save_function is not null ? new List<Function> {save_function} : null,
-         max_tokens  = Config.Active.UIable.Max_Tokens
-      };
-      return request;
-   }
-
-   private static Function? Enable_Save_via_Prompt_Function() {
-      var saveFile_function_json = System.IO.File.ReadAllText("Filetransfer/saveFile_Function.json");
-      //Function<SaveParameters>? saveFile_function = JsonConvert.DeserializeObject<Function<SaveParameters>>(saveFile_function_json);
-      Function? saveFile_function = JsonConvert.DeserializeObject<Function>(saveFile_function_json);
-
-      //Let's see if we can get away with the function only.
-      //var saveFile_function_sysmsg = System.IO.File.ReadAllText("Filetransfer/saveFile_system_message.md");
-      //tuned_up_system_message_content.AppendLine(saveFile_function_sysmsg);
-      return saveFile_function;
-   }
-
-   private static void add_associated_files_to_system_message(
-      FileInfo[]?   associated_files,
-      StringBuilder tuned_up_system_message_content) {
-      if (associated_files is null)
-         return;
-
-      //add the associated files to the system message
-      foreach (var file in associated_files) {
-         Markf278DownHelper.create_markdown_for_file(tuned_up_system_message_content, file);
-      }
    }
 
    private static void add_save_link_preprompt(StringBuilder tuned_up_system_message_content) {

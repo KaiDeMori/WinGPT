@@ -1,4 +1,3 @@
-using Newtonsoft.Json.Linq;
 using WinGPT.OpenAI.Chat;
 using Message = WinGPT.OpenAI.Chat.Message;
 
@@ -22,8 +21,13 @@ public static class openai_token_counter {
       foreach (var message in messages) {
          var messageCopy = message.Clone();
          if (messageCopy.role == Role.system && functions.Any() && !paddedSystem) {
-            if (!string.IsNullOrEmpty(messageCopy.content))
-               messageCopy = new Message(messageCopy.role, messageCopy.content + "\n");
+            //if (!string.IsNullOrEmpty(messageCopy.content))
+            //   messageCopy = new Message(messageCopy.role, messageCopy.content + "\n");
+            foreach (var content in messageCopy.content) {
+               if (content is Message.text_content_part textContent) {
+                  textContent.text += "\n";
+               }
+            }
 
             paddedSystem = true;
          }
@@ -67,9 +71,9 @@ public static class openai_token_counter {
 
       tokens += count_tokens(message.role.ToString());
 
-      if (!string.IsNullOrEmpty(message.content))
-         tokens += count_tokens(message.content);
-
+      tokens += message.content.OfType<Message.text_content_part>()
+         .Sum(text_content_part => count_tokens(text_content_part.text));
+        
       if (!string.IsNullOrEmpty(message.name))
          tokens += count_tokens(message.name) + 1; // +1 for the name
 

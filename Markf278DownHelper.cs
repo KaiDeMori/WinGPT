@@ -62,7 +62,7 @@ public static class Markf278DownHelper {
             var markdown_codeblock = create_markdown_code_block(file);
             sb.AppendLine(markdown_codeblock);
             break;
-         case FileType.Documents:
+         case FileType.Document:
             //that was a stupid idea
             //var markdown_textblock = create_markdown_text_block(file); 
             //sb.AppendLine(markdown_textblock);

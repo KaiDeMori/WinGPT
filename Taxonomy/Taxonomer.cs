@@ -41,7 +41,16 @@ public static class Taxonomer {
          return null;
 
       List<Message> all_messages = new() {
-         new Message(role: Role.system, content: sysmsg)
+         //new Message(role: Role.system, content: sysmsg) //old code
+         //now content is a list of content_parts
+         new Message {
+            role = Role.system,
+            content = new List<Message.content_part> {
+               new Message.text_content_part() {
+                  text = sysmsg
+               }
+            }
+         }
       };
       all_messages.AddRange(conversation.Messages);
       var all_immutable = all_messages.ToImmutableList();

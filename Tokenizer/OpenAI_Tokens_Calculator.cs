@@ -46,7 +46,18 @@ public static class OpenAI_Tokens_Calculator {
       // Calculate the number of tokens for each message
       foreach (var message in messages) {
          numTokens += tokensPerMessage;
-         numTokens += DeepTokenizer.count_tokens(message.content, model); // Count tokens for the content
+         foreach (var content in message.content) {
+            switch (content) {
+               case Message.text_content_part textContent:
+                  numTokens += DeepTokenizer.count_tokens(textContent.text, model); // Count tokens for text content
+                  break;
+               case Message.image_content_part imageContent:
+                  //not implemented yet, its not straight forward with the tiles and the resolution and whatnot
+                  //numTokens += DeepTokenizer.count_tokens(imageContent.image_url.url, model); // Count tokens for image content
+                  break;
+            }
+         }
+
          if (message.name != null) {
             numTokens += DeepTokenizer.count_tokens(message.name, model) + tokensPerName;
          }

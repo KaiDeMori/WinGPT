@@ -73,7 +73,14 @@ internal class QuickTulpaTest {
                var messageContent = contentMemory.Slice(messageStart, i - messageStart).ToString();
 
                if (!string.IsNullOrWhiteSpace(messageContent)) {
-                  messages.Add(new Message {role = currentRole, content = messageContent});
+                  messages.Add(new Message {
+                     role = currentRole,
+                     content = new List<Message.content_part> {
+                        new Message.text_content_part {
+                           text = messageContent
+                        }
+                     }
+                  });
                }
 
                currentRole  =  specialToken.Value;
@@ -87,7 +94,14 @@ internal class QuickTulpaTest {
       // Add the last message.
       var lastMessage = contentMemory.Slice(messageStart).ToString();
       if (!string.IsNullOrWhiteSpace(lastMessage)) {
-         messages.Add(new Message {role = currentRole, content = lastMessage});
+         messages.Add(new Message {
+            role = currentRole,
+            content = new List<Message.content_part> {
+               new Message.text_content_part {
+                  text = lastMessage
+               }
+            }
+         });
       }
 
       return new Tulpa {Configuration = tulpa_config, Messages = messages.ToImmutableArray()};

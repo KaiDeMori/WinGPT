@@ -5,19 +5,21 @@ namespace WinGPT;
 public enum FileType {
    Image,
    Code,
-   Documents,
+   Document,
    Other
 }
 
 public static class FileTypeIdentifier {
    private static readonly Dictionary<FileType, List<string>> _fileTypes;
-   private const string DefaultFileTypesJsonFileName = "FileTypes.json";
+   private const           string                             DefaultFileTypesJsonFileName = "FileTypes.json";
 
-   static FileTypeIdentifier () {
+   static FileTypeIdentifier() {
       try {
          _fileTypes = LoadFileTypes(DefaultFileTypesJsonFileName);
-      } catch (Exception) {
-         MessageBox.Show("Failed to load file types from JSON file. A new default file will be generated.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
+      catch (Exception) {
+         MessageBox.Show("Failed to load file types from JSON file. A new default file will be generated.", "Error", MessageBoxButtons.OK,
+            MessageBoxIcon.Error);
          GenerateDefaultFileTypesJson();
          _fileTypes = LoadFileTypes(DefaultFileTypesJsonFileName);
       }
@@ -35,8 +37,10 @@ public static class FileTypeIdentifier {
          kvp => kvp.Value.Select(ext => ext.ToLower()).ToList());
    }
 
-   public static FileType GetFileType(string filePath) {
-      var extension = Path.GetExtension(filePath).ToLower();
+   public static FileType GetFileType(FileInfo file) => GetFileType(file.FullName);
+
+   public static FileType GetFileType(string file_fullname) {
+      var extension = Path.GetExtension(file_fullname).ToLower();
 
       foreach (var fileType in _fileTypes.Where(fileType
                   => fileType.Value.Contains(extension))) {
@@ -48,9 +52,9 @@ public static class FileTypeIdentifier {
 
    private static void GenerateDefaultFileTypesJson() {
       var defaultFileTypes = new Dictionary<string, List<string>> {
-         { "Image", new List<string> { ".bmp", ".gif", ".jpeg", ".jpg", ".png" } },
-         { "Code", new List<string> { ".cpp", ".cs", ".css", ".go", ".html", ".java", ".js", ".json", ".md", ".php", ".py", ".rb", ".ts", ".vb", ".xml" } },
-         { "Text", new List<string> { ".doc", ".docx", ".pdf", ".ppt", ".pptx", ".txt", ".xls", ".xlsx" } }
+         {"Image", new List<string> {".bmp", ".gif", ".jpeg", ".jpg", ".png"}},
+         {"Code", new List<string> {".cpp", ".cs", ".css", ".go", ".html", ".java", ".js", ".json", ".md", ".php", ".py", ".rb", ".ts", ".vb", ".xml"}},
+         {"Text", new List<string> {".doc", ".docx", ".pdf", ".ppt", ".pptx", ".txt", ".xls", ".xlsx"}}
       };
 
       var json = JsonConvert.SerializeObject(defaultFileTypes, Formatting.Indented);
