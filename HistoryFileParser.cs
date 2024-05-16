@@ -24,7 +24,7 @@ internal static class HistoryFileParser {
          }
       }
 
-      string[] stringSeparators = {"\r\n"};
+      string[] stringSeparators = ["\r\n"];
       // Could throw an exception if the slice end index is out of range
       var section_lines = afterDelimiter[..nextDelimiterIndex]
          .Trim().ToString()

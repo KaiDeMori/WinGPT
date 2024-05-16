@@ -1,39 +1,38 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 
 namespace WinGPT.OpenAI.Chat;
 
-public class Message {
-   public Role               role    { get; set; }
-   public List<content_part> content { get; set; } = new();
+public abstract class Message {
+   public Role role { get; set; }
 
-   public enum content_type {
-      text,
-      image_url
-   }
+   public object content { get; set; } = new();
 
-   public abstract class content_part {
-      public content_type type { get; set; }
-   }
-
-   public class text_content_part : content_part {
-      public string text { get; set; }
-   }
-
-   public class image_content_part : content_part {
-      public image_url image_url { get; set; }
-   }
-
-   public class image_url {
-      public string url { get; set; }
-   }
-
+   [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+   public string? name { get; init; }
 
    /// <summary>
    /// **Not** the same thing as <see cref="Request.function_call"/>.
    /// </summary>
    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-   public FunctionCall? function_call { get; init; } = null!;
+   public FunctionCall? function_call { get; init; }
+
+   // Make Clone method virtual to allow overriding in derived classes
+   public virtual Message Clone() {
+      var clone = (Message) MemberwiseClone();
+      clone.content = this switch {
+         Simple_Message simpleMessage   => new string(simpleMessage.content),
+         Complex_Message complexMessage => complexMessage.content.Select(cp => cp.Clone()).ToList(),
+         _                              => clone.content
+      };
+
+      return clone;
+   }
+}
+
+public class Simple_Message : Message {
+   public new string content { get; set; }
 
    public override string ToString() {
       var specialToken = role.ToSpecialToken();
@@ -41,59 +40,81 @@ public class Message {
       return text;
    }
 
-   [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-   public string? name { get; init; }
+   // Override Clone method to return Simple_Message
+   public override Simple_Message Clone() {
+      return new Simple_Message {
+         role          = role,
+         content       = content,
+         name          = name,
+         function_call = function_call
+      };
+   }
+}
 
-   public class content_part_Converter : JsonConverter<content_part> {
-      public override content_part ReadJson(JsonReader reader, Type objectType, content_part? existingValue, bool hasExistingValue, JsonSerializer serializer) {
-         JObject item         = JObject.Load(reader);
-         JToken  content_type = item["type"]!;
-         return (content_type.Value<string>() switch {
-            "text"      => item.ToObject<text_content_part>(serializer),
-            "image_url" => item.ToObject<image_content_part>(serializer),
-            _           => throw new NotImplementedException($"Not implemented for type: {content_type!.Value<string>()}")
-         })!;
-      }
+public class Complex_Message : Message {
+   public new List<content_part> content { get; set; } = [];
 
-      public override void WriteJson(JsonWriter writer, content_part? value, JsonSerializer serializer) {
-         JObject jObject = new JObject();
-         Type    type    = value!.GetType();
-
-         if (type == typeof(text_content_part)) {
-            jObject.Add("type", "text");
-            jObject.Add("text", ((text_content_part) value).text);
-         }
-         else if (type == typeof(image_content_part)) {
-            jObject.Add("type",      "image_url");
-            jObject.Add("image_url", JObject.FromObject(((image_content_part) value).image_url));
-         }
-
-         jObject.WriteTo(writer);
-      }
+   public override string ToString() {
+      var specialToken = role.ToSpecialToken();
+      var text         = specialToken + string.Join("", content.OfType<text_content_part>()) + "\r\n";
+      return text;
    }
 
-   public Message Clone() {
-      // Create a shallow copy of the current object
-      Message clone = (Message) MemberwiseClone();
-
-      // Manually create a deep copy of the List<content_part> property
-      clone.content = new List<content_part>(content.Count);
-      foreach (var contentPart in content) {
-         switch (contentPart) {
-            case text_content_part textPart:
-               clone.content.Add(new text_content_part {type = textPart.type, text = textPart.text});
-               break;
-            case image_content_part imagePart:
-               clone.content.Add(new image_content_part {type = imagePart.type, image_url = new image_url {url = imagePart.image_url.url}});
-               break;
-         }
-      }
-
-      return clone;
+   // Override Clone method to return Complex_Message
+   public override Complex_Message Clone() {
+      return new Complex_Message {
+         role          = role,
+         content       = content.Select(cp => cp.Clone()).ToList(),
+         name          = name,
+         function_call = function_call
+      };
    }
 }
 
 public class FunctionCall {
    public string name      { get; init; } = null!;
    public string arguments { get; init; } = null!;
+}
+
+[JsonConverter(typeof(StringEnumConverter))]
+public enum content_type {
+   text,
+   image_url
+}
+
+public abstract class content_part {
+   public content_type type { get; set; }
+
+   public abstract content_part Clone();
+}
+
+public class text_content_part : content_part {
+   public new content_type type = content_type.text;
+
+   public string text { get; set; }
+
+   public override content_part Clone() {
+      return new text_content_part {text = text, type = content_type.text};
+   }
+
+   public override string ToString() {
+      return text;
+   }
+}
+
+public class image_content_part : content_part {
+   public new content_type type = content_type.image_url;
+
+   public image_url image_url { get; set; }
+
+   public override content_part Clone() {
+      return new image_content_part {
+         type      = content_type.image_url,
+         image_url = image_url
+      };
+   }
+}
+
+public class image_url {
+   public string url { get; set; }
 }

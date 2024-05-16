@@ -7,6 +7,7 @@ using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
 using Newtonsoft.Json.Linq;
 using WinGPT.OpenAI;
+using WinGPT.OpenAI.Chat;
 using WinGPT.Taxonomy;
 using WinGPT.Tokenizer;
 using Message = WinGPT.OpenAI.Chat.Message;
@@ -142,16 +143,26 @@ public partial class WinGPT_Form : Form {
 
       string userTempFolder = Path.Combine(Path.GetTempPath(), Application_Paths.AppName);
       webView21.CreationProperties = new CoreWebView2CreationProperties() {
-         UserDataFolder = userTempFolder
+         UserDataFolder = userTempFolder,
       };
 
       webView21.CoreWebView2InitializationCompleted +=
          WebView_CoreWebView2InitializationCompleted;
       webView21.NavigationStarting += CoreWebView2_NavigationStarting;
 
+      //CoreWebView2EnvironmentOptions options = new CoreWebView2EnvironmentOptions("--allow-file-access-from-files");
+      CoreWebView2EnvironmentOptions options =
+         new CoreWebView2EnvironmentOptions(
+            "--allow-file-access-from-files " +
+            "--disable-web-security "         +
+            "--allow-file-access ");
+
+      CoreWebView2Environment? environment = CoreWebView2Environment.CreateAsync(null, null, options).Result;
+
+
       //this makes sure our webview gets initialized
       //webView21.Source = new Uri("about:blank");
-      webView21.EnsureCoreWebView2Async().ContinueWith(_ =>
+      webView21.EnsureCoreWebView2Async(environment).ContinueWith(_ =>
          webView21.Invoke(Finally_the_stupid_edge_is_finished_initializing_and_we_can_actually_do_something));
    }
 
@@ -207,10 +218,10 @@ public partial class WinGPT_Form : Form {
          last_prompt_token_count       = DeepTokenizer.count_tokens(prompt, Config.Active.LanguageModel);
          prompt_token_count_label.Text = last_prompt_token_count.ToString("N0", CultureInfo.CurrentCulture);
          if (Conversation.Active is null) {
-            Conversation.Create_Conversation(new Message {
+            Conversation.Create_Conversation(new Complex_Message {
                role = Role.user,
-               content = new List<Message.content_part> {
-                  new Message.text_content_part {
+               content = new List<content_part> {
+                  new text_content_part {
                      text = prompt
                   }
                }
@@ -230,7 +241,8 @@ public partial class WinGPT_Form : Form {
       if (Debugger.IsAttached) {
          //prompt_textBox.Text = "What is bigger than a town?";
          //prompt_textBox.Text = "Please translate the file to french.";
-         prompt_textBox.Text = "Hi";
+         //prompt_textBox.Text = "Hi";
+         prompt_textBox.Text = "What's in the picture?";
       }
    }
 
@@ -266,9 +278,9 @@ public partial class WinGPT_Form : Form {
    private void refresh_total_request_token_count_label_complete() {
       string prompt = prompt_textBox.Text;
 
-      Message user_message = new() {
+      Complex_Message user_message = new() {
          role    = Role.user,
-         content = new List<Message.content_part> {new Message.text_content_part {text = prompt}},
+         content = new List<content_part> {new text_content_part {text = prompt}},
       };
       if (Conversation.Active == null)
          return;
@@ -314,13 +326,13 @@ public partial class WinGPT_Form : Form {
       Set_status_bar(true);
       string prompt = prompt_textBox.Text;
 
-      Message user_message = new() {
+      Complex_Message user_message = new() {
          role = Role.user,
-         content = new List<Message.content_part> {
-            new Message.text_content_part {
+         content = [
+            new text_content_part {
                text = prompt
             }
-         }
+         ]
       };
 
       if (Conversation.Active == null) {
@@ -643,7 +655,7 @@ public partial class WinGPT_Form : Form {
 
          if (last_message is not null && last_message.role == Role.user) {
             //not entirely sure anymore what's happening here
-            prompt_textBox.Text = last_message.content.OfType<Message.text_content_part>().FirstOrDefault()?.text ?? string.Empty;
+            prompt_textBox.Text = last_message.content;
          }
          else {
             prompt_textBox.Text = string.Empty;
@@ -872,7 +884,13 @@ public partial class WinGPT_Form : Form {
       settings.IsReputationCheckingRequired     = false;
       settings.IsSwipeNavigationEnabled         = false;
 
-      //webView21.CreationProperties.AdditionalBrowserArguments = "--disable-web-security --allow-file-access-from-files --allow-file-access --allow-file-access-from-files --allow-universal-acce"
+      webView21.CreationProperties.AdditionalBrowserArguments =
+         "--disable-web-security "         +
+         "--allow-file-access-from-files " +
+         "--allow-file-access "            +
+         "--allow-universal-access-from-files";
+      //webView21.CreationProperties.AdditionalBrowserArguments =
+      //   "--allow-file-access --allow-file-access-from-files";
 
       webView21.AllowExternalDrop = false;
 

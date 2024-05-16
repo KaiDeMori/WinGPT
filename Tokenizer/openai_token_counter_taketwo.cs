@@ -19,10 +19,16 @@ public static class openai_token_counter_taketwo {
          var message_copy = message.Clone();
          if (message_copy.role == Role.system && functions.Any() && !padded_system) {
             //append \n to all text content parts
-            foreach (var content in message_copy.content) {
-               if (content is Message.text_content_part text_content) {
-                  text_content.text += "\n";
+            switch (message) {
+               case Complex_Message complex_message: {
+                  foreach (var content in complex_message.content)
+                     if (content is text_content_part text_content)
+                        text_content.text += "\n";
+                  break;
                }
+               case Simple_Message simple_message:
+                  simple_message.content += "\n";
+                  break;
             }
 
             padded_system = true;
@@ -65,7 +71,15 @@ public static class openai_token_counter_taketwo {
       tokens += count_tokens(message.role.ToString());
 
       // Count tokens for the each text content part
-      tokens += message.content.OfType<Message.text_content_part>().Sum(content => count_tokens(content.text));
+      switch (message) {
+         case Complex_Message complex_message:
+            tokens += complex_message.content.OfType<text_content_part>()
+               .Sum(text_content => count_tokens(text_content.text));
+            break;
+         case Simple_Message simple_message:
+            tokens += count_tokens(simple_message.content);
+            break;
+      }
 
       // Count tokens for the name if it exists
       if (!string.IsNullOrEmpty(message.name)) {

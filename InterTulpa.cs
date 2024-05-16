@@ -1,12 +1,13 @@
-﻿using Message = WinGPT.OpenAI.Chat.Message;
+﻿using WinGPT.OpenAI.Chat;
+using Message = WinGPT.OpenAI.Chat.Message;
 
 namespace WinGPT;
 
 public interface InterTulpa {
    public Task<Message?> SendAsync(
-      Message      user_message,
-      Conversation conversation,
-      FileInfo[]?  associated_files = null);
+      Complex_Message user_message,
+      Conversation    conversation,
+      FileInfo[]?     associated_files = null);
 
 
    //public void Activate(Conversation conversation);

@@ -1,4 +1,5 @@
 ﻿using Microsoft.DeepDev;
+using WinGPT.OpenAI.Chat;
 
 namespace WinGPT.Tokenizer;
 
@@ -227,11 +228,15 @@ internal class DeepTokenizer {
       foreach (var message in messages) {
          token_count += 3; //added by OpenAI API
          token_count += count_tokens(message.role.ToString(), model_name);
-         //token_count += count_tokens(message.content, model_name); //old message class
-         //the content is List<content_part> now and we need to count all text content parts
-         // lets us OfType to get only the text content parts
-         token_count += message.content.OfType<OpenAI.Chat.Message.text_content_part>()
-            .Sum(content => count_tokens(content.text, model_name));
+         switch (message) {
+            case Complex_Message complex_message:
+               token_count += complex_message.content.OfType<text_content_part>()
+                  .Sum(content => count_tokens(content.text, model_name));
+               break;
+            case Simple_Message simple_message:
+               token_count += count_tokens(simple_message.content, model_name);
+               break;
+         }
 
          if (message.name != null)
             token_count += count_tokens(message.name, model_name);

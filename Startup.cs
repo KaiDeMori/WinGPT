@@ -20,8 +20,14 @@ internal static class Startup {
    public static void AssertPrerequisitesOrFail(Func<string> PromptUserForDirectory_callback) {
       Startup.PromptUserForDirectory = PromptUserForDirectory_callback;
 
-      if (!Assertions.Aggregate(true, (acc, assertion) => acc && assertion())) {
-         Application.Exit();
+      //if (!Assertions.Aggregate(true, (acc, assertion) => acc && assertion())) {
+      //   Application.Exit();
+      //} old code, lets do it sequencially, so we can exit as soon as one fails
+      foreach (var assertion in Assertions) {
+         if (!assertion()) {
+            Application.Exit();
+            return;
+         }
       }
    }
 

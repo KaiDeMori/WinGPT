@@ -9,15 +9,13 @@ public class Completions {
    private const           string Endpoint          = "chat/completions";
    private static readonly string Full_Endpoint_URL = HTTP_Client.Get_full_URL_for_endpoint(Endpoint);
 
+   private static readonly JsonSerializerSettings JSON_Serializer_Settings = new() {
+      //TypeNameHandling  = TypeNameHandling.Auto,
+      NullValueHandling = NullValueHandling.Ignore,
+   };
+
    public static async Task<Response?> POST_Async(Request request) {
-      // Serialize the request object to JSON
-      //string request_content_json = JsonConvert.SerializeObject(request, Formatting.Indented, new JsonSerializerSettings {
-      //   NullValueHandling = NullValueHandling.Ignore,
-      //});
-      string request_content_json = JsonConvert.SerializeObject(request, Formatting.None, new JsonSerializerSettings {
-         //TypeNameHandling  = TypeNameHandling.Auto,
-         NullValueHandling = NullValueHandling.Ignore,
-      });
+      string request_content_json = JsonConvert.SerializeObject(request, Formatting.None, JSON_Serializer_Settings);
 
       File.WriteAllText("_request.json", request_content_json);
 
