@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Newtonsoft.Json;
+using WinGPT.OpenAI.Chat;
 
 namespace WinGPT;
 
@@ -26,6 +27,8 @@ public class Conversation {
    public bool useSysMsgHack;
 
    public bool taxonomy_required = false;
+
+   public FileInfo[] image_files = Array.Empty<FileInfo>();
 
    public bool dirty = false;
 
@@ -100,8 +103,24 @@ public class Conversation {
 
       if (temporary_prompt is null) {
          foreach (var message in Messages) {
-            if (message is not null) //DRAGONS this should never be null, but when the API errors out, it is!
-               sb.AppendLine(message.ToString());
+            switch (message) {
+               case Complex_Message complex_message: {
+                  var role = SpecialTokens.To_API_Role.First(kvp => kvp.Value == complex_message.role).Key;
+                  sb.Append(role);
+                  foreach (var content in complex_message.content.OfType<text_content_part>()) {
+                     sb.AppendLine(content.text);
+                  }
+                  //possibly add images here later
+
+                  break;
+               }
+               case Simple_Message simple_message: {
+                  var role = SpecialTokens.To_API_Role.First(kvp => kvp.Value == simple_message.role).Key;
+                  sb.Append(role);
+                  sb.AppendLine(simple_message.content);
+                  break;
+               }
+            }
          }
       }
       else {
@@ -402,14 +421,14 @@ public class Conversation {
          var content = afterDelimiter[..nextDelimiterIndex].Trim();
 
          // Could throw an exception if the Role key doesn't exist in the dictionary
-         messages.Add(new Message {
+         messages.Add(new Complex_Message {
             role = SpecialTokens.To_API_Role[delimiterFound],
             //content = content.ToString() old code content is a list now
-            content = new List<Message.content_part> {
-               new Message.text_content_part {
+            content = [
+               new text_content_part {
                   text = content.ToString()
                }
-            }
+            ]
          });
 
          // Could throw an exception if the slice start index is out of range
@@ -464,13 +483,13 @@ public class Conversation {
          var content = afterDelimiter[..nextDelimiterIndex].Trim();
 
          // Could throw an exception if the Role key doesn't exist in the dictionary
-         messages.Add(new Message {
+         messages.Add(new Complex_Message() {
             role = SpecialTokens.To_API_Role[delimiterFound],
-            content = new List<Message.content_part> {
-               new Message.text_content_part {
+            content = [
+               new text_content_part {
                   text = content.ToString()
                }
-            }
+            ]
          });
 
          // Could throw an exception if the slice start index is out of range

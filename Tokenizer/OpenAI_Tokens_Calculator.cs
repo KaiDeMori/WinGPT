@@ -1,3 +1,4 @@
+using WinGPT.OpenAI.Chat;
 using Message = WinGPT.OpenAI.Chat.Message;
 
 namespace WinGPT.Tokenizer;
@@ -46,16 +47,25 @@ public static class OpenAI_Tokens_Calculator {
       // Calculate the number of tokens for each message
       foreach (var message in messages) {
          numTokens += tokensPerMessage;
-         foreach (var content in message.content) {
-            switch (content) {
-               case Message.text_content_part textContent:
-                  numTokens += DeepTokenizer.count_tokens(textContent.text, model); // Count tokens for text content
-                  break;
-               case Message.image_content_part imageContent:
-                  //not implemented yet, its not straight forward with the tiles and the resolution and whatnot
-                  //numTokens += DeepTokenizer.count_tokens(imageContent.image_url.url, model); // Count tokens for image content
-                  break;
-            }
+
+         switch (message) {
+            case Simple_Message simpleMessage:
+               numTokens += DeepTokenizer.count_tokens(simpleMessage.content, model); // 
+               break;
+            case Complex_Message complexMessage:
+               foreach (var content in complexMessage.content) {
+                  switch (content) {
+                     case text_content_part textContent:
+                        numTokens += DeepTokenizer.count_tokens(textContent.text, model); // Count tokens for text content
+                        break;
+                     case image_content_part imageContent:
+                        //not implemented yet, its not straight forward with the tiles and the resolution and whatnot
+                        //numTokens += DeepTokenizer.count_tokens(imageContent.image_url.url, model); // Count tokens for image content
+                        break;
+                  }
+               }
+
+               break;
          }
 
          if (message.name != null) {

@@ -4,9 +4,9 @@ using Newtonsoft.Json.Converters;
 namespace WinGPT.OpenAI.Chat;
 
 public class Choice {
-   public int           index         { get; init; }
-   public Message       message       { get; init; } = null!;
-   public Finish_Reason finish_reason { get; init; }
+   public int            index         { get; init; }
+   public Simple_Message message       { get; init; } = null!;
+   public Finish_Reason  finish_reason { get; init; }
 }
 
 /// <summary>

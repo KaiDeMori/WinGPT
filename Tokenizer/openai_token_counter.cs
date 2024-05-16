@@ -21,12 +21,20 @@ public static class openai_token_counter {
       foreach (var message in messages) {
          var messageCopy = message.Clone();
          if (messageCopy.role == Role.system && functions.Any() && !paddedSystem) {
-            //if (!string.IsNullOrEmpty(messageCopy.content))
-            //   messageCopy = new Message(messageCopy.role, messageCopy.content + "\n");
-            foreach (var content in messageCopy.content) {
-               if (content is Message.text_content_part textContent) {
-                  textContent.text += "\n";
-               }
+            //foreach (var content in messageCopy.content) {
+            //   if (content is Message.text_content_part textContent) {
+            //      textContent.text += "\n";
+            //   }
+            //}
+            switch (messageCopy) {
+               case Complex_Message complexMessage:
+                  foreach (var text_content in
+                           complexMessage.content.OfType<text_content_part>())
+                     text_content.text += "\n";
+                  break;
+               case Simple_Message simpleMessage:
+                  simpleMessage.content += "\n";
+                  break;
             }
 
             paddedSystem = true;
@@ -71,9 +79,16 @@ public static class openai_token_counter {
 
       tokens += count_tokens(message.role.ToString());
 
-      tokens += message.content.OfType<Message.text_content_part>()
-         .Sum(text_content_part => count_tokens(text_content_part.text));
-        
+      switch (message) {
+         case Complex_Message complexMessage:
+            tokens += complexMessage.content.OfType<text_content_part>()
+               .Sum(text_content => count_tokens(text_content.text));
+            break;
+         case Simple_Message simpleMessage:
+            tokens += count_tokens(simpleMessage.content);
+            break;
+      }
+
       if (!string.IsNullOrEmpty(message.name))
          tokens += count_tokens(message.name) + 1; // +1 for the name
 

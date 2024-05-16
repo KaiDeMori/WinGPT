@@ -162,8 +162,15 @@ public static class Tools {
       return intermediateDirectories.ToArray();
    }
 
-   public static bool isVisionModel() {
-      return Config.Active.LanguageModel.Contains("vision");
+   public static bool is_vision_model() {
+      var model = Config.Active.LanguageModel;
+      return model switch {
+         _ when model.Contains("vision")        => true,
+         //_ when model.Contains("preview")       => true,  //NOPE
+         _ when model.StartsWith("gpt-4o")      => true,
+         _ when model.StartsWith("gpt-4-turbo") => true,
+         _                                      => false
+      };
    }
 
    public static bool isImageGenerationModel() {

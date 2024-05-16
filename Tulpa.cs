@@ -27,7 +27,7 @@ public class Tulpa : InterTulpa {
    /// <summary>
    /// The internal Tulpa messages, usually a system message.
    /// </summary>
-   public ImmutableArray<Message> Messages { get; init; } = new();
+   public ImmutableArray<Simple_Message> Messages { get; init; } = new();
 
    //TADA should use Either monad here for error msg accumulation
    public static Tulpa? CreateFrom(FileInfo file) {
@@ -71,7 +71,7 @@ public class Tulpa : InterTulpa {
       return tulpa;
    }
 
-   public Request Create_Multimodal_Request(Message user_message, Conversation conversation, FileInfo[]? associated_files = null) {
+   public Request Create_Multimodal_Request(Complex_Message user_message, Conversation conversation, FileInfo[]? associated_files = null) {
       // Pre-Production
       /////////////////////////
 
@@ -81,7 +81,7 @@ public class Tulpa : InterTulpa {
 
       //DRAGONS not sure if we want to do this always
       //get the first system message or create a new one
-      Message first_system_message = tulpa_messages_togo.FirstOrDefault(m => m.role == Role.system) ?? new Message {role = Role.system};
+      var first_system_message = tulpa_messages_togo.FirstOrDefault(m => m.role == Role.system) ?? new Simple_Message {role = Role.system};
 
       //It's a StringBuilder. You can append to it. What do expect?
       //Just don't enumerate it.
@@ -104,13 +104,9 @@ public class Tulpa : InterTulpa {
 
       var system_message_content = tuned_up_system_message_content.ToString();
       //content is a list now!
-      var new_system_message = new Message {
-         role = Role.system,
-         content = new List<Message.content_part> {
-            new Message.text_content_part {
-               text = system_message_content
-            }
-         }
+      var new_system_message = new Simple_Message() {
+         role    = Role.system,
+         content = system_message_content
       };
       if (!string.IsNullOrEmpty(system_message_content)) {
          //replace the first system message with the new one, make sure its at the same position as the old one
@@ -119,9 +115,8 @@ public class Tulpa : InterTulpa {
       }
 
       // concatenate the Tulpa_Messages and the conversation messages and the new prompt as a user message.
-      List<Message> all_messages = new();
-      all_messages.AddRange(tulpa_messages_togo);
-      all_messages.AddRange(conversation.Messages);
+      List<Message> all_messages = [.. tulpa_messages_togo, .. conversation.Messages];
+
       if (conversation.useSysMsgHack)
          all_messages.Add(new_system_message);
 
@@ -139,19 +134,22 @@ public class Tulpa : InterTulpa {
          max_tokens  = Config.Active.UIable.Max_Tokens
       };
       return request;
-
-
-      return request;
    }
 
-   private void add_images_to_user_message(Message user_message, FileInfo[] associated_files) {
+   private void add_images_to_user_message(Complex_Message user_message, FileInfo[]? associated_files) {
+      if (associated_files is null)
+         return;
+
+      if (!Tools.is_vision_model())
+         return;
+
       foreach (var file in associated_files) {
          if (FileTypeIdentifier.GetFileType(file.FullName) != FileType.Image)
             continue;
 
          string base64DataUrl = ImageHelper.GetBase64DataUrl(file.FullName);
-         var imageContent = new Message.image_content_part {
-            image_url = new Message.image_url {
+         var imageContent = new image_content_part {
+            image_url = new image_url {
                url = base64DataUrl
             }
          };
@@ -190,9 +188,9 @@ public class Tulpa : InterTulpa {
    /// <param name="associated_files"></param>
    /// <returns>the new message to be added to the conversation</returns>
    public async Task<Message?> SendAsync(
-      Message      user_message,
-      Conversation conversation,
-      FileInfo[]?  associated_files = null) {
+      Complex_Message user_message,
+      Conversation    conversation,
+      FileInfo[]?     associated_files = null) {
       ////  Pre-Production
       ///////////////////////////
 
@@ -213,7 +211,9 @@ public class Tulpa : InterTulpa {
          return null;
       }
 
-      Message response_message = new() {
+      //as far as I understand the docs, the response will always be simple
+
+      Simple_Message response_message = new Simple_Message() {
          role    = Role.assistant,
          content = zeroth_Choice.message.content
       };
@@ -256,14 +256,10 @@ public class Tulpa : InterTulpa {
             AssociatedFilesSaver.SaveFile(save_CallArguments.filename, save_CallArguments.text_content, associated_files, out var dummy_assistant_content);
 
             //in case we have no content for the user, provide some feedback
-            if (response_message.content.Count == 0) {
-               response_message = new Message {
-                  role = Role.assistant,
-                  content = new List<Message.content_part> {
-                     new Message.text_content_part {
-                        text = dummy_assistant_content
-                     }
-                  }
+            if (string.IsNullOrWhiteSpace(response_message.content)) {
+               response_message = new Simple_Message() {
+                  role    = Role.assistant,
+                  content = dummy_assistant_content
                };
             }
          }
@@ -283,7 +279,7 @@ public class Tulpa : InterTulpa {
       tuned_up_system_message_content.AppendLine("-----");
    }
 
-   private static void remove_last_user_message(List<Message> tulpa_messages_togo) {
+   private static void remove_last_user_message(List<Simple_Message> tulpa_messages_togo) {
       //now we need to check if the last message is a user role and if so,
       //remove it (it's considered to be a SamplePrompt)
       var last_message = tulpa_messages_togo.LastOrDefault();

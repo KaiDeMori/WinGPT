@@ -100,6 +100,9 @@ public class Config {
          Active = loadedConfig;
       }
 
+      //That's why I don't like these static constructor inits
+      var file_type = FileTypeIdentifier.GetFileType("test.txt");
+
       lock (_lock) {
          loading = false;
       }

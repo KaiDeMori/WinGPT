@@ -43,13 +43,9 @@ public static class Taxonomer {
       List<Message> all_messages = new() {
          //new Message(role: Role.system, content: sysmsg) //old code
          //now content is a list of content_parts
-         new Message {
-            role = Role.system,
-            content = new List<Message.content_part> {
-               new Message.text_content_part() {
-                  text = sysmsg
-               }
-            }
+         new Simple_Message {
+            role    = Role.system,
+            content = sysmsg
          }
       };
       all_messages.AddRange(conversation.Messages);

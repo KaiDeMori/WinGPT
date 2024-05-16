@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using WinGPT.OpenAI.Chat;
 using Message = WinGPT.OpenAI.Chat.Message;
 
 namespace WinGPT;
@@ -45,7 +46,7 @@ internal class QuickTulpaTest {
       var contentMemory = content.AsMemory();
       var currentRole   = Role.system; // Default role.
       var messageStart  = 0;
-      var messages      = new List<Message>();
+      var messages      = new List<Simple_Message>();
 
       // Default configuration.
       var tulpa_config = new TulpaConfiguration();
@@ -70,16 +71,12 @@ internal class QuickTulpaTest {
       for (var i = messageStart; i < contentMemory.Length; i++) {
          foreach (var specialToken in specialTokens) {
             if (contentMemory.Slice(i).Span.StartsWith(specialToken.Key)) {
-               var messageContent = contentMemory.Slice(messageStart, i - messageStart).ToString();
+               var message_content = contentMemory.Slice(messageStart, i - messageStart).ToString();
 
-               if (!string.IsNullOrWhiteSpace(messageContent)) {
-                  messages.Add(new Message {
-                     role = currentRole,
-                     content = new List<Message.content_part> {
-                        new Message.text_content_part {
-                           text = messageContent
-                        }
-                     }
+               if (!string.IsNullOrWhiteSpace(message_content)) {
+                  messages.Add(new Simple_Message() {
+                     role    = currentRole,
+                     content = message_content
                   });
                }
 
@@ -94,13 +91,9 @@ internal class QuickTulpaTest {
       // Add the last message.
       var lastMessage = contentMemory.Slice(messageStart).ToString();
       if (!string.IsNullOrWhiteSpace(lastMessage)) {
-         messages.Add(new Message {
-            role = currentRole,
-            content = new List<Message.content_part> {
-               new Message.text_content_part {
-                  text = lastMessage
-               }
-            }
+         messages.Add(new Simple_Message {
+            role    = currentRole,
+            content = lastMessage
          });
       }
 

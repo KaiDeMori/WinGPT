@@ -1,8 +1,12 @@
-﻿namespace WinGPT;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+namespace WinGPT;
 
 /// <summary>
 /// This uses the OpenAI API endpoint wording.
 /// </summary>
+[JsonConverter(typeof(StringEnumConverter))]
 public enum Role {
    system,
    user,

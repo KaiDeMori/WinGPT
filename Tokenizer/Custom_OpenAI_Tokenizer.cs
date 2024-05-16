@@ -42,17 +42,25 @@ internal class Custom_OpenAI_Tokenizer {
       int msg_token_count = 0;
       foreach (var message in messages) {
          msg_token_count += msg_init; // Add tokens for each message initialization
-         //msg_token_count += count(message.content);  // Add tokens for message content //old code
-         foreach (var content in message.content) {
-            switch (content) {
-               case Message.text_content_part textContent:
-                  msg_token_count += count(textContent.text); // Add tokens for text content
-                  break;
-               case Message.image_content_part imageContent:
-                  //not implemented yet, its not straight forward with the tiles and the resolution and whatnot
-                  //msg_token_count += count(imageContent.image_url.url); // Add tokens for image content
-                  break;
-            }
+
+         switch (message) {
+            case Simple_Message simpleMessage:
+               msg_token_count += count(simpleMessage.content); // Add tokens for simple message content
+               break;
+            case Complex_Message complexMessage:
+               foreach (var content in complexMessage.content) {
+                  switch (content) {
+                     case text_content_part textContent:
+                        msg_token_count += count(textContent.text); // Add tokens for text content
+                        break;
+                     case image_content_part imageContent:
+                        //not implemented yet, its not straight forward with the tiles and the resolution and whatnot
+                        //msg_token_count += count(imageContent.image_url.url); // Add tokens for image content
+                        break;
+                  }
+               }
+
+               break;
          }
 
 
