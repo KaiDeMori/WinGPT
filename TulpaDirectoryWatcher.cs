@@ -33,10 +33,12 @@ internal class TulpaDirectoryWatcher {
    private void Update_Tulpas_and_Buttons() {
       var tulpas = ReadAllTulpas();
 
+      if (tulpas.Count == 0)
+         return;
+
       Tulpa selected_tulpa = tulpas.FirstOrDefault(tulpa =>
-                                tulpa.File?.Name == Config.Active.LastUsedTulpa ||
-                                tulpa.File?.Name == Config.DefaultAssistant_Filename)
-                             ?? tulpas.First();
+         tulpa.File?.Name == Config.Active.LastUsedTulpa ||
+         tulpa.File?.Name == Config.DefaultAssistant_Filename) ?? tulpas.First();
 
       CreateTulpaButtons(tulpas, selected_tulpa);
    }

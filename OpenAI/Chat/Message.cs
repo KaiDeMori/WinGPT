@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 namespace WinGPT.OpenAI.Chat;
 
 public abstract class Message {
+   [JsonProperty(Order = 1)]
    public Role role { get; set; }
 
    public object content { get; set; } = new();
@@ -32,6 +33,7 @@ public abstract class Message {
 }
 
 public class Simple_Message : Message {
+   [JsonProperty(Order = 2)]
    public new string content { get; set; }
 
    public override string ToString() {
@@ -52,6 +54,7 @@ public class Simple_Message : Message {
 }
 
 public class Complex_Message : Message {
+   [JsonProperty(Order = 2)]
    public new List<content_part> content { get; set; } = [];
 
    public override string ToString() {

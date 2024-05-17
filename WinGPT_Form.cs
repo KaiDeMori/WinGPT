@@ -215,7 +215,8 @@ public partial class WinGPT_Form : Form {
             return;
 
          var prompt = prompt_textBox.Text;
-         last_prompt_token_count       = DeepTokenizer.count_tokens(prompt, Config.Active.LanguageModel);
+         last_prompt_token_count =
+            DeepTokenizer.count_tokens(prompt, Config.Active.LanguageModel);
          prompt_token_count_label.Text = last_prompt_token_count.ToString("N0", CultureInfo.CurrentCulture);
          if (Conversation.Active is null) {
             Conversation.Create_Conversation(new Complex_Message {
