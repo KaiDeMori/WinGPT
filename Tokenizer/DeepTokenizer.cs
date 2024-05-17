@@ -4,14 +4,14 @@ using WinGPT.OpenAI.Chat;
 namespace WinGPT.Tokenizer;
 
 internal class DeepTokenizer {
-   private static readonly Dictionary<string, ITokenizer> ModelName_to_Tokeinzer = new();
+   private static readonly Dictionary<string, ITokenizer> ModelName_to_Tokenizer = new();
 
    private static ITokenizer GetTokenizer(string modelName) {
-      if (ModelName_to_Tokeinzer.TryGetValue(modelName, out var tokenizer))
+      if (ModelName_to_Tokenizer.TryGetValue(modelName, out var tokenizer))
          return tokenizer;
 
       tokenizer = CreateByModelNameAsync(modelName);
-      ModelName_to_Tokeinzer.Add(modelName, tokenizer);
+      ModelName_to_Tokenizer.Add(modelName, tokenizer);
       return tokenizer;
    }
 
@@ -152,7 +152,7 @@ internal class DeepTokenizer {
    private static readonly IReadOnlyDictionary<string, string> MODEL_PREFIX_TO_ENCODING =
       new Dictionary<string, string> {
          // chat
-         {"gpt-4o", "cl100k_base"},        // let's see where this is going
+         {"gpt-4o", "o200k_base"},         // let's see where this is going
          {"gpt-4-", "cl100k_base"},        // e.g., gpt-4-0314, etc., plus gpt-4-32k
          {"gpt-3.5-turbo-", "cl100k_base"} // e.g, gpt-3.5-turbo-0301, -0401, etc.
       };

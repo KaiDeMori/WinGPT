@@ -17,7 +17,8 @@ namespace WinGPT;
 /// https://en.wikipedia.org/wiki/Tulpa
 /// </summary>
 public class Tulpa : InterTulpa {
-   public int Token_Count { get; private set; }
+   [JsonIgnore]
+   public int Token_Count;
 
    [JsonIgnore]
    public FileInfo? File { get; set; }
@@ -65,8 +66,9 @@ public class Tulpa : InterTulpa {
       remove_last_user_message(tulpa_messages_togo);
 
       // concatenate the content
-      string all_messages_content = string.Join("", tulpa_messages_togo.Select(m => m.content));
+      string all_messages_content = string.Join("\n", tulpa_messages_togo.Select(m => m.content));
       tulpa.Token_Count = DeepTokenizer.count_tokens(all_messages_content, Config.Active.LanguageModel);
+      //tulpa.Token_Count = 3;
 
       return tulpa;
    }
