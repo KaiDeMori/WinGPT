@@ -37,7 +37,7 @@ internal class Custom_OpenAI_Tokenizer {
       }
 
       // Use the provided count function for token counting
-      Func<string, int> count = DeepTokenizer.count_tokens(Config.Active.LanguageModel);
+      Func<string, int> count = DeepTokenizer.count_tokens(Config.Active.Language_Model);
 
       int msg_token_count = 0;
       foreach (var message in messages) {

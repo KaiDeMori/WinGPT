@@ -166,13 +166,13 @@
 		<None Update="Taxonomy\system_message_template.md">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="Tokenizer\cl100k_base.tiktoken">
+		<None Update="Tokenizer\Vocab_Files\cl100k_base.tiktoken">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="Tokenizer\p50k_base.tiktoken">
+		<None Update="Tokenizer\Vocab_Files\p50k_base.tiktoken">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="Tokenizer\r50k_base.tiktoken">
+		<None Update="Tokenizer\Vocab_Files\r50k_base.tiktoken">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="webstuffs\custom_prism_plugin.js">

@@ -20,6 +20,7 @@ internal class DeepTokenizer {
       return tokenizer.Encode(text, new List<string>());
    }
 
+   [Obsolete("Use CountTokenizer")]
    public static int count_tokens(string text, string modelName) {
       var tokenizer = GetTokenizer(modelName);
       return tokenizer.Encode(text, new List<string>()).Count;

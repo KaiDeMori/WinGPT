@@ -61,15 +61,15 @@ internal class Custom_OpenAI_Tokenizer_Take_Two {
    public static int count_tokens(ImmutableList<Message> messages, List<Function>? functions) {
       Special_Token_Counts? special_token_counts;
 
-      if (Config.Active.LanguageModel.StartsWith("gpt-4"))
+      if (Config.Active.Language_Model.StartsWith("gpt-4"))
          special_token_counts = gpt_4;
-      else if (Config.Active.LanguageModel.StartsWith("gpt-3.5-turbo"))
+      else if (Config.Active.Language_Model.StartsWith("gpt-3.5-turbo"))
          special_token_counts = gpt_3_5_turbo;
       else
-         throw new Exception("Model not supported");
+         throw new Exception("Model does not support functions");
 
       // Use the provided count function for token counting
-      Func<string, int> count = DeepTokenizer.count_tokens(Config.Active.LanguageModel);
+      Func<string, int> count = DeepTokenizer.count_tokens(Config.Active.Language_Model);
 
       int msg_token_count = 0;
       foreach (var message in messages) {

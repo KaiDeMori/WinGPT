@@ -46,7 +46,7 @@ public class Completions {
                MessageBox.Show("We got unparsable JSON from the API", "Error", MessageBoxButtons.OK);
             }
             else {
-               Config.Active.TokenCounter.Increment(response);
+               Config.Active.Token_Counter.Increment(response);
             }
          }
          else {
