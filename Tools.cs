@@ -163,9 +163,9 @@ public static class Tools {
    }
 
    public static bool is_vision_model() {
-      var model = Config.Active.LanguageModel;
+      var model = Config.Active.Language_Model;
       return model switch {
-         _ when model.Contains("vision")        => true,
+         _ when model.Contains("vision") => true,
          //_ when model.Contains("preview")       => true,  //NOPE
          _ when model.StartsWith("gpt-4o")      => true,
          _ when model.StartsWith("gpt-4-turbo") => true,
@@ -174,7 +174,7 @@ public static class Tools {
    }
 
    public static bool isImageGenerationModel() {
-      return Config.Active.LanguageModel switch {
+      return Config.Active.Language_Model switch {
          Models.dall_e_3 => true,
          _               => false
       };

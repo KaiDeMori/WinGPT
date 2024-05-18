@@ -65,11 +65,6 @@ public class Tulpa : InterTulpa {
       var tulpa_messages_togo = tulpa.Messages.Select(m => m.Clone()).ToList();
       remove_last_user_message(tulpa_messages_togo);
 
-      // concatenate the content
-      string all_messages_content = string.Join("\n", tulpa_messages_togo.Select(m => m.content));
-      tulpa.Token_Count = DeepTokenizer.count_tokens(all_messages_content, Config.Active.LanguageModel);
-      //tulpa.Token_Count = 3;
-
       return tulpa;
    }
 
@@ -130,7 +125,7 @@ public class Tulpa : InterTulpa {
 
       Request request = new() {
          messages    = all_immutable,
-         model       = Config.Active.LanguageModel,
+         model       = Config.Active.Language_Model,
          temperature = Configuration.Temperature,
          functions   = save_function is not null ? new List<Function> {save_function} : null,
          max_tokens  = Config.Active.UIable.Max_Tokens
@@ -287,5 +282,11 @@ public class Tulpa : InterTulpa {
       var last_message = tulpa_messages_togo.LastOrDefault();
       if (last_message?.role == Role.user)
          tulpa_messages_togo.Remove(last_message);
+   }
+
+   public void update_token_count() {
+      Token_Count = CountTokenizer.count(
+         string.Join("\n", Messages.Select(m => m.content)),
+         Config.Active.Language_Model);
    }
 }

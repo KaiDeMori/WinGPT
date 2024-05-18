@@ -72,13 +72,13 @@ internal static class Startup {
    /// </summary>
    public static bool AssertBaseDirectory() {
       // Check if BaseDirectory is not empty and exists
-      if (!string.IsNullOrEmpty(Config.Active.BaseDirectory) && Directory.Exists(Config.Active.BaseDirectory)) {
+      if (!string.IsNullOrEmpty(Config.Active.Base_Directory) && Directory.Exists(Config.Active.Base_Directory)) {
          // If BaseDirectory is set and valid, just return
          return true;
       }
 
       // Inform the user about the necessity of setting a base directory
-      string message = string.IsNullOrEmpty(Config.Active.BaseDirectory)
+      string message = string.IsNullOrEmpty(Config.Active.Base_Directory)
          ? "The base directory has not been set. Please choose a base directory."
          : "The existing base directory could not be found. Please choose a new base directory.";
 
@@ -100,7 +100,7 @@ internal static class Startup {
       }
 
       // Check if it's the same
-      if (selectedDirectory == Config.Active.BaseDirectory) {
+      if (selectedDirectory == Config.Active.Base_Directory) {
          // If it's the same, just return
          return true;
       }
@@ -113,7 +113,7 @@ internal static class Startup {
          if (dialogResult == DialogResult.Yes) {
             // If user confirms, use the already existing one.
             // don't create the subdirectories, we assume they already exist
-            Config.Active.BaseDirectory = selectedDirectory;
+            Config.Active.Base_Directory = selectedDirectory;
             AssertSubdirectories();
             Config.Save();
             return true;
@@ -134,7 +134,7 @@ internal static class Startup {
          }
       }
       else {
-         Config.Active.BaseDirectory = selectedDirectory;
+         Config.Active.Base_Directory = selectedDirectory;
          AssertSubdirectories();
       }
 

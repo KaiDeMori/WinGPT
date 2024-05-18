@@ -4,8 +4,9 @@ using Message = WinGPT.OpenAI.Chat.Message;
 namespace WinGPT.Tokenizer;
 
 public static class openai_token_counter_taketwo {
-   public static int estimate_token_count(Request request, string language_model) {
-      Func<string, int> count_tokens = DeepTokenizer.count_tokens(language_model);
+   public static int estimate_token_count(Request request) {
+      Func<string, int> count_tokens =
+         content => CountTokenizer.count(content, Config.Active.Language_Model);
 
       var messages     = request.messages;
       var functions    = request.functions ?? new List<Function>();

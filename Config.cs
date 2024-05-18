@@ -4,20 +4,20 @@ using Formatting = Newtonsoft.Json.Formatting;
 namespace WinGPT;
 
 public class Config {
-   public static Config Active      = new();
-   public static Tulpa  ActiveTulpa = new();
+   public static Config Active       = new();
+   public static Tulpa  Active_Tulpa = new();
 
    //public static Conversation? ActiveConversation { get; set; }
 
-   public bool UseSysMsgHack { get; set; }
+   public bool Use_SysMsg_Hack { get; set; }
 
    public Config_UIable UIable { get; set; } = new();
 
    private const   string        tulpas_directory = "Tulpas";
-   internal static DirectoryInfo Tulpa_Directory => new(Path.Join(Active.BaseDirectory, tulpas_directory));
+   internal static DirectoryInfo Tulpa_Directory => new(Path.Join(Active.Base_Directory, tulpas_directory));
 
    private const   string        history_directory = "Conversation_History";
-   internal static DirectoryInfo History_Directory => new(Path.Join(Active.BaseDirectory, history_directory));
+   internal static DirectoryInfo History_Directory => new(Path.Join(Active.Base_Directory, history_directory));
 
    internal const string marf278down_extenstion = ".md";
    internal const string marf278down_filter     = "*.md";
@@ -26,15 +26,19 @@ public class Config {
    internal static readonly string my_css;
    internal static readonly string prism_js;
 
-   public const  string        models_text_filename                = "models.txt";
-   private const string        WebstuffsPrismFancyCss              = "webstuffs/prism_fancy.css";
-   private const string        WebstuffsPrismFancyJs               = "webstuffs/prism_fancy.js";
-   private const string        WebstuffsMyCss                      = "webstuffs/my.css";
-   private const string        Preliminary_Conversations_Directory = "tmp";
-   private const string        AdHoc_Downloads_Directory           = "Downloads";
-   public const  string        DefaultAssistant_Filename           = "Default_Assistant.md";
-   public static DirectoryInfo Preliminary_Conversations_Path => new(Path.Join(Active.BaseDirectory, Preliminary_Conversations_Directory));
-   public static DirectoryInfo AdHoc_Downloads_Path           => new(Path.Join(Active.BaseDirectory, AdHoc_Downloads_Directory));
+   public const  string models_text_filename                = "models.txt";
+   private const string WebstuffsPrismFancyCss              = "webstuffs/prism_fancy.css";
+   private const string WebstuffsPrismFancyJs               = "webstuffs/prism_fancy.js";
+   private const string WebstuffsMyCss                      = "webstuffs/my.css";
+   private const string Preliminary_Conversations_Directory = "tmp";
+   private const string AdHoc_Downloads_Directory           = "Downloads";
+   public const  string DefaultAssistant_Filename           = "Default_Assistant.md";
+
+   public static DirectoryInfo Preliminary_Conversations_Path =>
+      new(Path.Join(Active.Base_Directory, Preliminary_Conversations_Directory));
+
+   public static DirectoryInfo AdHoc_Downloads_Path =>
+      new(Path.Join(Active.Base_Directory, AdHoc_Downloads_Directory));
 
    public const string WIKI_URL = "https://wiki.peopleoftheprompt.org";
 
@@ -44,12 +48,12 @@ public class Config {
    /// <summary>
    /// This is the internal bookkeeping of the number of tokens used in total since the last reset.
    /// </summary>
-   public TokenCounter TokenCounter { get; set; } = new();
+   public TokenCounter Token_Counter { get; set; } = new();
 
-   public string? BaseDirectory  { get; set; }
-   public string  OpenAI_API_Key { get; set; } = "";
-   public string  LanguageModel  { get; set; } = "gpt-4-1106-preview";
-   public string  LastUsedTulpa  { get; set; } = DefaultAssistant_Filename;
+   public string? Base_Directory  { get; set; }
+   public string  OpenAI_API_Key  { get; set; } = "";
+   public string  Language_Model  { get; set; } = "gpt-4-1106-preview";
+   public string  Last_Used_Tulpa { get; set; } = DefaultAssistant_Filename;
 
    public double            MainSplitter_relative_position { get; set; } = .2;
    public double            TextSplitter_relative_position { get; set; } = .5;

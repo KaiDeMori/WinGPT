@@ -180,9 +180,9 @@ public partial class WinGPT_Form : Form {
       Template_Engine.Init();
       //AGI.Init();
       HTTP_Client.Init(Config.Active.OpenAI_API_Key);
-      Config.Active.TokenCounter.LimitReached = () => MessageBox.Show("Token limit reached.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+      Config.Active.Token_Counter.LimitReached = () => MessageBox.Show("Token limit reached.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-      sysmsghack_ToolStripMenuItem.Checked = Config.Active.UseSysMsgHack;
+      sysmsghack_ToolStripMenuItem.Checked = Config.Active.Use_SysMsg_Hack;
 
       //var success = stupid_edge_mumble_mumble.WaitOne(TimeSpan.FromSeconds(10));
       //if (!success) {
@@ -215,8 +215,7 @@ public partial class WinGPT_Form : Form {
             return;
 
          var prompt = prompt_textBox.Text;
-         last_prompt_token_count =
-            DeepTokenizer.count_tokens(prompt, Config.Active.LanguageModel);
+         last_prompt_token_count       = CountTokenizer.count(prompt, Config.Active.Language_Model);
          prompt_token_count_label.Text = last_prompt_token_count.ToString("N0", CultureInfo.CurrentCulture);
          if (Conversation.Active is null) {
             Conversation.Create_Conversation(new Complex_Message {
@@ -226,7 +225,7 @@ public partial class WinGPT_Form : Form {
                      text = prompt
                   }
                }
-            }, Config.ActiveTulpa);
+            }, Config.Active_Tulpa);
          }
 
          refresh_total_request_token_count_label();
@@ -261,7 +260,7 @@ public partial class WinGPT_Form : Form {
       //add'em up
       var total_sum = 0;
       // tulpa tokens
-      total_sum += Config.ActiveTulpa.Token_Count;
+      total_sum += Config.Active_Tulpa.Token_Count;
 
       // prompt tokens
       total_sum += last_prompt_token_count;
@@ -281,12 +280,12 @@ public partial class WinGPT_Form : Form {
 
       Complex_Message user_message = new() {
          role    = Role.user,
-         content = new List<content_part> {new text_content_part {text = prompt}},
+         content = [new text_content_part {text = prompt}],
       };
       if (Conversation.Active == null)
          return;
 
-      var request = Config.ActiveTulpa.Create_Multimodal_Request(
+      var request = Config.Active_Tulpa.Create_Multimodal_Request(
          user_message,
          Conversation.Active,
          Associated_files.Select(f => f.File).ToArray()
@@ -301,8 +300,8 @@ public partial class WinGPT_Form : Form {
 
    private void WinGPT_Form_Closing(object? sender, CancelEventArgs e) {
       //maybe there is a better "definition" of Last Used
-      if (Config.ActiveTulpa.File != null)
-         Config.Active.LastUsedTulpa = Config.ActiveTulpa.File.Name;
+      if (Config.Active_Tulpa.File != null)
+         Config.Active.Last_Used_Tulpa = Config.Active_Tulpa.File.Name;
 
       baseDirectoryWatcherAndTreeViewUpdater.treeViewPersistor.Save();
 
@@ -338,7 +337,7 @@ public partial class WinGPT_Form : Form {
 
       if (Conversation.Active == null) {
          //We have a new conversation and need to save it prelimiary
-         Conversation.Create_Conversation(user_message, Config.ActiveTulpa);
+         Conversation.Create_Conversation(user_message, Config.Active_Tulpa);
       }
 
       Conversation.Active.useSysMsgHack = sysmsghack_ToolStripMenuItem.Checked;
@@ -352,7 +351,7 @@ public partial class WinGPT_Form : Form {
          }
       }
 
-      var response_message = await Config.ActiveTulpa.SendAsync(
+      var response_message = await Config.Active_Tulpa.SendAsync(
          user_message,
          Conversation.Active,
          Associated_files.Select(f => f.File).ToArray());
@@ -365,7 +364,7 @@ public partial class WinGPT_Form : Form {
          return;
       }
 
-      int prompt_tokens     = Config.Active.TokenCounter.Last_Response_Usage.prompt_tokens;
+      int prompt_tokens     = Config.Active.Token_Counter.Last_Response_Usage.prompt_tokens;
       int delta_token_count = prompt_tokens - last_calculated_request_token_count;
       var detla_msg         = string.Empty;
       if (delta_token_count != 0) {
@@ -373,8 +372,8 @@ public partial class WinGPT_Form : Form {
       }
 
       response_input_token_count_label.Text  = prompt_tokens.ToString("N0", CultureInfo.CurrentCulture) + detla_msg;
-      response_output_token_count_label.Text = Config.Active.TokenCounter.Last_Response_Usage.completion_tokens.ToString("N0", CultureInfo.CurrentCulture);
-      response_total_token_count_label.Text  = Config.Active.TokenCounter.Last_Response_Usage.total_tokens.ToString("N0", CultureInfo.CurrentCulture);
+      response_output_token_count_label.Text = Config.Active.Token_Counter.Last_Response_Usage.completion_tokens.ToString("N0", CultureInfo.CurrentCulture);
+      response_total_token_count_label.Text  = Config.Active.Token_Counter.Last_Response_Usage.total_tokens.ToString("N0", CultureInfo.CurrentCulture);
 
       if (autoclear_checkBox.Checked)
          prompt_textBox.Clear();
@@ -452,7 +451,7 @@ public partial class WinGPT_Form : Form {
    }
 
    private void sysmsghack_ToolStripMenuItem_Click(object sender, EventArgs e) {
-      Config.Active.UseSysMsgHack = sysmsghack_ToolStripMenuItem.Checked;
+      Config.Active.Use_SysMsg_Hack = sysmsghack_ToolStripMenuItem.Checked;
       Config.Save();
    }
 
@@ -563,7 +562,7 @@ public partial class WinGPT_Form : Form {
       var dialogResult = base_directory_vistaFolderBrowserDialog.ShowDialog();
       return dialogResult switch {
          DialogResult.OK     => base_directory_vistaFolderBrowserDialog.SelectedPath,
-         DialogResult.Cancel => Config.Active.BaseDirectory,
+         DialogResult.Cancel => Config.Active.Base_Directory,
          _                   => string.Empty
       } ?? string.Empty;
    }
@@ -574,7 +573,7 @@ public partial class WinGPT_Form : Form {
 
       var conversation = Conversation.Active;
       //we want the last used one
-      conversation.Info.TulpaFile = Config.ActiveTulpa.File.Name;
+      conversation.Info.TulpaFile = Config.Active_Tulpa.File.Name;
 
       //history_file_name_textBox.Text = conversation.HistoryFile.Name;
       //main_toolTip.SetToolTip(history_file_name_textBox, conversation.Info.Summary ?? "no summary yet");
@@ -649,7 +648,7 @@ public partial class WinGPT_Form : Form {
    }
 
    private void SetActiveTulpaAndSaveConversation(Tulpa tulpa) {
-      Config.ActiveTulpa = tulpa;
+      Config.Active_Tulpa = tulpa;
 
       if (string.IsNullOrWhiteSpace(prompt_textBox.Text)) {
          var last_message = tulpa.Messages.LastOrDefault();
@@ -755,7 +754,7 @@ public partial class WinGPT_Form : Form {
          return;
       }
 
-      selected_tulpa ??= Config.ActiveTulpa;
+      selected_tulpa ??= Config.Active_Tulpa;
 
       ////////////////////////
       tulpas_flowLayoutPanel.SuspendLayout();
@@ -795,7 +794,7 @@ public partial class WinGPT_Form : Form {
          var item        = new ToolStripMenuItem(model_label);
          item.Tag = model;
          item.Click += (sender, args) => {
-            Config.Active.LanguageModel   = model.id;
+            Config.Active.Language_Model   = model.id;
             models_ToolStripMenuItem.Text = model_label;
             Config.Save();
             foreach (ToolStripMenuItem oneitem in models_ToolStripMenuItem.DropDownItems)
@@ -805,11 +804,11 @@ public partial class WinGPT_Form : Form {
          models_ToolStripMenuItem.DropDownItems.Add(item);
       }
 
-      var current_model = Models.Supported.FirstOrDefault(m => m.id == Config.Active.LanguageModel);
+      var current_model = Models.Supported.FirstOrDefault(m => m.id == Config.Active.Language_Model);
 
       if (current_model is null) {
          current_model               = Models.Supported.First();
-         Config.Active.LanguageModel = current_model.id;
+         Config.Active.Language_Model = current_model.id;
          Config.Save();
       }
 
@@ -1050,8 +1049,8 @@ public partial class WinGPT_Form : Form {
    }
 
    private void open_Base_Directory_ToolStripMenuItem_Click(object sender, EventArgs e) {
-      if (Config.Active.BaseDirectory != null) {
-         Open_in_Explorer(new DirectoryInfo(Config.Active.BaseDirectory));
+      if (Config.Active.Base_Directory != null) {
+         Open_in_Explorer(new DirectoryInfo(Config.Active.Base_Directory));
       }
    }
 
@@ -1131,7 +1130,7 @@ public partial class WinGPT_Form : Form {
    }
 
    private void check_context_window() {
-      var current_model = Models.Supported.First(m => m.id == Config.Active.LanguageModel);
+      var current_model = Models.Supported.First(m => m.id == Config.Active.Language_Model);
       if (last_calculated_request_token_count > current_model.context_window) {
          send_prompt_button.FlatStyle = FlatStyle.Standard;
          send_prompt_button.BackColor = Color.Coral;

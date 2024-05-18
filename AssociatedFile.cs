@@ -15,9 +15,7 @@ public class AssociatedFile : INotifyPropertyChanged {
    public void UpdateTokenCount() {
       try {
          var text_content = System.IO.File.ReadAllText(File.FullName);
-         TokenCount = DeepTokenizer.count_tokens(
-            text_content,
-            Config.Active.LanguageModel);
+         TokenCount = CountTokenizer.count(text_content, Config.Active.Language_Model);
          OnPropertyChanged(nameof(Name));
       }
       catch (Exception) {
