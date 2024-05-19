@@ -214,15 +214,13 @@ public partial class WinGPT_Form : Form {
          if (!Config.Active.UIable.Show_Live_Token_Count)
             return;
 
-         var prompt = prompt_textBox.Text;
-         last_prompt_token_count       = CountTokenizer.count(prompt, Config.Active.Language_Model);
-         prompt_token_count_label.Text = last_prompt_token_count.ToString("N0", CultureInfo.CurrentCulture);
+         update_prompt_token_count();
          if (Conversation.Active is null) {
             Conversation.Create_Conversation(new Complex_Message {
                role = Role.user,
                content = new List<content_part> {
                   new text_content_part {
-                     text = prompt
+                     text = prompt_textBox.Text
                   }
                }
             }, Config.Active_Tulpa);
@@ -244,6 +242,13 @@ public partial class WinGPT_Form : Form {
          //prompt_textBox.Text = "Hi";
          prompt_textBox.Text = "What's in the picture?";
       }
+   }
+
+   private void update_prompt_token_count() {
+      var prompt = prompt_textBox.Text;
+      last_prompt_token_count = CountTokenizer.count(prompt, Config.Active.Language_Model);
+      prompt_token_count_label.Text =
+         last_prompt_token_count.ToString("N0", CultureInfo.CurrentCulture);
    }
 
    private void refresh_associated_files_token_sum_label() {
@@ -291,7 +296,7 @@ public partial class WinGPT_Form : Form {
          Associated_files.Select(f => f.File).ToArray()
       );
 
-      var total_request_token_count = Custom_OpenAI_Tokenizer_Take_Two.count_tokens(request.messages, request.functions);
+      var total_request_token_count = Custom_OpenAI_Tokenizer_Take_Three.count_tokens(request.messages, request.functions);
       last_calculated_request_token_count  = total_request_token_count;
       total_request_token_count_label.Text = total_request_token_count.ToString("N0", CultureInfo.CurrentCulture);
 
@@ -528,18 +533,8 @@ public partial class WinGPT_Form : Form {
    private void conversation_history_treeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e) {
       // Check if the clicked node is the root node
       if (e.Node == conversation_history_treeView.TopNode && e.Node.Tag is DirectoryInfo directoryInfo) {
-         Open_in_Explorer(directoryInfo);
+         Tools.Open_in_Explorer(directoryInfo);
       }
-   }
-
-   private static void Open_in_Explorer(FileSystemInfo? filesystemInfo) {
-      if (filesystemInfo is null)
-         return;
-      var psi = new ProcessStartInfo {
-         FileName        = filesystemInfo.FullName,
-         UseShellExecute = true
-      };
-      Process.Start(psi);
    }
 
    private void conversation_history_treeView_BeforeCollapse(object sender, TreeViewCancelEventArgs e) {
@@ -598,6 +593,7 @@ public partial class WinGPT_Form : Form {
    }
 
    private void ActivateTulpa(Tulpa tulpa) {
+      tulpa.update_token_count();
       Set_Tulpa_TextBox(tulpa);
       SetActiveTulpaAndSaveConversation(tulpa);
    }
@@ -794,11 +790,12 @@ public partial class WinGPT_Form : Form {
          var item        = new ToolStripMenuItem(model_label);
          item.Tag = model;
          item.Click += (sender, args) => {
-            Config.Active.Language_Model   = model.id;
+            Config.Active.Language_Model  = model.id;
             models_ToolStripMenuItem.Text = model_label;
             Config.Save();
             foreach (ToolStripMenuItem oneitem in models_ToolStripMenuItem.DropDownItems)
                oneitem.Checked = oneitem == item;
+            realculate_all_token_counts();
             check_context_window();
          };
          models_ToolStripMenuItem.DropDownItems.Add(item);
@@ -807,7 +804,7 @@ public partial class WinGPT_Form : Form {
       var current_model = Models.Supported.FirstOrDefault(m => m.id == Config.Active.Language_Model);
 
       if (current_model is null) {
-         current_model               = Models.Supported.First();
+         current_model                = Models.Supported.First();
          Config.Active.Language_Model = current_model.id;
          Config.Save();
       }
@@ -978,7 +975,7 @@ public partial class WinGPT_Form : Form {
    }
 
    private void open_Config_Directory_ToolStripMenuItem_Click(object sender, EventArgs e) {
-      Open_in_Explorer(Application_Paths.Config_File.Directory);
+      Tools.Open_in_Explorer(Application_Paths.Config_File.Directory);
    }
 
    private void main_splitter_MouseDoubleClick(object sender, MouseEventArgs e) {
@@ -1050,7 +1047,7 @@ public partial class WinGPT_Form : Form {
 
    private void open_Base_Directory_ToolStripMenuItem_Click(object sender, EventArgs e) {
       if (Config.Active.Base_Directory != null) {
-         Open_in_Explorer(new DirectoryInfo(Config.Active.Base_Directory));
+         Tools.Open_in_Explorer(new DirectoryInfo(Config.Active.Base_Directory));
       }
    }
 
@@ -1064,20 +1061,20 @@ public partial class WinGPT_Form : Form {
       // Now you have the TreeNode that was clicked on, and you can work with it
       if (nodeAtMousePosition != null) {
          // Open the file in the default program
-         Open_in_Explorer(nodeAtMousePosition.Tag as FileSystemInfo);
+         Tools.Open_in_Explorer(nodeAtMousePosition.Tag as FileSystemInfo);
       }
    }
 
    private void open_AdHoc_Directory_ToolStripMenuItem_Click(object sender, EventArgs e) {
-      Open_in_Explorer(Config.Preliminary_Conversations_Path);
+      Tools.Open_in_Explorer(Config.Preliminary_Conversations_Path);
    }
 
    private void open_Tulpas_Directory_ToolStripMenuItem_Click(object sender, EventArgs e) {
-      Open_in_Explorer(Config.Tulpa_Directory);
+      Tools.Open_in_Explorer(Config.Tulpa_Directory);
    }
 
    private void open_Downloads_Directory_ToolStripMenuItem_Click(object sender, EventArgs e) {
-      Open_in_Explorer(Config.AdHoc_Downloads_Path);
+      Tools.Open_in_Explorer(Config.AdHoc_Downloads_Path);
    }
 
    private void update_wingpt_ToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -1111,6 +1108,13 @@ public partial class WinGPT_Form : Form {
       response_input_token_count_label.Text  = string.Empty;
       response_output_token_count_label.Text = string.Empty;
       response_total_token_count_label.Text  = string.Empty;
+   }
+
+   private void realculate_all_token_counts() {
+      Config.Active_Tulpa.update_token_count();
+      update_prompt_token_count();
+      refresh_total_request_token_count_label();
+      associated_files_token_sum_label_Click(null, null);
    }
 
    private void checkModelsToolStripMenuItem_Click(object sender, EventArgs e) {

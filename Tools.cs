@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using WinGPT.OpenAI;
@@ -188,5 +189,15 @@ public static class Tools {
       var       functionJson = File.ReadAllText(file.FullName);
       Function? function     = JsonConvert.DeserializeObject<Function>(functionJson);
       return function;
+   }
+
+   public static void Open_in_Explorer(FileSystemInfo? filesystemInfo) {
+      if (filesystemInfo is null)
+         return;
+      var psi = new ProcessStartInfo {
+         FileName        = filesystemInfo.FullName,
+         UseShellExecute = true
+      };
+      Process.Start(psi);
    }
 }
