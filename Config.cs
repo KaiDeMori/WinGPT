@@ -95,13 +95,20 @@ public class Config {
       JsonSerializerSettings settings = new() {
          ObjectCreationHandling = ObjectCreationHandling.Replace,
       };
-      Config? loadedConfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Application_Paths.Config_File.FullName), settings);
+      Config? loaded_Config = null;
+      try {
+         loaded_Config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Application_Paths.Config_File.FullName), settings);
+      }
+      catch (Exception) {
+         // ignored
+      }
+
       //if (Tools.HasNullProperties(loadedConfig)) {
-      if (loadedConfig is null) {
+      if (loaded_Config is null) {
          ConfigErrorCase();
       }
       else {
-         Active = loadedConfig;
+         Active = loaded_Config;
       }
 
       //That's why I don't like these static constructor inits
@@ -133,8 +140,18 @@ public class Config {
    }
 
    private static void ConfigErrorCase(bool invalid = true) {
-      var msg = invalid ? "is invalid" : "was not found";
-      MessageBox.Show($"The configuration file {msg}. Creating default configuration.", "Error", MessageBoxButtons.OK,
+      //if invalid is false, we copy the invalid config to a new one, appending "backup_" + the current date
+      var backup_config_name = $"Config_backup_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.json";
+      if (invalid) {
+         File.Move(Application_Paths.Config_File.FullName, Path.Join(Application_Paths.Config_File.DirectoryName,
+            backup_config_name));
+      }
+
+      var valid_msg = invalid ? "is invalid" : "was not found";
+      var msg       = $"The configuration file {valid_msg}. Creating default configuration.";
+      if (invalid)
+         msg += "\r\nThe invalid configuration file was backed up to \r\n" + backup_config_name;
+      MessageBox.Show(msg, "Error", MessageBoxButtons.OK,
          MessageBoxIcon.Error);
       Active = new Config();
       Save();
