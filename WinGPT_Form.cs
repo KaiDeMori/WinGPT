@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -1112,6 +1113,7 @@ public partial class WinGPT_Form : Form {
 
    private void realculate_all_token_counts() {
       Config.Active_Tulpa.update_token_count();
+      Set_Tulpa_TextBox(Config.Active_Tulpa);
       update_prompt_token_count();
       refresh_total_request_token_count_label();
       associated_files_token_sum_label_Click(null, null);

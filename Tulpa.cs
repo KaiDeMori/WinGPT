@@ -18,7 +18,7 @@ namespace WinGPT;
 /// </summary>
 public class Tulpa : InterTulpa {
    [JsonIgnore]
-   public int Token_Count;
+   public int Token_Count { get; private set; }
 
    [JsonIgnore]
    public FileInfo? File { get; set; }
