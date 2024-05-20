@@ -1,3 +1,5 @@
+using WinGPT.OpenAI.Chat;
+
 namespace WinGPT.Tokenizer.lasttrythenigiveup;
 
 // Token counter class for estimating the number of tokens used by OpenAI API requests
@@ -48,8 +50,8 @@ public class TokenCounter {
             tokens += 1;
          }
          else if (function_call is Dictionary<string, object> &&
-                  ((Dictionary<string, object>) function_call).ContainsKey("name")) {
-            tokens += string_tokens((string) ((Dictionary<string, object>) function_call)["name"]) + 4;
+                  ((Dictionary<string, object>) function_call).ContainsKey(KEYS.name)) {
+            tokens += string_tokens((string) ((Dictionary<string, object>) function_call)[KEYS.name]) + 4;
          }
       }
 

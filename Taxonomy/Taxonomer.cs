@@ -33,9 +33,14 @@ public static class Taxonomer {
    /// <returns></returns>
    private static Function_Parameters? taxonomize(Conversation conversation, string[] existing_categories) {
       //DRAGONS AI function-magic
-      string existing_categories_json = JsonConvert.SerializeObject(existing_categories);
-      var    sysmsg_template          = File.ReadAllText("Taxonomy/system_message_template.md");
-      string sysmsg                   = sysmsg_template.Replace($"{{{{{nameof(existing_categories)}}}}}", existing_categories_json);
+      string existing_categories_json =
+         JsonConvert.SerializeObject(existing_categories);
+
+      var sysmsg_template =
+         File.ReadAllText("Taxonomy/system_message_template.md");
+
+      string sysmsg =
+         sysmsg_template.Replace($"{{{{{nameof(existing_categories)}}}}}", existing_categories_json);
 
       Function? function = JsonConvert.DeserializeObject<Function>(FunctionJson);
       if (function is null)
