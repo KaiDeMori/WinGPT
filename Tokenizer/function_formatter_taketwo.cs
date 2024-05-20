@@ -17,6 +17,18 @@ public static class function_formatter_taketwo {
       return sb.ToString();
    }
 
+   public static string format_tools_definitions(IEnumerable<Tool> tools) {
+      var sb = new StringBuilder();
+
+      foreach (var tool in tools) {
+         sb.AppendLine($"- {tool.function.name}: {tool.function.description}");
+         sb.Append(format_object_properties(tool.function.parameters, 1));
+      }
+
+      return sb.ToString();
+   }
+
+
    private static string format_object_properties(Parameters parameters, int indent) {
       var sb = new StringBuilder();
 

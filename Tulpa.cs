@@ -4,7 +4,9 @@ using System.Text;
 using Newtonsoft.Json;
 using WinGPT.OpenAI;
 using WinGPT.OpenAI.Chat;
+using WinGPT.Taxonomy;
 using WinGPT.Tokenizer;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 using Message = WinGPT.OpenAI.Chat.Message;
 
 // ReSharper disable MethodHasAsyncOverload
@@ -94,11 +96,6 @@ public class Tulpa : InterTulpa {
       // "Upload"
       add_associated_files_to_system_message(associated_files, tuned_up_system_message_content);
 
-      // if the save_function is null, the parameter will just be ignored
-      Function? save_function = null;
-      if (Config.Active.UIable.Use_Save_Via_Prompt)
-         save_function = Enable_Save_via_Prompt_Function();
-
       var system_message_content = tuned_up_system_message_content.ToString();
       //content is a list now!
       var new_system_message = new Simple_Message() {
@@ -127,9 +124,15 @@ public class Tulpa : InterTulpa {
          messages    = all_immutable,
          model       = Config.Active.Language_Model,
          temperature = Configuration.Temperature,
-         functions   = save_function is not null ? new List<Function> {save_function} : null,
-         max_tokens  = Config.Active.UIable.Max_Tokens
+         tool_choice = new ToolChoice(ToolChoice_Mode.auto),
+         //functions   = save_function is not null ? [save_function] : null,
+         max_tokens = Config.Active.UIable.Max_Tokens
       };
+
+      //lezzgotools!
+      if (Config.Active.UIable.Use_Save_Via_Prompt)
+         Enable_Save_via_Prompt_Function(request.tools);
+
       return request;
    }
 
@@ -154,15 +157,23 @@ public class Tulpa : InterTulpa {
       }
    }
 
-   private static Function? Enable_Save_via_Prompt_Function() {
+   private static void Enable_Save_via_Prompt_Function(List<Tool> tools) {
       var saveFile_function_json = System.IO.File.ReadAllText("Filetransfer/saveFile_Function.json");
       //Function<SaveParameters>? saveFile_function = JsonConvert.DeserializeObject<Function<SaveParameters>>(saveFile_function_json);
-      Function? saveFile_function = JsonConvert.DeserializeObject<Function>(saveFile_function_json);
+
+      JsonSerializerSettings settings = new() {
+         Error = (sender, args) => throw new Exception(args.ErrorContext.Error.Message)
+      };
+      Function? saveFile_function = JsonConvert.DeserializeObject<Function>(saveFile_function_json, settings);
+
+      if (saveFile_function is null)
+         throw new Exception("The save function could not be parsed!");
 
       //Let's see if we can get away with the function only.
       //var saveFile_function_sysmsg = System.IO.File.ReadAllText("Filetransfer/saveFile_system_message.md");
       //tuned_up_system_message_content.AppendLine(saveFile_function_sysmsg);
-      return saveFile_function;
+
+      tools.Add(new Tool(saveFile_function));
    }
 
    private static void add_associated_files_to_system_message(
@@ -202,7 +213,7 @@ public class Tulpa : InterTulpa {
          return null;
       }
 
-      Choice? zeroth_Choice = response.Choices.FirstOrDefault();
+      Choice? zeroth_Choice = response.choices.FirstOrDefault();
       if (zeroth_Choice == null) {
          MessageBox.Show("The API returned no choices.", "Error", MessageBoxButtons.OK);
          return null;

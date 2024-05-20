@@ -8,8 +8,9 @@ public static class openai_token_counter_taketwo {
       Func<string, int> count_tokens =
          content => CountTokenizer.count(content, Config.Active.Language_Model);
 
-      var messages     = request.messages;
-      var functions    = request.functions ?? new List<Function>();
+      var messages = request.messages;
+      //List<Function>? functions    = request.functions ?? new List<Function>();
+      var tools        = request.tools ?? [];
       var functionCall = request.function_call;
 
       bool padded_system = false;
@@ -18,7 +19,7 @@ public static class openai_token_counter_taketwo {
       // Count tokens in messages
       foreach (var message in messages) {
          var message_copy = message.Clone();
-         if (message_copy.role == Role.system && functions.Any() && !padded_system) {
+         if (message_copy.role == Role.system && tools.Any() && !padded_system) {
             //append \n to all text content parts
             switch (message) {
                case Complex_Message complex_message: {
@@ -42,12 +43,12 @@ public static class openai_token_counter_taketwo {
       tokens += 3;
 
       // Count tokens in functions
-      if (functions.Any()) {
-         tokens += estimate_tokens_in_functions(functions, count_tokens);
+      if (tools.Any()) {
+         tokens += estimate_tokens_in_tools(tools, count_tokens);
       }
 
       // Adjust token count based on system messages and function calls
-      if (functions.Any() && messages.Any(m => m.role == Role.system)) {
+      if (tools.Any() && messages.Any(m => m.role == Role.system)) {
          tokens -= 4; // Adjust for the system token
       }
 
@@ -115,6 +116,19 @@ public static class openai_token_counter_taketwo {
 
       // Format the function definitions and count their tokens
       string formatted_functions = function_formatter_taketwo.format_function_definitions(functions);
+      tokens += count_tokens(formatted_functions);
+
+      // Add tokens for the prompt formatting
+      tokens += 9;
+
+      return tokens;
+   }
+
+   private static int estimate_tokens_in_tools(IEnumerable<Tool> tools, Func<string, int> count_tokens) {
+      int tokens = 0;
+
+      // Format the function definitions and count their tokens
+      string formatted_functions = function_formatter_taketwo.format_tools_definitions(tools);
       tokens += count_tokens(formatted_functions);
 
       // Add tokens for the prompt formatting

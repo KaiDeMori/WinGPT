@@ -9,7 +9,7 @@ public class Completions {
    private const           string Endpoint          = "chat/completions";
    private static readonly string Full_Endpoint_URL = HTTP_Client.Get_full_URL_for_endpoint(Endpoint);
 
-   private static readonly JsonSerializerSettings JSON_Serializer_Settings = new() {
+   public static readonly JsonSerializerSettings JSON_Serializer_Settings = new() {
       //TypeNameHandling  = TypeNameHandling.Auto,
       NullValueHandling = NullValueHandling.Ignore,
    };

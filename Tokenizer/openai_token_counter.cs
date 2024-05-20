@@ -11,8 +11,9 @@ public static class openai_token_counter {
    public static int estimate_token_count(Request request, string language_model) {
       Func<string, int> count_tokens = DeepTokenizer.count_tokens(language_model);
 
-      var messages     = request.messages;
-      var functions    = request.functions ?? new List<Function>();
+      var messages = request.messages;
+      //var functions    = request.functions ?? new List<Function>();
+      var tools        = request.tools ?? [];
       var functionCall = request.function_call;
 
       bool paddedSystem = false;
@@ -20,7 +21,7 @@ public static class openai_token_counter {
       int tokens = 0;
       foreach (var message in messages) {
          var messageCopy = message.Clone();
-         if (messageCopy.role == Role.system && functions.Any() && !paddedSystem) {
+         if (messageCopy.role == Role.system && tools.Any() && !paddedSystem) {
             //foreach (var content in messageCopy.content) {
             //   if (content is Message.text_content_part textContent) {
             //      textContent.text += "\n";
@@ -46,12 +47,13 @@ public static class openai_token_counter {
       // Each completion (vs message) seems to carry a 3-token overhead
       tokens += 3;
 
-      // If there are functions, add the function definitions as they count towards token usage
-      if (functions.Any())
-         tokens += estimate_tokens_in_functions(functions, count_tokens);
+      // If there are tools, add the tool definitions as they count towards token usage
+      // I'm sure this is very wrong, but I don't know how to count tool tokens
+      if (tools.Any())
+         tokens += estimate_tokens_in_functions(tools.Select(t => t.function), count_tokens);
 
       // If there's a system message and functions are present, subtract four tokens
-      if (functions.Any() && messages.Any(m => m.role == Role.system))
+      if (tools.Any() && messages.Any(m => m.role == Role.system))
          tokens -= 4;
 
       // Corrected handling of functionCall
