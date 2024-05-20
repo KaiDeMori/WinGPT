@@ -3,7 +3,6 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
-using WinGPT.OpenAI;
 using WinGPT.OpenAI.Chat;
 using Message = WinGPT.OpenAI.Chat.Message;
 
@@ -13,15 +12,17 @@ public static class Taxonomer {
    private const           string taxonomy_function_name = "taxonomy";
    private static readonly string FunctionJson           = File.ReadAllText("Taxonomy/function.json");
 
-   private const string example_function_call = @"
-{
-    ""name"": ""taxonomy"",
-    ""arguments"": {
-        ""summary"": ""A nice little summary."",
-        ""filename"": ""My first chat.md"",
-		""category"": ""simple times""
-    }
-}";
+   private const string example_function_call =
+      """
+      {
+          "name": "taxonomy",
+          "arguments": {
+              "summary": "A nice little summary.",
+              "filename": "My first chat.md",
+              "category": "simple times"
+          }
+      }
+      """;
 
    /// <summary>
    /// Sets the summary and the history filename, returns a category-suggestion.
@@ -36,19 +37,19 @@ public static class Taxonomer {
       var    sysmsg_template          = File.ReadAllText("Taxonomy/system_message_template.md");
       string sysmsg                   = sysmsg_template.Replace($"{{{{{nameof(existing_categories)}}}}}", existing_categories_json);
 
-      OpenAI.Chat.Function? function = JsonConvert.DeserializeObject<OpenAI.Chat.Function>(FunctionJson);
+      Function? function = JsonConvert.DeserializeObject<Function>(FunctionJson);
       if (function is null)
          return null;
 
-      List<Message> all_messages = new() {
+      List<Message> all_messages = [
          //new Message(role: Role.system, content: sysmsg) //old code
          //now content is a list of content_parts
          new Simple_Message {
             role    = Role.system,
             content = sysmsg
-         }
-      };
-      all_messages.AddRange(conversation.Messages);
+         },
+         .. conversation.Messages,
+      ];
       var all_immutable = all_messages.ToImmutableList();
 
       //var function_call = new {
@@ -59,13 +60,15 @@ public static class Taxonomer {
       //var functionCallSettings = new FunctionCallSettings(taxonomy_function_name);
 
       //Let's get the request ready
-      var request = new Request() {
-         messages      = all_immutable,
-         functions     = new List<Function> {function},
-         function_call = new FunctionCallSettings("taxonomy"),
-         model         = Config.Active.UIable.Taxonomy_Model,
-         temperature   = 0.0
+      var request = new Request {
+         messages = all_immutable,
+         //functions     = new List<Function> {function},
+         //function_call = new FunctionCallSettings("taxonomy"),
+         tool_choice = new ToolChoice(function.name),
+         model       = Config.Active.UIable.Taxonomy_Model,
+         temperature = 0.0
       };
+      request.tools.Add(new Tool(function));
 
       //string request_json = JsonConvert.SerializeObject(request, Formatting.Indented, new JsonSerializerSettings {
       //   NullValueHandling = NullValueHandling.Ignore,
@@ -79,7 +82,7 @@ public static class Taxonomer {
       if (!IsOK(response))
          return null;
 
-      FunctionCall functionCall = response.Choices[0].message.function_call;
+      FunctionCall functionCall = response.choices[0].message.function_call;
 
       Function_Parameters functionParameters = JsonConvert.DeserializeObject<Function_Parameters>(functionCall.arguments);
 
@@ -100,7 +103,7 @@ public static class Taxonomer {
    private static bool IsOK(Response? response) {
       if (response is null)
          return false;
-      var choice = response.Choices.FirstOrDefault();
+      var choice = response.choices.FirstOrDefault();
       if (choice is null)
          return false;
       if (choice.finish_reason != Finish_Reason.stop)

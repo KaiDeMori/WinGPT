@@ -18,10 +18,20 @@ public class Choice {
 /// 🤣
 /// </summary>
 [JsonConverter(typeof(StringEnumConverter))]
+public enum Finish_Reason_old {
+   stop,
+   length,
+   function_call, //NOT if we insist on calling THAT one function.
+   content_filter,
+   @null,
+}
+
+[JsonConverter(typeof(StringEnumConverter))]
 public enum Finish_Reason {
    stop,
    length,
    function_call, //NOT if we insist on calling THAT one function.
    content_filter,
+   tool_calls,
    @null,
 }

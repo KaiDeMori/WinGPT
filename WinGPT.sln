@@ -24,11 +24,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebView2_LocalFile_Trials",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webview2_dummy_Trials", "..\webview2_dummy_Trials\webview2_dummy_Trials.csproj", "{D7CDFEC0-057A-4820-B418-55D830100B67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSML_tokenBS", "..\MSML_tokenBS\MSML_tokenBS.csproj", "{787F2B39-C4D3-439C-915A-6399285CBE38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MSML_tokenBS", "..\MSML_tokenBS\MSML_tokenBS.csproj", "{787F2B39-C4D3-439C-915A-6399285CBE38}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeepDev_Tokenizer_Trials", "..\DeepDev_Tokenizer_Trials\DeepDev_Tokenizer_Trials.csproj", "{88E26F93-2892-417F-A198-1EA684F8F535}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tryGI_tokenizer_TRIALS", "..\tryGI_tokenizer_TRIALS\tryGI_tokenizer_TRIALS.csproj", "{6314B314-EFB0-46FD-9E9E-5341868009E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tryGI_tokenizer_TRIALS", "..\tryGI_tokenizer_TRIALS\tryGI_tokenizer_TRIALS.csproj", "{6314B314-EFB0-46FD-9E9E-5341868009E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenAI_Tools_Trials", "..\OpenAI_Tools_Trials\OpenAI_Tools_Trials.csproj", "{0E8EFAF6-9595-42EE-9C97-98617F06AD4C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -202,6 +204,22 @@ Global
 		{6314B314-EFB0-46FD-9E9E-5341868009E1}.Release|x64.Build.0 = Release|Any CPU
 		{6314B314-EFB0-46FD-9E9E-5341868009E1}.Release|x86.ActiveCfg = Release|Any CPU
 		{6314B314-EFB0-46FD-9E9E-5341868009E1}.Release|x86.Build.0 = Release|Any CPU
+		{0E8EFAF6-9595-42EE-9C97-98617F06AD4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E8EFAF6-9595-42EE-9C97-98617F06AD4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E8EFAF6-9595-42EE-9C97-98617F06AD4C}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{0E8EFAF6-9595-42EE-9C97-98617F06AD4C}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{0E8EFAF6-9595-42EE-9C97-98617F06AD4C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0E8EFAF6-9595-42EE-9C97-98617F06AD4C}.Debug|x64.Build.0 = Debug|Any CPU
+		{0E8EFAF6-9595-42EE-9C97-98617F06AD4C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0E8EFAF6-9595-42EE-9C97-98617F06AD4C}.Debug|x86.Build.0 = Debug|Any CPU
+		{0E8EFAF6-9595-42EE-9C97-98617F06AD4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E8EFAF6-9595-42EE-9C97-98617F06AD4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E8EFAF6-9595-42EE-9C97-98617F06AD4C}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{0E8EFAF6-9595-42EE-9C97-98617F06AD4C}.Release|ARM64.Build.0 = Release|Any CPU
+		{0E8EFAF6-9595-42EE-9C97-98617F06AD4C}.Release|x64.ActiveCfg = Release|Any CPU
+		{0E8EFAF6-9595-42EE-9C97-98617F06AD4C}.Release|x64.Build.0 = Release|Any CPU
+		{0E8EFAF6-9595-42EE-9C97-98617F06AD4C}.Release|x86.ActiveCfg = Release|Any CPU
+		{0E8EFAF6-9595-42EE-9C97-98617F06AD4C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

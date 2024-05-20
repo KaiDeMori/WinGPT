@@ -34,7 +34,10 @@ public abstract class Message {
 
 public class Simple_Message : Message {
    [JsonProperty(Order = 2)]
-   public new string content { get; set; }
+   public new string? content { get; set; }
+
+   [JsonProperty(Order = 3, NullValueHandling = NullValueHandling.Ignore)]
+   public Tool_Call[]? tool_calls { get; init; }
 
    public override string ToString() {
       var specialToken = role.ToSpecialToken();
@@ -86,18 +89,18 @@ public enum content_type {
 }
 
 public abstract class content_part {
-   public content_type type { get; set; }
+   public content_type type => throw new NotImplementedException();
 
    public abstract content_part Clone();
 }
 
 public class text_content_part : content_part {
-   public new content_type type = content_type.text;
+   public new content_type type => content_type.text;
 
    public string text { get; set; }
 
    public override content_part Clone() {
-      return new text_content_part {text = text, type = content_type.text};
+      return new text_content_part {text = text};
    }
 
    public override string ToString() {
@@ -106,13 +109,12 @@ public class text_content_part : content_part {
 }
 
 public class image_content_part : content_part {
-   public new content_type type = content_type.image_url;
+   public new content_type type => content_type.image_url;
 
    public image_url image_url { get; set; }
 
    public override content_part Clone() {
       return new image_content_part {
-         type      = content_type.image_url,
          image_url = image_url
       };
    }

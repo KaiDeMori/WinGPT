@@ -52,9 +52,9 @@ public class TokenCounter {
    }
 
    public void Increment(Response response) {
-      Prompt_Tokens       += response.Usage.prompt_tokens;
-      Completion_Tokens   += response.Usage.completion_tokens;
-      Total_Tokens        += response.Usage.total_tokens;
-      Last_Response_Usage =  response.Usage;
+      Prompt_Tokens       += response.usage.prompt_tokens;
+      Completion_Tokens   += response.usage.completion_tokens;
+      Total_Tokens        += response.usage.total_tokens;
+      Last_Response_Usage =  response.usage;
    }
 }

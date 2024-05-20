@@ -297,7 +297,9 @@ public partial class WinGPT_Form : Form {
          Associated_files.Select(f => f.File).ToArray()
       );
 
-      var total_request_token_count = Custom_OpenAI_Tokenizer_Take_Three.count_tokens(request.messages, request.functions);
+      var functions = request.tools?.Select(t => t.function).ToArray() ?? [];
+      var total_request_token_count =
+         Custom_OpenAI_Tokenizer_Take_Three.count_tokens(request.messages, functions);
       last_calculated_request_token_count  = total_request_token_count;
       total_request_token_count_label.Text = total_request_token_count.ToString("N0", CultureInfo.CurrentCulture);
 
