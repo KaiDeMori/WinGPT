@@ -12,6 +12,9 @@ public class Completions {
    public static readonly JsonSerializerSettings JSON_Serializer_Settings = new() {
       //TypeNameHandling  = TypeNameHandling.Auto,
       NullValueHandling = NullValueHandling.Ignore,
+      Converters = new List<JsonConverter> {
+         new ToolChoiceJsonConverter()
+      }
    };
 
    public static async Task<Response?> POST_Async(Request request) {

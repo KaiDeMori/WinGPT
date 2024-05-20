@@ -8,22 +8,22 @@ public class ToolChoiceJsonConverter : JsonConverter<ToolChoice> {
       JObject jObject = JObject.Load(reader);
 
       return
-         jObject["type"]!.Value<string>() == "function"
-            ? new ToolChoice(jObject["function"]?["name"]?.Value<string>()!)
-            : new ToolChoice(Enum.Parse<ToolChoice_Mode>(jObject["type"]?.Value<string>()!, true));
+         jObject[KEYS.type]!.Value<string>() == KEYS.function
+            ? new ToolChoice(jObject[KEYS.function]?[KEYS.name]?.Value<string>()!)
+            : new ToolChoice(Enum.Parse<ToolChoice_Mode>(jObject[KEYS.type]?.Value<string>()!, true));
    }
 
    public override void WriteJson(JsonWriter writer, ToolChoice? value, JsonSerializer serializer) {
-      JObject jObject = [];
-
       if (value?.Mode == ToolChoice_Mode.none) {
-         jObject.Add("type",     "function");
-         jObject.Add("function", new JObject {{"name", value.FunctionName}});
+         JObject jObject = new() {
+            {KEYS.type, KEYS.function},
+            {KEYS.function, new JObject {{KEYS.name, value.FunctionName}}}
+         };
+         jObject.WriteTo(writer);
       }
       else {
-         jObject.Add("type", value?.Mode.ToString());
+         // When it's not a function, write the mode directly as a string
+         writer.WriteValue(value?.Mode.ToString());
       }
-
-      jObject.WriteTo(writer);
    }
 }
