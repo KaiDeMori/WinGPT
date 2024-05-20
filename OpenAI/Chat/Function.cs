@@ -12,9 +12,14 @@ public class Function {
 
 // Abstract base class for function parameters, containing common properties.
 public class Parameters {
-   public string                              type       { get; init; }
-   public List<string>                        required   { get; init; }
+   [JsonProperty(Order = 1)]
+   public string type { get; init; }
+
+   [JsonProperty(Order = 2)]
    public Dictionary<string, ParameterDetail> properties { get; init; }
+
+   [JsonProperty(Order = 3)]
+   public List<string> required { get; init; }
 }
 
 public interface ICallArguments {
@@ -22,11 +27,11 @@ public interface ICallArguments {
 
 // Class representing the details of a parameter.
 public class ParameterDetail {
-   public string        type        { get; init; }
-   public string        description { get; init; }
+   public string type        { get; init; }
+   public string description { get; init; }
 
    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-   public List<string>? enumValues  { get; init; } // Optional field for enum values
+   public List<string>? enumValues { get; init; } // Optional field for enum values
 }
 
 // Class representing the call arguments for a save function.
