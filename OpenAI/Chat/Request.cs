@@ -21,7 +21,7 @@ public class Request {
    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
    public FunctionCallSettings? function_call { get; init; }
 
-   [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+   [JsonProperty(Order = 4, NullValueHandling = NullValueHandling.Ignore)]
    public ToolChoice? tool_choice { get; set; }
 
    public double temperature { get; init; }

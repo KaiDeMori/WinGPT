@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
@@ -46,6 +47,9 @@ public static class Taxonomer {
       if (function is null)
          return null;
 
+      //we need only the text parts of each message
+      List<Message> conversation_text_messages = Message.remove_image_parts(conversation.Messages);
+
       List<Message> all_messages = [
          //new Message(role: Role.system, content: sysmsg) //old code
          //now content is a list of content_parts
@@ -53,7 +57,7 @@ public static class Taxonomer {
             role    = Role.system,
             content = sysmsg
          },
-         .. conversation.Messages,
+         .. conversation_text_messages,
       ];
       var all_immutable = all_messages.ToImmutableList();
 
@@ -87,9 +91,12 @@ public static class Taxonomer {
       if (!IsOK(response))
          return null;
 
-      FunctionCall functionCall = response.choices[0].message.function_call;
+      //it's all tools now.
+      //FunctionCall functionCall = response.choices[0].message.function_call;
+      //it's all tools now.
+      Tool_Call first_tool_call = response.choices.First().message.tool_calls!.First();
 
-      Function_Parameters functionParameters = JsonConvert.DeserializeObject<Function_Parameters>(functionCall.arguments);
+      Function_Parameters functionParameters = JsonConvert.DeserializeObject<Function_Parameters>(first_tool_call.function.arguments)!;
 
       functionParameters.existing_categories = existing_categories;
 
@@ -105,7 +112,7 @@ public static class Taxonomer {
    }
 
    //we have to do a couple of sanity chekcs on the response before using it.
-   private static bool IsOK(Response? response) {
+   private static bool IsOK([NotNullWhen(true)] Response? response) {
       if (response is null)
          return false;
       var choice = response.choices.FirstOrDefault();
@@ -119,7 +126,9 @@ public static class Taxonomer {
          return false;
       if (message.content != null)
          return false;
-      if (message.function_call is null)
+      //if (message.function_call is null) //deprecated, use tools now
+      //   return false;
+      if (message.tool_calls is null)
          return false;
 
       FunctionCall functionCall = message.function_call;

@@ -30,6 +30,32 @@ public abstract class Message {
 
       return clone;
    }
+
+   public static List<Message> remove_image_parts(List<Message> messages) {
+      var new_messages = new List<Message>();
+
+      foreach (var message in messages) {
+         if (message is Complex_Message complex_message) {
+            var new_content = complex_message.content
+               .Where(cp => cp.type != content_type.image_url)
+               .ToList();
+
+            var new_complex_message = new Complex_Message {
+               role          = complex_message.role,
+               content       = new_content,
+               name          = complex_message.name,
+               function_call = complex_message.function_call
+            };
+
+            new_messages.Add(new_complex_message);
+         }
+         else {
+            new_messages.Add(message);
+         }
+      }
+
+      return new_messages;
+   }
 }
 
 public class Simple_Message : Message {
@@ -45,7 +71,6 @@ public class Simple_Message : Message {
       return text;
    }
 
-   // Override Clone method to return Simple_Message
    public override Simple_Message Clone() {
       return new Simple_Message {
          role          = role,
@@ -66,7 +91,6 @@ public class Complex_Message : Message {
       return text;
    }
 
-   // Override Clone method to return Complex_Message
    public override Complex_Message Clone() {
       return new Complex_Message {
          role          = role,
@@ -89,13 +113,13 @@ public enum content_type {
 }
 
 public abstract class content_part {
-   public content_type type => throw new NotImplementedException();
+   public abstract content_type type { get; }
 
    public abstract content_part Clone();
 }
 
 public class text_content_part : content_part {
-   public new content_type type => content_type.text;
+   public override content_type type => content_type.text;
 
    public string text { get; set; }
 
@@ -109,7 +133,7 @@ public class text_content_part : content_part {
 }
 
 public class image_content_part : content_part {
-   public new content_type type => content_type.image_url;
+   public override content_type type => content_type.image_url;
 
    public image_url image_url { get; set; }
 
