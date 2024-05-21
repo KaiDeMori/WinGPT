@@ -14,7 +14,7 @@ public class ToolChoiceJsonConverter : JsonConverter<ToolChoice> {
    }
 
    public override void WriteJson(JsonWriter writer, ToolChoice? value, JsonSerializer serializer) {
-      if (value?.Mode == ToolChoice_Mode.none) {
+      if (value?.Mode == null) {
          JObject jObject = new() {
             {KEYS.type, KEYS.function},
             {KEYS.function, new JObject {{KEYS.name, value.FunctionName}}}
