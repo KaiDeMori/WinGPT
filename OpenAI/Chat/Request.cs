@@ -11,8 +11,19 @@ public class Request {
    //[JsonProperty("functions", NullValueHandling = NullValueHandling.Ignore)]
    //public List<Function>? functions { get; init; }
 
-   [JsonProperty("tools", NullValueHandling = NullValueHandling.Ignore)]
+   [JsonProperty("tools",
+      NullValueHandling = NullValueHandling.Ignore,
+      DefaultValueHandling = DefaultValueHandling.Ignore)]
    public List<Tool> tools { get; } = [];
+
+   /// <summary>
+   /// Seriously dark newtonsoft magic.
+   /// Don't try to understand, just believe.
+   /// </summary>
+   /// <returns></returns>
+   public bool ShouldSerializetools() {
+      return tools.Count > 0;
+   }
 
    /// <summary>
    /// "none", "auto" or your function name like this

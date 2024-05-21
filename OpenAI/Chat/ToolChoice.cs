@@ -13,10 +13,11 @@ public class ToolChoice {
 
    public ToolChoice(ToolChoice_Mode mode) {
       Mode = mode;
+      FunctionName = null;
    }
 
    public ToolChoice(string functionName) {
-      Mode         = ToolChoice_Mode.none;
+      Mode         = null;
       FunctionName = functionName;
    }
 }

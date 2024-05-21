@@ -16,6 +16,7 @@ public abstract class Message {
    /// <summary>
    /// **Not** the same thing as <see cref="Request.function_call"/>.
    /// </summary>
+   [Obsolete("It's all tools now.")]
    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
    public FunctionCall? function_call { get; init; }
 
