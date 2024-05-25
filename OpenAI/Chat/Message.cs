@@ -32,6 +32,9 @@ public abstract class Message {
       return clone;
    }
 
+   public abstract string? ToString_Content_Only();
+
+
    public static List<Message> remove_image_parts(List<Message> messages) {
       var new_messages = new List<Message>();
 
@@ -72,6 +75,8 @@ public class Simple_Message : Message {
       return text;
    }
 
+   public override string? ToString_Content_Only() => content;
+
    public override Simple_Message Clone() {
       return new Simple_Message {
          role          = role,
@@ -91,6 +96,8 @@ public class Complex_Message : Message {
       var text         = specialToken + string.Join("", content.OfType<text_content_part>()) + "\r\n";
       return text;
    }
+
+   public override string? ToString_Content_Only() => string.Join("", content.OfType<text_content_part>());
 
    public override Complex_Message Clone() {
       return new Complex_Message {
