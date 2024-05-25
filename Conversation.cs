@@ -152,6 +152,14 @@ public class Conversation {
    /// Saves the conversation to the history file.
    /// </summary>
    public void Save() {
+      //Let's first make sure that the converstaion actually contains any prompts
+      if (Messages.Count == 0)
+         return;
+
+      //and that they are not empty string
+      if (Messages.All(m => string.IsNullOrWhiteSpace(m.ToString_Content_Only())))
+         return;
+
       if (HistoryFile is null)
          throw new Exception("HistoryFile must not be null!");
 
@@ -179,6 +187,11 @@ public class Conversation {
             TulpaFile = tulpa.File.Name,
          }
       };
+
+      //only actually save if the conversation is not null or empty string
+      if (string.IsNullOrEmpty(first_prompt.ToString()))
+         return conversation;
+
       var content = conversation.Create_history_file_content(first_prompt);
       //DRAGONS a lot can go wrong here
       //make at least sure the whole directory exists and if not create it
