@@ -124,14 +124,17 @@ public class Tulpa : InterTulpa {
          messages    = all_immutable,
          model       = Config.Active.Language_Model,
          temperature = Configuration.Temperature,
-         tool_choice = new ToolChoice(ToolChoice_Mode.auto),
+         tool_choice = null,
          //functions   = save_function is not null ? [save_function] : null,
          max_tokens = Config.Active.UIable.Max_Tokens
       };
 
       //lezzgotools!
-      if (Config.Active.UIable.Use_Save_Via_Prompt)
+      if (Config.Active.UIable.Use_Save_Via_Prompt) {
          Enable_Save_via_Prompt_Function(request.tools);
+         //set proper tool_choice
+         //request.tool_choice = new ToolChoice(request.tools.First().function.name);
+      }
 
       return request;
    }
