@@ -73,6 +73,7 @@ public partial class WinGPT_Form : Form {
 
       prompt_textBox.DragEnter += prompt_textBox_DragEnter;
       prompt_textBox.DragDrop  += prompt_textBox_DragDrop;
+      prompt_textBox.LostFocus += (_, _) => auto_save();
 
       //Maybe we should put more init stuff here, instead of Load and Shown 
       apply_UIable();
@@ -211,7 +212,8 @@ public partial class WinGPT_Form : Form {
          refresh_total_request_token_count_label();
       };
 
-      TimedTokenizer.Callback = () => {
+      Prompt_Actions_Timer.Callback.Add(auto_save);
+      Prompt_Actions_Timer.Callback.Add(() => {
          if (!Config.Active.UIable.Show_Live_Token_Count)
             return;
 
@@ -228,8 +230,8 @@ public partial class WinGPT_Form : Form {
          }
 
          refresh_total_request_token_count_label();
-      };
-      TimedTokenizer.Reset();
+      });
+      Prompt_Actions_Timer.Reset();
 
       Enabled = true;
       Set_status_bar(false, "Let's go!");
@@ -243,6 +245,24 @@ public partial class WinGPT_Form : Form {
          //prompt_textBox.Text = "Hi";
          prompt_textBox.Text = "What's in the picture?";
       }
+   }
+
+   private string previous_prompt = "";
+
+   private void auto_save() {
+      if (!Config.Active.UIable.Auto_Save)
+         return;
+
+      string current_prompt = prompt_textBox.Text;
+      if (previous_prompt == current_prompt)
+         return;
+      previous_prompt = current_prompt;
+
+      if (Conversation.Active is not null)
+         Conversation.Active.Save();
+
+      //notify the user
+      Set_status_bar(false, "Conversation saved…");
    }
 
    private void update_prompt_token_count() {
@@ -492,7 +512,7 @@ public partial class WinGPT_Form : Form {
          send_prompt_button_Click(sender, e);
       }
       else {
-         TimedTokenizer.Reset();
+         Prompt_Actions_Timer.Reset();
       }
    }
 
@@ -667,7 +687,7 @@ public partial class WinGPT_Form : Form {
       }
    }
 
-   private void Set_status_bar(bool isBusy, string? message = null) {
+   private void Set_status_bar(bool isBusy, string? message = null, TimeSpan? timeout = null) {
       main_toolStripProgressBar.Visible = isBusy;
       //if (main_toolStripStatusLabel.Text.Length < 10)
       main_toolStripStatusLabel.Text = message ?? (isBusy ? "Busy" : "Ready");
@@ -675,6 +695,18 @@ public partial class WinGPT_Form : Form {
       foreach (Control c in this.Controls) {
          c.Enabled = !isBusy;
       }
+
+      if (timeout is not null)
+         Task.Delay(timeout.Value)
+            .ContinueWith(_ =>
+               Set_status_bar(
+                  false,
+                  null,
+                  TimeSpan.FromMilliseconds(
+                     Config.Active.UIable.prompt_actions_timer_interval
+                  )
+               )
+            );
    }
 
    private void ResetUI() {
