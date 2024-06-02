@@ -28,6 +28,11 @@ public class Config_UIable {
    [Description("The ID of the model used by the Taxonomer.")]
    public string Taxonomy_Model { get; set; } = "gpt-3.5-turbo-16k";
     
+   [Category("Features")]
+   [DisplayName("Auto-Save")]
+   [Description("Automatically saves the conversation.")]
+   public bool Auto_Save { get; set; } = true;
+
    [DisplayName("Prompt Font")]
    [Description("This controls the font of the prompt text-box.")]
    public Font Prompt_Font { get; set; } = new Font("Arial", 12);
@@ -77,9 +82,9 @@ public class Config_UIable {
    /// This is the interval used for the tokenizer call in milliseconds.
    /// </summary>
    [Category("Performance")]
-   [DisplayName("Prompt Token-Counter interval")]
-   [Description("This is the interval used for the tokenizer call for the prompt text box in  milliseconds. After each keystroke, we wait this many ms before calling the tokenizer.")]
-   public int count_tokens_timer_interval { get; set; } = 2000;
+   [DisplayName("Interval for Token-Counting and Auto-Save. [ms]")]
+   [Description("After this time of inactivity, the token-counting and auto-save will be triggered.")]
+   public int prompt_actions_timer_interval { get; set; } = 2000;
 }
 
 /// <summary>
