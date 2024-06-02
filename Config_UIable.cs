@@ -31,7 +31,7 @@ public class Config_UIable {
    [Category("Features")]
    [DisplayName("Auto-Save")]
    [Description("Automatically saves the conversation.")]
-   public bool Auto_Save { get; set; } = true;
+   public bool Auto_Save { get; set; } = false;
 
    [DisplayName("Prompt Font")]
    [Description("This controls the font of the prompt text-box.")]
