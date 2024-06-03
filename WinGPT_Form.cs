@@ -242,8 +242,8 @@ public partial class WinGPT_Form : Form {
       if (Debugger.IsAttached) {
          //prompt_textBox.Text = "What is bigger than a town?";
          //prompt_textBox.Text = "Please translate the file to french.";
-         //prompt_textBox.Text = "Hi";
-         prompt_textBox.Text = "What's in the picture?";
+         prompt_textBox.Text = "Hi";
+         //prompt_textBox.Text = "What's in the picture?";
       }
    }
 
@@ -262,7 +262,7 @@ public partial class WinGPT_Form : Form {
          Conversation.Active.Save();
 
       //notify the user
-      Set_status_bar(false, "Conversation saved…");
+      Set_status_bar(null, "Conversation saved…", TimeSpan.FromMilliseconds(Config.Active.UIable.prompt_actions_timer_interval));
    }
 
    private void update_prompt_token_count() {
@@ -687,25 +687,25 @@ public partial class WinGPT_Form : Form {
       }
    }
 
-   private void Set_status_bar(bool isBusy, string? message = null, TimeSpan? timeout = null) {
-      main_toolStripProgressBar.Visible = isBusy;
-      //if (main_toolStripStatusLabel.Text.Length < 10)
-      main_toolStripStatusLabel.Text = message ?? (isBusy ? "Busy" : "Ready");
-      //Enabled                           = !isBusy;
-      foreach (Control c in this.Controls) {
-         c.Enabled = !isBusy;
+   private void Set_status_bar(bool? isBusy, string? message = null, TimeSpan? timeout = null) {
+      var busy_message = string.Empty;
+      if (isBusy is { } busy) {
+         busy_message                      = busy ? "Busy" : "Ready";
+         main_toolStripProgressBar.Visible = busy;
+         foreach (Control c in this.Controls) {
+            c.Enabled = !busy;
+         }
       }
+
+      main_toolStripStatusLabel.Text = message ?? busy_message;
+
+      //if (main_toolStripStatusLabel.Text.Length < 10)
+      //Enabled                           = !isBusy;
 
       if (timeout is not null)
          Task.Delay(timeout.Value)
             .ContinueWith(_ =>
-               Set_status_bar(
-                  false,
-                  null,
-                  TimeSpan.FromMilliseconds(
-                     Config.Active.UIable.prompt_actions_timer_interval
-                  )
-               )
+               main_toolStripStatusLabel.Text = string.Empty
             );
    }
 
