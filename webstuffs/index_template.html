@@ -84,7 +84,7 @@
         }
 
 
-        window.onload = function() {
+        window.onload = function () {
             headerTags.forEach((tag) => {
                 // Query all header elements with the "external-filename" class.
                 const headers = document.querySelectorAll(`${tag}.external-filename`);
@@ -98,9 +98,15 @@
     </script>
 
     <link rel="stylesheet" href="my.css">
+
+    <!--
+
+    Select theme and configure plugins here:
+        https://prismjs.com/download.html
+
+    -->
     <link rel="stylesheet" href="prism_fancy.css">
     <script src="prism_fancy.js"></script>
-    <script src="custom_prism_plugin.js"></script>
 
 </head>
 <body class="line-numbers match-braces">
