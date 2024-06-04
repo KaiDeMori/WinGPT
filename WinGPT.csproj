@@ -102,6 +102,16 @@
 
 	</Target>
 
+	<Target Name="ArchiveZip" AfterTargets="Publish" Condition="'$(ZipIt)' == 'True'">
+		<Message Text="##############  Archive ##############" Importance="high" />
+		<ItemGroup>
+			<ZipFiles Include="$(PublishDir)\*.zip" />
+		</ItemGroup>
+		<Message Text="ZipFile: @(ZipFiles)" Importance="high" />
+		<Copy SourceFiles="@(ZipFiles)" DestinationFolder="..\peopleoftheprompt.org\WinGPT\archive\$(ApplicationVersion)\" />
+		<Message Text="##############  Archived ##############" Importance="high" />
+	</Target>
+
 
 	<ItemGroup>
 		<Content Include="Icons\WinGPT_1.ico" />
@@ -159,7 +169,7 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="OpenAI\supported_models.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Taxonomy\function.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -168,13 +178,13 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Tokenizer\Vocab_Files\cl100k_base.tiktoken">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Tokenizer\Vocab_Files\p50k_base.tiktoken">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Tokenizer\Vocab_Files\r50k_base.tiktoken">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="webstuffs\custom_prism_plugin.js">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -194,6 +204,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Tokenizer\lasttrythenigiveup\" />
+		<Folder Include="Tokenizer\lasttrythenigiveup\" />
 	</ItemGroup>
 </Project>

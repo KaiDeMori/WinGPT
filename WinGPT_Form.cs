@@ -63,7 +63,7 @@ public partial class WinGPT_Form : Form {
 
       Text += $" v{Tools.VersionString} › {Application_Paths.APP_MODE}";
 
-      Set_status_bar(true, "Initializing available models.");
+      Set_status_bar("Initializing available models.");
       Initialize_Models_MenuItems();
       uploaded_files_comboBox.Items.Clear();
       uploaded_files_comboBox.DataSource    = Associated_files;
@@ -141,7 +141,7 @@ public partial class WinGPT_Form : Form {
    #region stay in Form
 
    private void WinGPT_Form_Load(object? sender, EventArgs e) {
-      Set_status_bar(true, "Initializing WebView2.");
+      Set_status_bar("Initializing WebView2.");
 
       string userTempFolder = Path.Combine(Path.GetTempPath(), Application_Paths.AppName);
       webView21.CreationProperties = new CoreWebView2CreationProperties() {
@@ -177,7 +177,7 @@ public partial class WinGPT_Form : Form {
 
       set_splitter_state();
 
-      Set_status_bar(true, "Asserting prerequisties…");
+      Set_status_bar("Asserting prerequisties…");
       Startup.AssertPrerequisitesOrFail(PromptUserForBaseDirectory);
       Template_Engine.Init();
       //AGI.Init();
@@ -192,15 +192,15 @@ public partial class WinGPT_Form : Form {
       //   Application.Exit();
       //}
 
-      Set_status_bar(true, "Waiting for Godot.");
+      Set_status_bar("Waiting for Godot.");
       await stupid_edge_mumble_mumble.Task;
 
-      Set_status_bar(true, "Watch the Tulpas!");
+      Set_status_bar("Watch the Tulpas!");
       tulpa_DirectoryWatcher = new(CreateTulpaButtons_safe);
 
       //baseDirectoryWatcher = new BaseDirectoryWatcher(Config.History_Directory, conversation_history_treeView);
       //baseDirectoryWatcher.InitializeTree();
-      Set_status_bar(true, "Watch the base!");
+      Set_status_bar("Watch the base!");
       baseDirectoryWatcherAndTreeViewUpdater =
          new BaseDirectoryWatcherAndTreeViewUpdater(
             Config.History_Directory,
@@ -234,7 +234,8 @@ public partial class WinGPT_Form : Form {
       Prompt_Actions_Timer.Reset();
 
       Enabled = true;
-      Set_status_bar(false, "Let's go!");
+      Set_status_bar("Let's go!");
+      busy(false);
 
       //TADA should be a user-set default in the Settings
       //select and activate the default tulpa
@@ -262,7 +263,7 @@ public partial class WinGPT_Form : Form {
          Conversation.Active.Save();
 
       //notify the user
-      Set_status_bar(null, "Conversation saved…", TimeSpan.FromMilliseconds(Config.Active.UIable.prompt_actions_timer_interval));
+      Set_status_bar("Conversation saved…", TimeSpan.FromMilliseconds(Config.Active.UIable.prompt_actions_timer_interval));
    }
 
    private void update_prompt_token_count() {
@@ -351,7 +352,7 @@ public partial class WinGPT_Form : Form {
    #region Top Billing
 
    private async void send_prompt_button_Click(object sender, EventArgs e) {
-      Set_status_bar(true);
+      busy(true);
       string prompt = prompt_textBox.Text;
 
       Complex_Message user_message = new() {
@@ -388,7 +389,7 @@ public partial class WinGPT_Form : Form {
 
       if (response_message is null) {
          //we got an error.
-         Set_status_bar(false);
+         busy(false);
          return;
       }
 
@@ -610,7 +611,7 @@ public partial class WinGPT_Form : Form {
 
       Show_markf278down();
 
-      Set_status_bar(false);
+      busy(false);
 
       prompt_textBox.Focus();
    }
@@ -687,26 +688,33 @@ public partial class WinGPT_Form : Form {
       }
    }
 
-   private void Set_status_bar(bool? isBusy, string? message = null, TimeSpan? timeout = null) {
-      var busy_message = string.Empty;
-      if (isBusy is { } busy) {
-         busy_message                      = busy ? "Busy" : "Ready";
-         main_toolStripProgressBar.Visible = busy;
-         foreach (Control c in this.Controls) {
-            c.Enabled = !busy;
-         }
+   private void busy(bool is_busy) {
+      var busy_message = is_busy ? "Busy" : "Ready";
+      main_toolStripProgressBar.Visible = is_busy;
+      foreach (Control c in this.Controls) {
+         c.Enabled = !is_busy;
       }
+   }
 
-      main_toolStripStatusLabel.Text = message ?? busy_message;
+   private CancellationTokenSource _cts = new();
 
-      //if (main_toolStripStatusLabel.Text.Length < 10)
-      //Enabled                           = !isBusy;
+   private void Set_status_bar(string message, TimeSpan? timeout = null) {
+      // Cancel the previous timeout task if it exists
+      _cts.Cancel();
+      _cts = new CancellationTokenSource();
 
-      if (timeout is not null)
-         Task.Delay(timeout.Value)
-            .ContinueWith(_ =>
-               main_toolStripStatusLabel.Text = string.Empty
-            );
+      main_toolStripStatusLabel.Text = message;
+
+      if (timeout is null)
+         return;
+
+      var token = _cts.Token;
+
+      Task.Delay(timeout.Value, token)
+         .ContinueWith(_ => {
+            if (!token.IsCancellationRequested)
+               main_toolStripStatusLabel.Text = string.Empty;
+         }, TaskContinuationOptions.OnlyOnRanToCompletion);
    }
 
    private void ResetUI() {
