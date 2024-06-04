@@ -638,7 +638,7 @@ public partial class WinGPT_Form : Form {
          .UseSmartyPants()
          //.Use<AngleBracketEscapeExtension>()
          .DisableHtml()
-         .UsePrism()
+         //.UsePrism()
          .UseSoftlineBreakAsHardlineBreak()
          //.UseCodeBlockTextReplace()
          .Build();
