@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using Markdig;
+using Markdig.Prism;
 //using Markdig.SyntaxHighlighting;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
@@ -637,7 +638,7 @@ public partial class WinGPT_Form : Form {
          .UseSmartyPants()
          //.Use<AngleBracketEscapeExtension>()
          .DisableHtml()
-         //.UsePrism()
+         .UsePrism()
          .UseSoftlineBreakAsHardlineBreak()
          //.UseCodeBlockTextReplace()
          .Build();
