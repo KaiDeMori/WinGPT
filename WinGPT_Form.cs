@@ -1,9 +1,7 @@
-using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using Markdig;
-using Markdig.Prism;
 //using Markdig.SyntaxHighlighting;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
@@ -12,8 +10,6 @@ using WinGPT.OpenAI;
 using WinGPT.OpenAI.Chat;
 using WinGPT.Taxonomy;
 using WinGPT.Tokenizer;
-using Message = WinGPT.OpenAI.Chat.Message;
-using Timer = System.Windows.Forms.Timer;
 
 namespace WinGPT;
 
@@ -26,7 +22,7 @@ public partial class WinGPT_Form : Form {
 
    private readonly BindingList<AssociatedFile> Associated_files = new();
 
-   private int treeview_width;
+   //private int treeview_width;
    private int main_splitter_position;
    private int prompt_splitter_distance;
 
@@ -900,6 +896,10 @@ public partial class WinGPT_Form : Form {
       var text_splitter_total_width  = text_splitContainer.Width;
       var text_splitter_abs_position = (int) (text_splitter_total_width * Config.Active.TextSplitter_relative_position);
       text_splitContainer.SplitterDistance = text_splitter_abs_position;
+
+      conversation_history_treeView.Visible = Config.Active.conversation_history_visible;
+      if (Config.Active.conversation_history_visible)
+         main_splitter.SplitPosition = treeview_absolute_width;
    }
 
    #endregion
@@ -1024,15 +1024,17 @@ public partial class WinGPT_Form : Form {
 
    private void main_splitter_MouseDoubleClick(object sender, MouseEventArgs e) {
       if (conversation_history_treeView.Visible) {
-         treeview_width                        = conversation_history_treeView.Width;
-         main_splitter_position                = main_splitter.SplitPosition;
-         conversation_history_treeView.Visible = false;
+         Config.Active.conversation_history_visible_width = conversation_history_treeView.Width;
+         main_splitter_position                           = main_splitter.SplitPosition;
+         conversation_history_treeView.Visible            = false;
       }
       else {
          conversation_history_treeView.Visible = true;
-         conversation_history_treeView.Width   = treeview_width;
+         conversation_history_treeView.Width   = Config.Active.conversation_history_visible_width;
          main_splitter.SplitPosition           = main_splitter_position;
       }
+
+      Config.Active.conversation_history_visible = conversation_history_treeView.Visible;
    }
 
    private void text_splitContainer_MouseDoubleClick(object sender, MouseEventArgs e) {
