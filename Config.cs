@@ -52,12 +52,14 @@ public class Config {
 
    public string? Base_Directory  { get; set; }
    public string  OpenAI_API_Key  { get; set; } = "";
-   public string  Language_Model  { get; set; } = "gpt-4-1106-preview";
+   public string  Language_Model  { get; set; } = "gpt-4o";
    public string  Last_Used_Tulpa { get; set; } = DefaultAssistant_Filename;
 
-   public double            MainSplitter_relative_position { get; set; } = .2;
-   public double            TextSplitter_relative_position { get; set; } = .5;
-   public WindowParameters? WindowParameters               { get; set; }
+   public bool              conversation_history_visible       { get; set; } = true;
+   public int               conversation_history_visible_width { get; set; } = 100;
+   public double            MainSplitter_relative_position     { get; set; } = .2;
+   public double            TextSplitter_relative_position     { get; set; } = .5;
+   public WindowParameters? WindowParameters                   { get; set; }
 
 
    static Config() {
