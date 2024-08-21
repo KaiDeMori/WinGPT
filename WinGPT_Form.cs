@@ -426,6 +426,23 @@ public partial class WinGPT_Form : Form {
    private void new_conversation_button_Click(object sender, EventArgs e) {
       Debug.WriteLine("new_conversation_button_Click");
       //save first
+      string prompt = prompt_textBox.Text;
+      if (!string.IsNullOrEmpty(prompt)) {
+         Complex_Message user_message = new() {
+            role = Role.user,
+            content = [
+               new text_content_part {
+                  text = prompt
+               }
+            ]
+         };
+
+         if (Conversation.Active == null)
+            Conversation.Create_Conversation(user_message, Config.Active_Tulpa);
+         else
+            Conversation.Active.Messages.Add(user_message);
+      }
+
       if (Conversation.Active != null)
          Conversation.Active.Save();
       conversation_history_treeView.SelectedNode = null;
