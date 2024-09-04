@@ -27,7 +27,7 @@ public class Config_UIable {
    [DisplayName("Taxonomy Model")]
    [Description("The ID of the model used by the Taxonomer.")]
    public string Taxonomy_Model { get; set; } = "gpt-3.5-turbo-16k";
-    
+
    [Category("Features")]
    [DisplayName("Auto-Save")]
    [Description("Automatically saves the conversation.")]
@@ -77,6 +77,11 @@ public class Config_UIable {
    [DisplayName("Auto Scale Mode")]
    [Description("Sets the AutoScaleMode. Needs app restart!")]
    public AutoScaleMode Auto_Scale_Mode { get; set; } = AutoScaleMode.Font;
+
+   [Category("Experimental")]
+   [DisplayName("Math rendering")]
+   [Description("Uses MathJax and a custom prompt to create beautiful formulas!")]
+   public bool Math_Rendering { get; set; } = true;
 
    /// <summary>
    /// This is the interval used for the tokenizer call in milliseconds.

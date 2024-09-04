@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Text;
 using Newtonsoft.Json;
+using WinGPT.markf278digger;
 using WinGPT.OpenAI;
 using WinGPT.OpenAI.Chat;
 using WinGPT.Taxonomy;
@@ -91,7 +92,10 @@ public class Tulpa : InterTulpa {
 
       //not a function! just a pre-prompt for markf278down
       if (Config.Active.UIable.Use_Save_Via_Link)
-         add_save_link_preprompt(tuned_up_system_message_content);
+         spice_up_system_message("Filetransfer/save_link_system_message.md", tuned_up_system_message_content);
+
+      if (Config.Active.UIable.Math_Rendering)
+         spice_up_system_message("markf278digger/math_render_block_system_message.md", tuned_up_system_message_content);
 
       // "Upload"
       add_associated_files_to_system_message(associated_files, tuned_up_system_message_content);
@@ -282,8 +286,8 @@ public class Tulpa : InterTulpa {
       return response_message;
    }
 
-   private static void add_save_link_preprompt(StringBuilder tuned_up_system_message_content) {
-      var system_message = System.IO.File.ReadAllText("Filetransfer/save_link_system_message.md");
+   private void spice_up_system_message(string text_file, StringBuilder tuned_up_system_message_content) {
+      var system_message = System.IO.File.ReadAllText(text_file);
       tuned_up_system_message_content.AppendLine(Tools.nl);
       tuned_up_system_message_content.AppendLine(system_message);
       tuned_up_system_message_content.AppendLine(Tools.nl);

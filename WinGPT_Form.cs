@@ -2,10 +2,13 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using Markdig;
+using Markdig.Prism;
 //using Markdig.SyntaxHighlighting;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
 using Newtonsoft.Json.Linq;
+using WinGPT.MarkDig_Extensions;
+using WinGPT.markf278digger;
 using WinGPT.OpenAI;
 using WinGPT.OpenAI.Chat;
 using WinGPT.Taxonomy;
@@ -623,7 +626,7 @@ public partial class WinGPT_Form : Form {
          show_conversation_info();
       }
 
-      Show_markf278down();
+      Markf278DownHelper.Show_markf278down(this);
 
       busy(false);
 
@@ -634,43 +637,6 @@ public partial class WinGPT_Form : Form {
       tulpa.update_token_count();
       Set_Tulpa_TextBox(tulpa);
       SetActiveTulpaAndSaveConversation(tulpa);
-   }
-
-   private void Show_markf278down() {
-      if (Conversation.Active == null)
-         throw new Exception("No active conversation!");
-      var conversation = Conversation.Active;
-      var markf278down = conversation.Create_markf278down();
-      response_textBox.Text = markf278down;
-
-      //now we want to use markdig to transform the messages to html
-      var pipeline = new MarkdownPipelineBuilder()
-         .UseAdvancedExtensions()
-         .UseEmojiAndSmiley()
-         .UseEmphasisExtras()
-         .UseSmartyPants()
-         //.Use<AngleBracketEscapeExtension>()
-         .DisableHtml()
-         //.UsePrism()
-         .UseSoftlineBreakAsHardlineBreak()
-         //.UseCodeBlockTextReplace()
-         .Build();
-      //.UseSyntaxHighlighting()
-      //.UseTaskLists()
-      //.UseTypographer()
-      //.Configure("typographer")
-
-      //double all line endings in the markdown
-      //var markf278down_doubled = markf278down.Replace("\r\n", "\r\n\r\n");
-
-      var html_fragment = Markdown.ToHtml(markf278down, pipeline);
-      var htmlFromFile  = Template_Engine.CreateFullHtml_FromFile(html_fragment);
-
-      //DRAGONS be gone!
-      if (Debugger.IsAttached)
-         File.WriteAllText("PAGE.HTML", htmlFromFile);
-
-      webView21.NavigateToString(htmlFromFile);
    }
 
    private void Set_Tulpa_TextBox(Tulpa tulpa) {

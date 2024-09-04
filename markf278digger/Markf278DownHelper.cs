@@ -1,6 +1,9 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
+using Markdig;
+using WinGPT.MarkDig_Extensions;
 
-namespace WinGPT;
+namespace WinGPT.markf278digger;
 
 public static class Markf278DownHelper {
    public static string create_markdown_code_block(FileInfo file) {
@@ -78,5 +81,47 @@ public static class Markf278DownHelper {
          default:
             throw new ArgumentOutOfRangeException();
       }
+   }
+
+   private static readonly MarkdownPipeline pipeline;
+
+   static Markf278DownHelper() {
+      pipeline = new MarkdownPipelineBuilder()
+         .UseAdvancedExtensions()
+         .UseEmojiAndSmiley()
+         .UseEmphasisExtras()
+         .UseSmartyPants()
+         .DisableHtml()
+         .UseSoftlineBreakAsHardlineBreak()
+         //.UsePrism()
+         //.Use<AngleBracketEscapeExtension>()
+         //.UseMathematics()
+         .UseCodeBlockTextReplace()
+         .Build();
+      //.UseSyntaxHighlighting()
+      //.UseTaskLists()
+      //.UseTypographer()
+      //.Configure("typographer") 
+   }
+
+   public static void Show_markf278down(WinGPT_Form form) {
+      if (Conversation.Active == null)
+         throw new Exception("No active conversation!");
+      var conversation = Conversation.Active;
+      var markf278down = conversation.Create_markf278down();
+      form.response_textBox.Text = markf278down;
+
+      //double all line endings in the markdown
+      //var markf278down_doubled = markf278down.Replace("\r\n", "\r\n\r\n");
+
+      //now we want to use markdig to transform the messages to html
+      var html_fragment = Markdown.ToHtml(markf278down, pipeline);
+      var htmlFromFile  = Template_Engine.CreateFullHtml_FromFile(html_fragment);
+
+      //DRAGONS be gone!
+      if (Debugger.IsAttached)
+         File.WriteAllText("PAGE.HTML", htmlFromFile);
+
+      form.webView21.NavigateToString(htmlFromFile);
    }
 }

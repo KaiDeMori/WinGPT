@@ -1,7 +1,8 @@
 ﻿using Markdig;
 using Markdig.Renderers;
 using Markdig.Renderers.Html;
-using Markdig.Syntax;
+
+namespace WinGPT.MarkDig_Extensions;
 
 public class CodeBlockTextReplaceExtension : IMarkdownExtension {
    public void Setup(MarkdownPipelineBuilder pipeline) {
@@ -18,20 +19,5 @@ public class CodeBlockTextReplaceExtension : IMarkdownExtension {
 
          htmlRenderer.ObjectRenderers.Add(new CustomCodeBlockRenderer());
       }
-   }
-}
-
-public class CustomCodeBlockRenderer : HtmlObjectRenderer<CodeBlock> {
-   protected override void Write(HtmlRenderer renderer, CodeBlock obj) {
-      // Assuming the text to be replaced is "TODO" with "REPLACED"
-      var replacedContent = obj.Lines.ToString().Replace("\n\n", "\n");
-      renderer.Write("<pre><code  class=\"language-csharp\">").Write(replacedContent).Write("</code></pre>");
-   }
-}
-
-public static class MarkdownBuilderExtensions {
-   public static MarkdownPipelineBuilder UseCodeBlockTextReplace(this MarkdownPipelineBuilder pipeline) {
-      pipeline.Extensions.Add(new CodeBlockTextReplaceExtension());
-      return pipeline;
    }
 }

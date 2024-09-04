@@ -119,14 +119,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Autoupdater.NET.Official" Version="1.8.6" />
+		<PackageReference Include="Autoupdater.NET.Official" Version="1.9.2" />
 		<PackageReference Include="Markdig" Version="0.37.0" />
 		<PackageReference Include="Microsoft.DeepDev.TokenizerLib" Version="1.3.3" />
-		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2535.41" />
+		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2739.15" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.16" />
+		<PackageReference Include="Newtonsoft.Json.Schema" Version="4.0.1" />
 		<PackageReference Include="Ookii.Dialogs.WinForms" Version="4.0.0" />
-		<PackageReference Include="Tiktoken" Version="2.0.2" />
+		<PackageReference Include="Tiktoken" Version="2.0.3" />
 		<PackageReference Include="WebStoating.Markdig.Prism" Version="1.0.0" />
 	</ItemGroup>
 
@@ -162,6 +162,9 @@
 		<None Update="Filetransfer\saveFile_system_message.md">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<None Update="markf278digger\math_render_block_system_message.md">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="OpenAI\ErrorCodes.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
@@ -192,6 +195,9 @@
 		<None Update="webstuffs\index_template.html">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<None Update="webstuffs\MathJax_tex-mml-chtml.js">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="webstuffs\my.css">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
@@ -212,6 +218,12 @@
 		</None>
 		<None Update="webstuffs\prism_fancy.js">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="webstuffs\prism_kai.css">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="webstuffs\prism_kai.js">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 
