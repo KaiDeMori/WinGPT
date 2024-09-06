@@ -847,10 +847,12 @@ public partial class WinGPT_Form : Form {
    /// This saves the relative position of the splitters.
    /// </summary>
    private void save_splitter_state() {
-      var main_panel_absolute_width = main_panel.Width;
-      var treeview_absolute_width   = conversation_history_treeView.Width;
-      var treeview_relative_width   = (double) treeview_absolute_width / main_panel_absolute_width;
-      Config.Active.MainSplitter_relative_position = treeview_relative_width;
+      if (Config.Active.conversation_history_visible) {
+         var main_panel_absolute_width = main_panel.Width;
+         var treeview_absolute_width   = conversation_history_treeView.Width;
+         var treeview_relative_width   = (double) treeview_absolute_width / main_panel_absolute_width;
+         Config.Active.MainSplitter_relative_position = treeview_relative_width;
+      }
 
       var text_splitter_total_width  = text_splitContainer.Width;
       var text_splitter_abs_position = text_splitContainer.SplitterDistance;
@@ -862,6 +864,8 @@ public partial class WinGPT_Form : Form {
    /// This sets the relative position of the splitters.
    /// </summary>
    private void set_splitter_state() {
+      conversation_history_treeView.Visible = Config.Active.conversation_history_visible;
+
       //check if Config.Active.MainSplitter_relative_position is between 0 and 1
       //if not, set it to 0.2
       if (Config.Active.MainSplitter_relative_position < 0 || Config.Active.MainSplitter_relative_position > 1)
@@ -872,17 +876,18 @@ public partial class WinGPT_Form : Form {
       if (Config.Active.TextSplitter_relative_position < 0 || Config.Active.TextSplitter_relative_position > 1)
          Config.Active.TextSplitter_relative_position = 0.5;
 
-      var main_panel_absolute_width = main_panel.Width;
-      var treeview_absolute_width   = (int) (main_panel_absolute_width * Config.Active.MainSplitter_relative_position);
-      conversation_history_treeView.Width = treeview_absolute_width;
 
       var text_splitter_total_width  = text_splitContainer.Width;
       var text_splitter_abs_position = (int) (text_splitter_total_width * Config.Active.TextSplitter_relative_position);
       text_splitContainer.SplitterDistance = text_splitter_abs_position;
 
-      conversation_history_treeView.Visible = Config.Active.conversation_history_visible;
-      if (Config.Active.conversation_history_visible)
-         main_splitter.SplitPosition = treeview_absolute_width;
+      var main_panel_absolute_width = main_panel.Width;
+      var treeview_absolute_width   = (int) (main_panel_absolute_width * Config.Active.MainSplitter_relative_position);
+      main_splitter_position = treeview_absolute_width;
+      if (Config.Active.conversation_history_visible) {
+         conversation_history_treeView.Width = treeview_absolute_width;
+         main_splitter.SplitPosition         = treeview_absolute_width;
+      }
    }
 
    #endregion
