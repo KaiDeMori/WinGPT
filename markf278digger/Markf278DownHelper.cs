@@ -96,7 +96,7 @@ public static class Markf278DownHelper {
          //.UsePrism()
          //.Use<AngleBracketEscapeExtension>()
          //.UseMathematics()
-         .UseCodeBlockTextReplace()
+         //.UseCodeBlockTextReplace()
          .Build();
       //.UseSyntaxHighlighting()
       //.UseTaskLists()
