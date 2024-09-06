@@ -1,5 +1,17 @@
 [
   {
+    "id": "gpt-4o-mini",
+    "owned_by": "openai",
+    "context_window": 128000,
+    "is_alias": true
+  },
+  {
+    "id": "gpt-4o-mini-2024-07-18",
+    "owned_by": "openai",
+    "context_window": 128000,
+    "is_alias": true
+  },
+  {
     "id": "gpt-4o",
     "owned_by": "openai",
     "context_window": 128000,
@@ -9,7 +21,19 @@
     "id": "gpt-4o-2024-05-13",
     "owned_by": "openai",
     "context_window": 128000,
-    "is_alias": false
+    "is_alias": true
+  },
+  {
+    "id": "gpt-4o-2024-08-06",
+    "owned_by": "openai",
+    "context_window": 128000,
+    "is_alias": true
+  },
+  {
+    "id": "chatgpt-4o-latest",
+    "owned_by": "openai",
+    "context_window": 128000,
+    "is_alias": true
   },
   {
     "id": "gpt-4-turbo",
@@ -24,13 +48,13 @@
     "is_alias": false
   },
   {
-    "id": "gpt-4-0125-preview",
+    "id": "gpt-4-turbo-preview",
     "owned_by": "openai",
     "context_window": 128000,
     "is_alias": false
   },
   {
-    "id": "gpt-4-turbo-preview",
+    "id": "gpt-4-0125-preview",
     "owned_by": "openai",
     "context_window": 128000,
     "is_alias": false
@@ -106,17 +130,19 @@
     "owned_by": "openai",
     "context_window": 16385,
     "is_alias": true
-  },
-  {
-    "id": "gpt-3.5-turbo-0613",
-    "owned_by": "openai",
-    "context_window": 4096,
-    "is_alias": false
-  },
-  {
-    "id": "gpt-3.5-turbo-16k-0613",
-    "owned_by": "openai",
-    "context_window": 16385,
-    "is_alias": false
   }
+
+  // Good bye ol'turbo!
+  //{
+  //  "id": "gpt-3.5-turbo-0613",
+  //  "owned_by": "openai",
+  //  "context_window": 4096,
+  //  "is_alias": false
+  //},
+  //{
+  //  "id": "gpt-3.5-turbo-16k-0613",
+  //  "owned_by": "openai",
+  //  "context_window": 16385,
+  //  "is_alias": false
+  //}
 ]

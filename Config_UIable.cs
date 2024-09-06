@@ -26,7 +26,7 @@ public class Config_UIable {
    [Category("Features")]
    [DisplayName("Taxonomy Model")]
    [Description("The ID of the model used by the Taxonomer.")]
-   public string Taxonomy_Model { get; set; } = "gpt-3.5-turbo-16k";
+   public string Taxonomy_Model { get; set; } = "gpt-4o-mini";
 
    [Category("Features")]
    [DisplayName("Auto-Save")]
