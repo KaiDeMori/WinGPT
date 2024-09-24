@@ -48,6 +48,10 @@ internal class Custom_OpenAI_Tokenizer_Take_Three {
 
    // This method calculates the token count for messages and IFunction array based on the model
    public static int count_tokens(ImmutableList<Message> messages, Function[] functions) {
+      Model? model = Models.get_model_by_id(Config.Active.Language_Model);
+      if (model == null || model.is_preview)
+         return -1;
+
       Special_Token_Counts? special_token_counts;
 
       if (Config.Active.Language_Model.StartsWith("gpt-4"))
