@@ -35,7 +35,7 @@ public class Request {
    [JsonProperty(Order = 4, NullValueHandling = NullValueHandling.Ignore)]
    public ToolChoice? tool_choice { get; set; }
 
-   public double temperature { get; init; }
+   public double? temperature { get; init; } = null;
 
    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
    public int? max_tokens { get; init; } = Config.Active.UIable.Max_Tokens;

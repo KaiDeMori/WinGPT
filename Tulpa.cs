@@ -209,7 +209,13 @@ public class Tulpa : InterTulpa {
       ////  Pre-Production
       ///////////////////////////
 
-      Request request = Create_Multimodal_Request(user_message, conversation, associated_files);
+      Request request;
+      if (Models.get_model_by_id(Config.Active.Language_Model)!.is_preview) {
+         string text_from_usermessage = user_message.ToString_Content_Only();
+         request = Create_Preview_Request(new Simple_Message {content = text_from_usermessage}, conversation, associated_files);
+      }
+      else
+         request = Create_Multimodal_Request(user_message, conversation, associated_files);
 
       // done with Pre-Production
       /////////////////////////////
@@ -286,6 +292,63 @@ public class Tulpa : InterTulpa {
       ///////////////////
 
       return response_message;
+   }
+
+   // Very limited functionality: NO functions, NO system messages, NO associated files, NO images
+   private Request Create_Preview_Request(Simple_Message user_message, Conversation conversation, FileInfo[]? associated_files = null) {
+      // Pre-Production
+      /////////////////////////
+
+      var tulpa_messages_togo = Messages.Select(m => m.Clone()).ToList();
+      // Special case for tulpas with an example prompt
+      remove_last_user_message(tulpa_messages_togo);
+
+      var first_system_message = tulpa_messages_togo.FirstOrDefault(m => m.role == Role.system);
+
+      //for now send as "USER" message
+      Simple_Message fake_system_message = new() {
+         role    = Role.user,
+         content = first_system_message?.content ?? string.Empty
+      };
+
+      var tuned_up_fake_system_message_content = new StringBuilder();
+
+      //add the content of the old system message to the new one
+      tuned_up_fake_system_message_content.Append(fake_system_message.content);
+
+      if (Config.Active.UIable.Math_Rendering)
+         spice_up_system_message("markf278digger/math_render_block_system_message.md", tuned_up_fake_system_message_content);
+
+      // "Upload"
+      add_associated_files_to_system_message(associated_files, tuned_up_fake_system_message_content);
+
+      var system_message_content = tuned_up_fake_system_message_content.ToString();
+      //content is a list now!
+      var new_system_message = new Simple_Message() {
+         role    = Role.user,
+         content = system_message_content
+      };
+      if (!string.IsNullOrEmpty(system_message_content)) {
+         //replace the first system message with the new one, make sure its at the same position as the old one
+         tulpa_messages_togo.Remove(fake_system_message);
+         tulpa_messages_togo.Insert(Math.Max(tulpa_messages_togo.IndexOf(fake_system_message), 0), new_system_message);
+      }
+
+      // concatenate the Tulpa_Messages and the conversation messages and the new prompt as a user message.
+      List<Message> all_messages = [
+         .. tulpa_messages_togo,
+         .. conversation.Messages,
+         user_message
+      ];
+
+      var all_immutable = all_messages.ToImmutableList();
+
+      Request request = new() {
+         messages = all_immutable,
+         model    = Config.Active.Language_Model,
+      };
+
+      return request;
    }
 
    private void spice_up_system_message(string text_file, StringBuilder tuned_up_system_message_content) {

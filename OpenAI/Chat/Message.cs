@@ -6,7 +6,7 @@ namespace WinGPT.OpenAI.Chat;
 
 public abstract class Message {
    [JsonProperty(Order = 1)]
-   public Role role { get; set; }
+   public Role role { get; set; } = Role.user;
 
    public object content { get; set; } = new();
 
@@ -103,7 +103,7 @@ public class Complex_Message : Message {
       return text;
    }
 
-   public override string? ToString_Content_Only() => string.Join("", content.OfType<text_content_part>());
+   public override string ToString_Content_Only() => string.Join("", content.OfType<text_content_part>());
 
    public override Complex_Message Clone() {
       return new Complex_Message {
