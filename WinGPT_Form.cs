@@ -504,9 +504,11 @@ public partial class WinGPT_Form : Form {
    private void conversation_name_textBox_MouseDoubleClick(object sender, MouseEventArgs e) {
       // Disable the textbox
       history_file_name_textBox.Enabled = false;
-      if (Conversation.Active == null) {
+      if (Conversation.Active == null)
          return;
-      }
+
+      if (!string.IsNullOrEmpty(prompt_textBox.Text))
+         previous_prompt = prompt_textBox.Text;
 
       // Run the task
       ((Task) Task.Run(() =>
@@ -708,6 +710,8 @@ public partial class WinGPT_Form : Form {
       response_input_token_count_label.Text  = string.Empty;
       response_output_token_count_label.Text = string.Empty;
       response_total_token_count_label.Text  = string.Empty;
+      if (!string.IsNullOrEmpty(previous_prompt))
+         prompt_textBox.Text = previous_prompt;
       prompt_textBox.Focus();
    }
 

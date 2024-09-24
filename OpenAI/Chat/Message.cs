@@ -20,6 +20,12 @@ public abstract class Message {
    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
    public FunctionCall? function_call { get; init; }
 
+   /// <summary>
+   /// Controls which (if any) tool is called by the model.
+   /// Tx only.
+   /// </summary>
+   public Tool_Choices? tool_choice { get; set; } = null!;
+
    // Make Clone method virtual to allow overriding in derived classes
    public virtual Message Clone() {
       var clone = (Message) MemberwiseClone();
@@ -154,4 +160,10 @@ public class image_content_part : content_part {
 
 public class image_url {
    public string url { get; set; }
+}
+
+public enum Tool_Choices {
+   none,
+   auto,
+   required
 }

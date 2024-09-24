@@ -1,4 +1,28 @@
 [
+  //{
+  //  "id": "o1-preview",
+  //  "owned_by": "openai",
+  //  "context_window": 128000,
+  //  "is_alias": true
+  //},
+  //{
+  //  "id": "o1-preview-2024-09-12",
+  //  "owned_by": "openai",
+  //  "context_window": 128000,
+  //  "is_alias": false
+  //},
+  //{
+  //  "id": "o1-mini",
+  //  "owned_by": "openai",
+  //  "context_window": 128000,
+  //  "is_alias": true
+  //},
+  //{
+  //  "id": "o1-mini-2024-09-12",
+  //  "owned_by": "openai",
+  //  "context_window": 128000,
+  //  "is_alias": false
+  //},
   {
     "id": "gpt-4o-mini",
     "owned_by": "openai",

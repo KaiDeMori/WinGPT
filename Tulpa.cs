@@ -248,12 +248,14 @@ public class Tulpa : InterTulpa {
       //   .ToArray();
       //and wrong *again*! *Of course* the AI can answer with a function call **and** content in the same message.
 
-      FunctionCall? function_call = zeroth_Choice.message.function_call;
+      //FunctionCall? function_call = zeroth_Choice.message.function_call;
+
+      Tool_Call.Function? function_call = zeroth_Choice.message.tool_calls?.FirstOrDefault()?.function;
 
       if (function_call is not null) {
          //Also the docs are vague about the finish reason, so let's check that too
          var finish_reason = zeroth_Choice.finish_reason;
-         if (finish_reason != Finish_Reason.function_call) {
+         if (finish_reason != Finish_Reason.tool_calls) {
             MessageBox.Show($"The API returned a finish reason: {finish_reason}.\r\nWhat's going on here?!", "?!?!?!1?", MessageBoxButtons.YesNoCancel,
                MessageBoxIcon.Question);
          }
