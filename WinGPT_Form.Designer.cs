@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            TreeNode treeNode1 = new TreeNode("Node2");
-            TreeNode treeNode2 = new TreeNode("Chat1", new TreeNode[] { treeNode1 });
-            TreeNode treeNode3 = new TreeNode("Node3");
-            TreeNode treeNode4 = new TreeNode("Node4");
-            TreeNode treeNode5 = new TreeNode("Conversation History Root", new TreeNode[] { treeNode2, treeNode3, treeNode4 });
+            TreeNode treeNode6 = new TreeNode("Node2");
+            TreeNode treeNode7 = new TreeNode("Chat1", new TreeNode[] { treeNode6 });
+            TreeNode treeNode8 = new TreeNode("Node3");
+            TreeNode treeNode9 = new TreeNode("Node4");
+            TreeNode treeNode10 = new TreeNode("Conversation History Root", new TreeNode[] { treeNode7, treeNode8, treeNode9 });
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WinGPT_Form));
             main_toolTip = new ToolTip(components);
             associated_files_token_sum_label = new Label();
@@ -171,7 +171,7 @@
             response_input_token_count_label.Size = new Size(37, 15);
             response_input_token_count_label.TabIndex = 0;
             response_input_token_count_label.Text = "12345";
-            main_toolTip.SetToolTip(response_input_token_count_label, "Number of Input tokens");
+            main_toolTip.SetToolTip(response_input_token_count_label, "Input tokens (Cached Tokens) (+/-Delta)");
             // 
             // response_output_token_count_label
             // 
@@ -182,7 +182,7 @@
             response_output_token_count_label.Size = new Size(37, 15);
             response_output_token_count_label.TabIndex = 1;
             response_output_token_count_label.Text = "12345";
-            main_toolTip.SetToolTip(response_output_token_count_label, "Number of Output tokens");
+            main_toolTip.SetToolTip(response_output_token_count_label, "Output tokens (Reasoning Tokens)");
             // 
             // response_total_token_count_label
             // 
@@ -263,7 +263,7 @@
             // toggle_LEFT_button
             // 
             toggle_LEFT_button.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            toggle_LEFT_button.Font = new Font("Consolas", 6F, FontStyle.Regular, GraphicsUnit.Point);
+            toggle_LEFT_button.Font = new Font("Consolas", 6F);
             toggle_LEFT_button.Location = new Point(462, 0);
             toggle_LEFT_button.Margin = new Padding(0);
             toggle_LEFT_button.Name = "toggle_LEFT_button";
@@ -364,7 +364,7 @@
             // toggle_RIGHT_button
             // 
             toggle_RIGHT_button.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            toggle_RIGHT_button.Font = new Font("Consolas", 6F, FontStyle.Regular, GraphicsUnit.Point);
+            toggle_RIGHT_button.Font = new Font("Consolas", 6F);
             toggle_RIGHT_button.Location = new Point(-2, 0);
             toggle_RIGHT_button.Margin = new Padding(0);
             toggle_RIGHT_button.Name = "toggle_RIGHT_button";
@@ -495,17 +495,17 @@
             conversation_history_treeView.Indent = 10;
             conversation_history_treeView.Location = new Point(0, 37);
             conversation_history_treeView.Name = "conversation_history_treeView";
-            treeNode1.Name = "Node2";
-            treeNode1.Text = "Node2";
-            treeNode2.Name = "Node1";
-            treeNode2.Text = "Chat1";
-            treeNode3.Name = "Node3";
-            treeNode3.Text = "Node3";
-            treeNode4.Name = "Node4";
-            treeNode4.Text = "Node4";
-            treeNode5.Name = "RootNode";
-            treeNode5.Text = "Conversation History Root";
-            conversation_history_treeView.Nodes.AddRange(new TreeNode[] { treeNode5 });
+            treeNode6.Name = "Node2";
+            treeNode6.Text = "Node2";
+            treeNode7.Name = "Node1";
+            treeNode7.Text = "Chat1";
+            treeNode8.Name = "Node3";
+            treeNode8.Text = "Node3";
+            treeNode9.Name = "Node4";
+            treeNode9.Text = "Node4";
+            treeNode10.Name = "RootNode";
+            treeNode10.Text = "Conversation History Root";
+            conversation_history_treeView.Nodes.AddRange(new TreeNode[] { treeNode10 });
             conversation_history_treeView.PathSeparator = "/";
             conversation_history_treeView.Size = new Size(161, 316);
             conversation_history_treeView.TabIndex = 0;

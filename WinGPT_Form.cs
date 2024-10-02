@@ -393,16 +393,23 @@ public partial class WinGPT_Form : Form {
          return;
       }
 
-      int prompt_tokens     = Config.Active.Token_Counter.Last_Response_Usage.prompt_tokens;
+      var usage             = Config.Active.Token_Counter.Last_Response_Usage;
+      int prompt_tokens     = usage.prompt_tokens;
       int delta_token_count = prompt_tokens - last_calculated_request_token_count;
-      var detla_msg         = string.Empty;
-      if (delta_token_count != 0) {
-         detla_msg = $" ({delta_token_count:+#;-#;0})";
-      }
 
-      response_input_token_count_label.Text  = prompt_tokens.ToString("N0", CultureInfo.CurrentCulture) + detla_msg;
-      response_output_token_count_label.Text = Config.Active.Token_Counter.Last_Response_Usage.completion_tokens.ToString("N0", CultureInfo.CurrentCulture);
-      response_total_token_count_label.Text  = Config.Active.Token_Counter.Last_Response_Usage.total_tokens.ToString("N0", CultureInfo.CurrentCulture);
+      var response_count_string = usage.completion_tokens.ToString("N0", CultureInfo.CurrentCulture);
+      if (usage.completion_tokens_details.reasoning_tokens > 0)
+         response_count_string += $" ({usage.completion_tokens_details.reasoning_tokens:N0})";
+
+      var prompt_tokens_string = prompt_tokens.ToString("N0", CultureInfo.CurrentCulture);
+      if (usage.prompt_tokens_details.cached_tokens > 0)
+         prompt_tokens_string += $" ({usage.prompt_tokens_details.cached_tokens:N0})";
+      if (delta_token_count != 0)
+         prompt_tokens_string += $" ({delta_token_count:+#;-#;0})";
+
+      response_input_token_count_label.Text  = prompt_tokens_string;
+      response_output_token_count_label.Text = response_count_string;
+      response_total_token_count_label.Text  = usage.total_tokens.ToString("N0", CultureInfo.CurrentCulture);
 
       if (autoclear_checkBox.Checked)
          prompt_textBox.Clear();
