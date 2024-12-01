@@ -46,13 +46,19 @@
     "is_alias": true
   },
   {
-    "id": "gpt-4o-2024-05-13",
+    "id": "gpt-4o-2024-11-20",
     "owned_by": "openai",
     "context_window": 128000,
     "is_alias": false
   },
   {
     "id": "gpt-4o-2024-08-06",
+    "owned_by": "openai",
+    "context_window": 128000,
+    "is_alias": false
+  },
+  {
+    "id": "gpt-4o-2024-05-13",
     "owned_by": "openai",
     "context_window": 128000,
     "is_alias": false

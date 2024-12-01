@@ -319,10 +319,15 @@ public partial class WinGPT_Form : Form {
       );
 
       var functions = request.tools?.Select(t => t.function).ToArray() ?? [];
-      var total_request_token_count =
-         Custom_OpenAI_Tokenizer_Take_Three.count_tokens(request.messages, functions);
-      last_calculated_request_token_count  = total_request_token_count;
-      total_request_token_count_label.Text = total_request_token_count.ToString("N0", CultureInfo.CurrentCulture);
+      try {
+         var total_request_token_count =
+            Custom_OpenAI_Tokenizer_Take_Three.count_tokens(request.messages, functions);
+         last_calculated_request_token_count  = total_request_token_count;
+         total_request_token_count_label.Text = total_request_token_count.ToString("N0", CultureInfo.CurrentCulture);
+      }
+      catch (Exception e) {
+         MessageBox.Show(e.Message, "Tokens could not be counted.", MessageBoxButtons.OK);
+      }
 
       check_context_window();
    }
