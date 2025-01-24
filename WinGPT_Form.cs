@@ -1171,7 +1171,7 @@ public partial class WinGPT_Form : Form {
    private void checkModelsToolStripMenuItem_Click(object sender, EventArgs e) {
       var available_models = Models.get_available_models_for_api_key();
 
-      var message     = available_models.Aggregate("Available models:\r\n", (current, model) => current + $"{model}\r\n");
+      var message     = available_models.Order().Aggregate("Available models:\r\n", (current, model) => current + $"{model}\r\n");
       var models_file = Path.Join(Config.AdHoc_Downloads_Path.FullName, Config.models_text_filename);
       File.WriteAllText(models_file, message);
       MessageBox.Show($"Available models written to\r\n{models_file}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);

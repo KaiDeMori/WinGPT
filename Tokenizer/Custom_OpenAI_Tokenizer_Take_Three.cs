@@ -52,6 +52,9 @@ internal class Custom_OpenAI_Tokenizer_Take_Three {
       if (model == null || model.is_preview)
          return -1;
 
+      if (model.id.StartsWith("o1"))
+         return -1;
+
       Special_Token_Counts? special_token_counts;
 
       if (Config.Active.Language_Model.StartsWith("gpt-4"))

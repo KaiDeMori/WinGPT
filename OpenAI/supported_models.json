@@ -1,5 +1,19 @@
 [
   {
+    "id": "o1",
+    "owned_by": "openai",
+    "context_window": 200000,
+    "is_alias": true,
+    "is_preview": false
+  },
+  {
+    "id": "o1-2024-12-17",
+    "owned_by": "openai",
+    "context_window": 200000,
+    "is_alias": false,
+    "is_preview": false
+  },
+  {
     "id": "o1-preview",
     "owned_by": "openai",
     "context_window": 128000,
