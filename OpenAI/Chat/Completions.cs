@@ -18,12 +18,15 @@ public class Completions {
    };
 
    public static async Task<Response?> POST_Async(Request request) {
+      //quick and very dirty hack for the reasoning models.
+      if (request.model.StartsWith("o1")) {
+         //we need to remove temperature from the request
+         request.temperature      = null;
+         request.reasoning_effort = Config.Active.UIable.reasoning_effort;
+      }
+
       string request_content_json = JsonConvert.SerializeObject(request, Formatting.None, JSON_Serializer_Settings);
-
       File.WriteAllText("_request.json", request_content_json);
-
-      //replace all "system" by "System" -> Bad Request
-      //jsonRequest = jsonRequest.Replace("\"system\"", "\"System\"");
 
       Response? response;
 
@@ -74,20 +77,13 @@ public class Completions {
    }
 
    private static void handle_Error_Response(HttpResponseMessage responseMessage) {
-      var         statusCode = responseMessage.StatusCode;
-      ErrorCode[] errorCodes = ErrorCodes.FromDocumentation;
-      //we need to find the error code that matches the status code
-      ErrorCode? errorCode = errorCodes.FirstOrDefault(errorCode => errorCode.Code == (int) statusCode);
-      if (errorCode != null) {
-         //we found a matching error code
-         show_known_errormessage(errorCode);
-         //MessageBox.Show($"{errorCode.Overview.Cause}\r\n{errorCode.Overview.Solution}", $"Error {errorCode.Code}: {errorCode.Name}", MessageBoxButtons.OK);
-      }
-      else {
-         //we did not find a matching error code
-         MessageBox.Show($"Code: {(int) responseMessage.StatusCode}\r\n{responseMessage.ReasonPhrase}", responseMessage.StatusCode.ToString(),
-            MessageBoxButtons.OK);
-      }
+      //get the content of the response as string synchronously
+      var json_content = responseMessage.Content.ReadAsStringAsync().Result;
+      var content      = make_json_human_readable(json_content);
+      var statusCode   = responseMessage.StatusCode;
+
+      //show the error message
+      MessageBox.Show($"{content}", $"{statusCode}", MessageBoxButtons.OK, MessageBoxIcon.Error);
    }
 
    private static void show_known_errormessage(ErrorCode errorCode) {

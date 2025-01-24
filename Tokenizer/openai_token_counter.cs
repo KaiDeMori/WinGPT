@@ -21,7 +21,7 @@ public static class openai_token_counter {
       int tokens = 0;
       foreach (var message in messages) {
          var messageCopy = message.Clone();
-         if (messageCopy.role == Role.system && tools.Any() && !paddedSystem) {
+         if (messageCopy.role == Role.developer && tools.Any() && !paddedSystem) {
             //foreach (var content in messageCopy.content) {
             //   if (content is Message.text_content_part textContent) {
             //      textContent.text += "\n";
@@ -53,7 +53,7 @@ public static class openai_token_counter {
          tokens += estimate_tokens_in_functions(tools.Select(t => t.function), count_tokens);
 
       // If there's a system message and functions are present, subtract four tokens
-      if (tools.Any() && messages.Any(m => m.role == Role.system))
+      if (tools.Any() && messages.Any(m => m.role == Role.developer))
          tokens -= 4;
 
       // Corrected handling of functionCall

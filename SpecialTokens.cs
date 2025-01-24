@@ -30,7 +30,7 @@ internal class SpecialTokens {
    /// A Hashmap to map the SpecialTokens to the Role enum
    /// </summary>
    public static readonly Dictionary<string, Role> To_API_Role = new() {
-      {System, Role.system},
+      {System, Role.developer},
       {User, Role.user},
       {Assistant, Role.assistant},
       {Function, Role.function},

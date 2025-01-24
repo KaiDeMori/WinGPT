@@ -81,7 +81,7 @@ public class Tulpa : InterTulpa {
 
       //DRAGONS not sure if we want to do this always
       //get the first system message or create a new one
-      var first_system_message = tulpa_messages_togo.FirstOrDefault(m => m.role == Role.system) ?? new Simple_Message {role = Role.system};
+      var first_system_message = tulpa_messages_togo.FirstOrDefault(m => m.role == Role.developer) ?? new Simple_Message {role = Role.developer};
 
       //It's a StringBuilder. You can append to it. What do expect?
       //Just don't enumerate it.
@@ -103,7 +103,7 @@ public class Tulpa : InterTulpa {
       var system_message_content = tuned_up_system_message_content.ToString();
       //content is a list now!
       var new_system_message = new Simple_Message() {
-         role    = Role.system,
+         role    = Role.developer,
          content = system_message_content
       };
       if (!string.IsNullOrEmpty(system_message_content)) {
@@ -303,7 +303,7 @@ public class Tulpa : InterTulpa {
       // Special case for tulpas with an example prompt
       remove_last_user_message(tulpa_messages_togo);
 
-      var first_system_message = tulpa_messages_togo.FirstOrDefault(m => m.role == Role.system);
+      var first_system_message = tulpa_messages_togo.FirstOrDefault(m => m.role == Role.developer);
 
       //for now send as "USER" message
       Simple_Message fake_system_message = new() {

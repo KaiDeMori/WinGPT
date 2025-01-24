@@ -3,6 +3,8 @@ using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Text;
+using Newtonsoft.Json.Linq;
 using WinGPT.OpenAI;
 using WinGPT.OpenAI.Chat;
 
@@ -199,5 +201,50 @@ public static class Tools {
          UseShellExecute = true
       };
       Process.Start(psi);
+   }
+
+
+   public static string make_json_human_readable(string json_content) {
+      // Parse the JSON content into a JObject
+      var jsonObject = JsonConvert.DeserializeObject<JObject>(json_content);
+
+      // Initialize a StringBuilder to construct the human-readable string
+      var result = new StringBuilder();
+
+      if (jsonObject == null)
+         return result.ToString();
+
+      // Recursive function to process JSON tokens
+      void process_token(JToken token) {
+         switch (token.Type) {
+            case JTokenType.Object:
+               foreach (var property in token.Children<JProperty>()) {
+                  if (property.Value.Type == JTokenType.Object || property.Value.Type == JTokenType.Array) {
+                     result.AppendLine(property.Name);
+                     process_token(property.Value);
+                  }
+                  else {
+                     result.AppendLine($"{property.Name}: {property.Value}");
+                  }
+               }
+
+               break;
+            case JTokenType.Array:
+               foreach (var item in token.Children()) {
+                  process_token(item);
+               }
+
+               break;
+            default:
+               result.AppendLine(token.ToString());
+               break;
+         }
+      }
+
+      // Start processing the root object
+      process_token(jsonObject);
+
+      // Return the constructed string
+      return result.ToString();
    }
 }

@@ -54,7 +54,7 @@ public static class Taxonomer {
          //new Message(role: Role.system, content: sysmsg) //old code
          //now content is a list of content_parts
          new Simple_Message {
-            role    = Role.system,
+            role    = Role.developer,
             content = sysmsg
          },
          .. conversation_text_messages,

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Drawing.Design;
+using WinGPT.OpenAI.Chat;
 
 namespace WinGPT;
 
@@ -90,6 +91,13 @@ public class Config_UIable {
    [DisplayName("Interval for Token-Counting and Auto-Save. [ms]")]
    [Description("After this time of inactivity, the token-counting and auto-save will be triggered.")]
    public int prompt_actions_timer_interval { get; set; } = 2000;
+
+   [Category("o1 / Reasoning Models")]
+   [DisplayName("Reasoning Effort")]
+   [Description(
+      "Constrains effort on reasoning for reasoning models. Currently supported values are low, medium, and high. Reducing reasoning effort can result in faster responses and fewer tokens used on reasoning in a response.")]
+
+   public reasoning_effort reasoning_effort { get; set; } = reasoning_effort.medium;
 }
 
 /// <summary>

@@ -8,7 +8,7 @@ namespace WinGPT;
 /// </summary>
 [JsonConverter(typeof(StringEnumConverter))]
 public enum Role {
-   system,
+   developer,
    user,
    assistant,
    function,
@@ -16,7 +16,7 @@ public enum Role {
 
 public static class RoleHelper {
    public static readonly BiDictionary<Role, string> RoleTokenBiDictionary = new() {
-      {Role.system, SpecialTokens.System},
+      {Role.developer, SpecialTokens.System},
       {Role.user, SpecialTokens.User},
       {Role.assistant, SpecialTokens.Assistant},
       {Role.function, SpecialTokens.Function},

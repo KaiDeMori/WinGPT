@@ -37,14 +37,14 @@ internal class QuickTulpaTest {
 
    public static Tulpa ParseMessages(string content) {
       var specialTokens = new Dictionary<string, Role> {
-         {SpecialTokens.System, Role.system},
+         {SpecialTokens.System, Role.developer},
          {SpecialTokens.User, Role.user},
          {SpecialTokens.Assistant, Role.assistant},
          {SpecialTokens.Function, Role.function},
       };
 
       var contentMemory = content.AsMemory();
-      var currentRole   = Role.system; // Default role.
+      var currentRole   = Role.developer; // Default role.
       var messageStart  = 0;
       var messages      = new List<Simple_Message>();
 

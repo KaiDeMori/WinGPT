@@ -6,7 +6,7 @@ namespace WinGPT;
 
 public static class TulpaParser {
    public static Dictionary<string, Role> Special_Tokens = new() {
-      {SpecialTokens.System, Role.system},
+      {SpecialTokens.System, Role.developer},
       {SpecialTokens.User, Role.user},
       {SpecialTokens.Assistant, Role.assistant},
       {SpecialTokens.Function, Role.function}
@@ -14,7 +14,7 @@ public static class TulpaParser {
 
    public static bool TryParse(string content, FileInfo file, [MaybeNullWhen(false)] out Tulpa tulpa) {
       var content_memory = content.AsMemory();
-      var current_role   = Role.system; // Default role.
+      var current_role   = Role.developer; // Default role.
       var message_start  = 0;
       var messages       = new List<Simple_Message>();
 

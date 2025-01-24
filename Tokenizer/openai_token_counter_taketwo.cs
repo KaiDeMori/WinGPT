@@ -19,7 +19,7 @@ public static class openai_token_counter_taketwo {
       // Count tokens in messages
       foreach (var message in messages) {
          var message_copy = message.Clone();
-         if (message_copy.role == Role.system && tools.Any() && !padded_system) {
+         if (message_copy.role == Role.developer && tools.Any() && !padded_system) {
             //append \n to all text content parts
             switch (message) {
                case Complex_Message complex_message: {
@@ -48,7 +48,7 @@ public static class openai_token_counter_taketwo {
       }
 
       // Adjust token count based on system messages and function calls
-      if (tools.Any() && messages.Any(m => m.role == Role.system)) {
+      if (tools.Any() && messages.Any(m => m.role == Role.developer)) {
          tokens -= 4; // Adjust for the system token
       }
 
