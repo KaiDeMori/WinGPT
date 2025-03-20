@@ -372,4 +372,12 @@ public class Tulpa : InterTulpa {
          string.Join("\n", Messages.Select(m => m.content)),
          Config.Active.Language_Model);
    }
+
+   public static void create_Default_Tulpa_if_none_exist() {
+      if (Config.Tulpa_Directory.GetFiles(Config.marf278down_filter).Length > 0)
+         return;
+
+      var    default_tulpa_file   = new FileInfo(Path.Join(Config.Tulpa_Directory.FullName, Config.DefaultAssistant_Filename));
+      System.IO.File.WriteAllText(default_tulpa_file.FullName, "");
+   }
 }
