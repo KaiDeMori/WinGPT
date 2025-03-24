@@ -85,6 +85,7 @@ public partial class WinGPT_Form : Form {
       open_Tulpas_Directory_ToolStripMenuItem.Image    = FolderBitmap;
       open_Base_Directory_ToolStripMenuItem.Image      = FolderBitmap;
       open_Downloads_Directory_ToolStripMenuItem.Image = FolderBitmap;
+      open_Screenshot_DirectoryToolStripMenuItem.Image = FolderBitmap;
 
       update_wingpt_ToolStripMenuItem.Enabled = false;
 

@@ -83,6 +83,7 @@
             open_AdHoc_Directory_ToolStripMenuItem = new ToolStripMenuItem();
             open_Tulpas_Directory_ToolStripMenuItem = new ToolStripMenuItem();
             open_Downloads_Directory_ToolStripMenuItem = new ToolStripMenuItem();
+            open_Screenshot_DirectoryToolStripMenuItem = new ToolStripMenuItem();
             refresh_ConversationHistory_ToolStripMenuItem = new ToolStripMenuItem();
             checkModelsToolStripMenuItem = new ToolStripMenuItem();
             help_ToolStripMenuItem = new ToolStripMenuItem();
@@ -99,7 +100,6 @@
             main_toolStripProgressBar = new ToolStripProgressBar();
             base_directory_vistaFolderBrowserDialog = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog();
             upload_vistaOpenFileDialog = new Ookii.Dialogs.WinForms.VistaOpenFileDialog();
-            open_Screenshot_DirectoryToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)text_splitContainer).BeginInit();
             text_splitContainer.Panel1.SuspendLayout();
             text_splitContainer.Panel2.SuspendLayout();
