@@ -1,6 +1,6 @@
 using System.Drawing.Imaging;
 
-namespace WinGPT; 
+namespace WinGPT;
 
 public static class ImageHelper {
    /// <summary>
@@ -9,8 +9,17 @@ public static class ImageHelper {
    /// <param name="imagePath">The path to the image file.</param>
    /// <returns>A Base64 data URL representing the image.</returns>
    public static string GetBase64DataUrl(string imagePath) {
-      using Image        image = Image.FromFile(imagePath);
-      using MemoryStream m     = new MemoryStream();
+      using Image image = Image.FromFile(imagePath);
+      return GetBase64DataUrl(image);
+   }
+
+   /// <summary>
+   /// Converts an Image to a Base64 data URL.
+   /// </summary>
+   /// <param name="image">The Image to convert.</param>
+   /// <returns>A Base64 data URL representing the image.</returns>
+   public static string GetBase64DataUrl(Image image) {
+      using MemoryStream m = new MemoryStream();
       // Save the image to the stream in PNG format
       image.Save(m, ImageFormat.Png);
 

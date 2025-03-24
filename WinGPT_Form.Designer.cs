@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            TreeNode treeNode6 = new TreeNode("Node2");
-            TreeNode treeNode7 = new TreeNode("Chat1", new TreeNode[] { treeNode6 });
-            TreeNode treeNode8 = new TreeNode("Node3");
-            TreeNode treeNode9 = new TreeNode("Node4");
-            TreeNode treeNode10 = new TreeNode("Conversation History Root", new TreeNode[] { treeNode7, treeNode8, treeNode9 });
+            TreeNode treeNode1 = new TreeNode("Node2");
+            TreeNode treeNode2 = new TreeNode("Chat1", new TreeNode[] { treeNode1 });
+            TreeNode treeNode3 = new TreeNode("Node3");
+            TreeNode treeNode4 = new TreeNode("Node4");
+            TreeNode treeNode5 = new TreeNode("Conversation History Root", new TreeNode[] { treeNode2, treeNode3, treeNode4 });
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WinGPT_Form));
             main_toolTip = new ToolTip(components);
             associated_files_token_sum_label = new Label();
@@ -89,6 +89,7 @@
             about_ToolStripMenuItem = new ToolStripMenuItem();
             goTo_WinGPT_Wiki_ToolStripMenuItem = new ToolStripMenuItem();
             update_wingpt_ToolStripMenuItem = new ToolStripMenuItem();
+            take_screenshot_ToolStripMenuItem = new ToolStripMenuItem();
             main_panel = new Panel();
             tulpas_tableLayoutPanel = new TableLayoutPanel();
             tulpas_flowLayoutPanel = new FlowLayoutPanel();
@@ -98,6 +99,7 @@
             main_toolStripProgressBar = new ToolStripProgressBar();
             base_directory_vistaFolderBrowserDialog = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog();
             upload_vistaOpenFileDialog = new Ookii.Dialogs.WinForms.VistaOpenFileDialog();
+            open_Screenshot_DirectoryToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)text_splitContainer).BeginInit();
             text_splitContainer.Panel1.SuspendLayout();
             text_splitContainer.Panel2.SuspendLayout();
@@ -495,17 +497,17 @@
             conversation_history_treeView.Indent = 10;
             conversation_history_treeView.Location = new Point(0, 37);
             conversation_history_treeView.Name = "conversation_history_treeView";
-            treeNode6.Name = "Node2";
-            treeNode6.Text = "Node2";
-            treeNode7.Name = "Node1";
-            treeNode7.Text = "Chat1";
-            treeNode8.Name = "Node3";
-            treeNode8.Text = "Node3";
-            treeNode9.Name = "Node4";
-            treeNode9.Text = "Node4";
-            treeNode10.Name = "RootNode";
-            treeNode10.Text = "Conversation History Root";
-            conversation_history_treeView.Nodes.AddRange(new TreeNode[] { treeNode10 });
+            treeNode1.Name = "Node2";
+            treeNode1.Text = "Node2";
+            treeNode2.Name = "Node1";
+            treeNode2.Text = "Chat1";
+            treeNode3.Name = "Node3";
+            treeNode3.Text = "Node3";
+            treeNode4.Name = "Node4";
+            treeNode4.Text = "Node4";
+            treeNode5.Name = "RootNode";
+            treeNode5.Text = "Conversation History Root";
+            conversation_history_treeView.Nodes.AddRange(new TreeNode[] { treeNode5 });
             conversation_history_treeView.PathSeparator = "/";
             conversation_history_treeView.Size = new Size(161, 316);
             conversation_history_treeView.TabIndex = 0;
@@ -537,7 +539,7 @@
             // 
             // main_menuStrip
             // 
-            main_menuStrip.Items.AddRange(new ToolStripItem[] { base_directory_toolStripMenuItem, settings_ToolStripMenuItem, models_ToolStripMenuItem, tools_ToolStripMenuItem, help_ToolStripMenuItem });
+            main_menuStrip.Items.AddRange(new ToolStripItem[] { base_directory_toolStripMenuItem, settings_ToolStripMenuItem, models_ToolStripMenuItem, tools_ToolStripMenuItem, take_screenshot_ToolStripMenuItem, help_ToolStripMenuItem });
             main_menuStrip.Location = new Point(0, 0);
             main_menuStrip.Name = "main_menuStrip";
             main_menuStrip.ShowItemToolTips = true;
@@ -586,7 +588,7 @@
             // 
             // tools_ToolStripMenuItem
             // 
-            tools_ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openai_api_key_toolStripMenuItem, tokenCounter_ToolStripMenuItem, sysmsghack_ToolStripMenuItem, open_Config_Directory_ToolStripMenuItem, open_AdHoc_Directory_ToolStripMenuItem, open_Tulpas_Directory_ToolStripMenuItem, open_Downloads_Directory_ToolStripMenuItem, refresh_ConversationHistory_ToolStripMenuItem, checkModelsToolStripMenuItem });
+            tools_ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openai_api_key_toolStripMenuItem, tokenCounter_ToolStripMenuItem, sysmsghack_ToolStripMenuItem, open_Config_Directory_ToolStripMenuItem, open_Downloads_Directory_ToolStripMenuItem, open_Screenshot_DirectoryToolStripMenuItem, open_AdHoc_Directory_ToolStripMenuItem, open_Tulpas_Directory_ToolStripMenuItem, refresh_ConversationHistory_ToolStripMenuItem, checkModelsToolStripMenuItem });
             tools_ToolStripMenuItem.Image = Properties.Resources.ToolWindow;
             tools_ToolStripMenuItem.Name = "tools_ToolStripMenuItem";
             tools_ToolStripMenuItem.Size = new Size(62, 20);
@@ -699,6 +701,15 @@
             update_wingpt_ToolStripMenuItem.Text = "Update";
             update_wingpt_ToolStripMenuItem.Click += update_wingpt_ToolStripMenuItem_Click;
             // 
+            // take_screenshot_ToolStripMenuItem
+            // 
+            take_screenshot_ToolStripMenuItem.Image = Properties.Resources.Camera;
+            take_screenshot_ToolStripMenuItem.Name = "take_screenshot_ToolStripMenuItem";
+            take_screenshot_ToolStripMenuItem.Size = new Size(93, 20);
+            take_screenshot_ToolStripMenuItem.Text = "Screenshot";
+            take_screenshot_ToolStripMenuItem.ToolTipText = "Take and attach a screenshot ";
+            take_screenshot_ToolStripMenuItem.Click += take_screenshot_ToolStripMenuItem_Click;
+            // 
             // main_panel
             // 
             main_panel.Controls.Add(main_splitter);
@@ -781,6 +792,14 @@
             upload_vistaOpenFileDialog.Multiselect = true;
             upload_vistaOpenFileDialog.SupportMultiDottedExtensions = true;
             upload_vistaOpenFileDialog.Title = "Choose wisely!";
+            // 
+            // open_Screenshot_DirectoryToolStripMenuItem
+            // 
+            open_Screenshot_DirectoryToolStripMenuItem.Image = Properties.Resources.FolderOpened;
+            open_Screenshot_DirectoryToolStripMenuItem.Name = "open_Screenshot_DirectoryToolStripMenuItem";
+            open_Screenshot_DirectoryToolStripMenuItem.Size = new Size(227, 22);
+            open_Screenshot_DirectoryToolStripMenuItem.Text = "Open Screenshot Directory";
+            open_Screenshot_DirectoryToolStripMenuItem.Click += open_Screenshot_DirectoryToolStripMenuItem_Click;
             // 
             // WinGPT_Form
             // 
@@ -892,5 +911,7 @@
         private  Label                                           response_total_token_count_label;
         private  ToolStripMenuItem                               models_ToolStripMenuItem;
         private  ToolStripMenuItem                               checkModelsToolStripMenuItem;
+        private ToolStripMenuItem take_screenshot_ToolStripMenuItem;
+        private ToolStripMenuItem open_Screenshot_DirectoryToolStripMenuItem;
     }
 }

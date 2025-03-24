@@ -41,6 +41,7 @@ internal static class Startup {
       CreateDirectoryIfNotExists(Config.History_Directory);
       CreateDirectoryIfNotExists(Config.Preliminary_Conversations_Path);
       CreateDirectoryIfNotExists(Config.AdHoc_Downloads_Path);
+      CreateDirectoryIfNotExists(Config.Screenshot_Directory);
 
       Tulpa.create_Default_Tulpa_if_none_exist();
 

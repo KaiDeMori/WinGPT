@@ -26,6 +26,8 @@
 		<PackageProjectUrl>https://www.peopleoftheprompt.org</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/KaiDeMori/WinGPT</RepositoryUrl>
 		<ForceDesignerDPIUnaware>true</ForceDesignerDPIUnaware>
+		<!--
+		-->
 	</PropertyGroup>
 
 	<Import Project="CustomBuild.targets" />
@@ -229,5 +231,9 @@
 
 	<ItemGroup>
 		<Folder Include="Tokenizer\lasttrythenigiveup\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\ExternalScreenshotTool\ExternalScreenshotTool.csproj" />
 	</ItemGroup>
 </Project>

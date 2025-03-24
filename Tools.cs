@@ -170,6 +170,8 @@ public static class Tools {
       return model switch {
          _ when model.Contains("vision") => true,
          //_ when model.Contains("preview")       => true,  //NOPE
+         _ when model.StartsWith("o1")      => true,
+         _ when model.StartsWith("gpt-4.5")      => true,
          _ when model.StartsWith("gpt-4o")      => true,
          _ when model.StartsWith("gpt-4-turbo") => true,
          _                                      => false

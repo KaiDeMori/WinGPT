@@ -32,6 +32,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tryGI_tokenizer_TRIALS", ".
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenAI_Tools_Trials", "..\OpenAI_Tools_Trials\OpenAI_Tools_Trials.csproj", "{0E8EFAF6-9595-42EE-9C97-98617F06AD4C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalScreenshotTool", "..\ExternalScreenshotTool\ExternalScreenshotTool.csproj", "{39AE1D93-B94B-4972-8A5B-F40C285B7AAD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -220,6 +222,22 @@ Global
 		{0E8EFAF6-9595-42EE-9C97-98617F06AD4C}.Release|x64.Build.0 = Release|Any CPU
 		{0E8EFAF6-9595-42EE-9C97-98617F06AD4C}.Release|x86.ActiveCfg = Release|Any CPU
 		{0E8EFAF6-9595-42EE-9C97-98617F06AD4C}.Release|x86.Build.0 = Release|Any CPU
+		{39AE1D93-B94B-4972-8A5B-F40C285B7AAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39AE1D93-B94B-4972-8A5B-F40C285B7AAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39AE1D93-B94B-4972-8A5B-F40C285B7AAD}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{39AE1D93-B94B-4972-8A5B-F40C285B7AAD}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{39AE1D93-B94B-4972-8A5B-F40C285B7AAD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{39AE1D93-B94B-4972-8A5B-F40C285B7AAD}.Debug|x64.Build.0 = Debug|Any CPU
+		{39AE1D93-B94B-4972-8A5B-F40C285B7AAD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{39AE1D93-B94B-4972-8A5B-F40C285B7AAD}.Debug|x86.Build.0 = Debug|Any CPU
+		{39AE1D93-B94B-4972-8A5B-F40C285B7AAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39AE1D93-B94B-4972-8A5B-F40C285B7AAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39AE1D93-B94B-4972-8A5B-F40C285B7AAD}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{39AE1D93-B94B-4972-8A5B-F40C285B7AAD}.Release|ARM64.Build.0 = Release|Any CPU
+		{39AE1D93-B94B-4972-8A5B-F40C285B7AAD}.Release|x64.ActiveCfg = Release|Any CPU
+		{39AE1D93-B94B-4972-8A5B-F40C285B7AAD}.Release|x64.Build.0 = Release|Any CPU
+		{39AE1D93-B94B-4972-8A5B-F40C285B7AAD}.Release|x86.ActiveCfg = Release|Any CPU
+		{39AE1D93-B94B-4972-8A5B-F40C285B7AAD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

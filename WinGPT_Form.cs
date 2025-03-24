@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Windows.Forms;
 using Markdig;
 using Markdig.Prism;
 //using Markdig.SyntaxHighlighting;
@@ -23,7 +24,7 @@ public partial class WinGPT_Form : Form {
 
    private readonly TaskCompletionSource<bool> stupid_edge_mumble_mumble = new();
 
-   private readonly BindingList<AssociatedFile> Associated_files = new();
+   public readonly BindingList<AssociatedFile> Associated_files = new();
 
    //private int treeview_width;
    private int main_splitter_position;
@@ -1115,6 +1116,10 @@ public partial class WinGPT_Form : Form {
       }
    }
 
+   private void open_Screenshot_DirectoryToolStripMenuItem_Click(object sender, EventArgs e) {
+      Tools.Open_in_Explorer(Config.Screenshot_Directory);
+   }
+
    private void open_AdHoc_Directory_ToolStripMenuItem_Click(object sender, EventArgs e) {
       Tools.Open_in_Explorer(Config.Preliminary_Conversations_Path);
    }
@@ -1194,5 +1199,35 @@ public partial class WinGPT_Form : Form {
          send_prompt_button.FlatStyle = FlatStyle.System;
          send_prompt_button.BackColor = SystemColors.Control;
       }
+   }
+
+   private void take_screenshot_ToolStripMenuItem_Click(object sender, EventArgs e) {
+      //ScreenshotForm.shoot(this);
+
+      Hide();
+
+      var process = new Process {
+         StartInfo = new ProcessStartInfo {
+            FileName               = "ExternalScreenshotTool.exe",
+            Arguments              = $"\"{Config.Screenshot_Directory.FullName}\"",
+            UseShellExecute        = false,
+            RedirectStandardOutput = true,
+            CreateNoWindow         = true,
+         }
+      };
+
+      process.Start();
+      string? image_full_filename = process.StandardOutput.ReadLine();
+      process.WaitForExit();
+
+      Show();
+      BringToFront();
+
+      if (string.IsNullOrEmpty(image_full_filename))
+         return;
+
+      var image_file = new FileInfo(image_full_filename);
+      Associated_files.Add(new(image_file));
+
    }
 }
