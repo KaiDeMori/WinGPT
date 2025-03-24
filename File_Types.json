@@ -1,0 +1,23 @@
+{
+  "Image": {
+    "png": "image/png",
+    "jpg": "image/jpeg",
+    "jpeg": "image/jpeg",
+    "gif": "image/gif",
+    "webp": "image/webp"
+  },
+  "Document": {
+    "pdf": "application/pdf"
+  },
+  "Code": {
+    "cs": "text/plain",
+    "cpp": "text/plain",
+    "js": "text/javascript",
+    "ts": "text/typescript",
+    "py": "text/plain",
+    "html": "text/html",
+    "css": "text/css",
+    "json": "application/json",
+    "md": "text/markdown"
+  }
+}

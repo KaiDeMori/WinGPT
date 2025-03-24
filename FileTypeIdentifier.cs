@@ -11,30 +11,30 @@ public enum FileType {
 
 public static class FileTypeIdentifier {
    private static readonly Dictionary<FileType, List<string>> _fileTypes;
-   private const           string                             DefaultFileTypesJsonFileName = "FileTypes.json";
+
+   private const string File_Types_Json_FileName = "File_Types.json";
 
    static FileTypeIdentifier() {
       try {
-         _fileTypes = LoadFileTypes(DefaultFileTypesJsonFileName);
+         _fileTypes = LoadFileTypes(File_Types_Json_FileName);
       }
       catch (Exception) {
-         MessageBox.Show("Failed to load file types from JSON file. A new default file will be generated.", "Error", MessageBoxButtons.OK,
+         MessageBox.Show($"Failed to load file types from file {File_Types_Json_FileName} .", "Error", MessageBoxButtons.OK,
             MessageBoxIcon.Error);
-         GenerateDefaultFileTypesJson();
-         _fileTypes = LoadFileTypes(DefaultFileTypesJsonFileName);
       }
    }
 
    private static Dictionary<FileType, List<string>> LoadFileTypes(string jsonFilePath) {
-      var json      = File.ReadAllText(jsonFilePath);
-      var fileTypes = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(json);
+      var json                  = File.ReadAllText(jsonFilePath);
+      var file_types_dictionary = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(json);
 
-      if (fileTypes == null)
+      if (file_types_dictionary == null)
          throw new Exception("Failed to load file types from JSON file.");
 
-      return fileTypes.ToDictionary(
+      return file_types_dictionary.ToDictionary(
          kvp => Enum.Parse<FileType>(kvp.Key),
-         kvp => kvp.Value.Select(ext => ext.ToLower()).ToList());
+         kvp => kvp.Value.Select(ext => "." + ext.Key.ToLower()).ToList()
+      );
    }
 
    public static FileType GetFileType(FileInfo file) => GetFileType(file.FullName);
@@ -42,23 +42,9 @@ public static class FileTypeIdentifier {
    public static FileType GetFileType(string file_fullname) {
       var extension = Path.GetExtension(file_fullname).ToLower();
 
-      foreach (var fileType in _fileTypes.Where(fileType
-                  => fileType.Value.Contains(extension))) {
+      foreach (var fileType in _fileTypes.Where(fileType => fileType.Value.Contains(extension)))
          return fileType.Key;
-      }
 
       return FileType.Other;
-   }
-
-   private static void GenerateDefaultFileTypesJson() {
-      var defaultFileTypes = new Dictionary<string, List<string>> {
-         {"Image", [".bmp", ".gif", ".jpeg", ".jpg", ".png"]},
-         {"Code", [".cpp", ".cs", ".csv", ".css", ".go", ".gs", ".html", ".java", ".js", ".json", ".md", ".php", ".py", ".rb", ".ts", ".txt", ".vb", ".xml"]},
-         {"Document", [".pdf"]}
-         //{"Document", [".doc", ".docx", ".pdf", ".ppt", ".pptx", ".txt", ".xls", ".xlsx"]}
-      };
-
-      var json = JsonConvert.SerializeObject(defaultFileTypes, Formatting.Indented);
-      File.WriteAllText(DefaultFileTypesJsonFileName, json);
    }
 }

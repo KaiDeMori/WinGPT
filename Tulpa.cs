@@ -161,7 +161,7 @@ public class Tulpa : InterTulpa {
          if (FileTypeIdentifier.GetFileType(file.FullName) != FileType.Document)
             continue;
 
-         string base64DataUrl = ImageHelper.GetBase64DataUrl_for_Document(file.FullName);
+         string base64DataUrl = FileHelper.get_base64_data_url(file);
          document_content_part documentContent = new() {
             file = new() {
                filename  = file.Name,
@@ -183,7 +183,7 @@ public class Tulpa : InterTulpa {
          if (FileTypeIdentifier.GetFileType(file.FullName) != FileType.Image)
             continue;
 
-         string base64DataUrl = ImageHelper.GetBase64DataUrl_for_Image(file.FullName);
+         string base64DataUrl = FileHelper.get_base64_data_url(file);
          var imageContent = new image_content_part {
             image_url = new image_url {
                url    = base64DataUrl,
