@@ -51,9 +51,9 @@
             // 
             api_key_textBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             api_key_textBox.Location = new Point(6, 22);
-            api_key_textBox.MaxLength = 52;
+            api_key_textBox.MaxLength = 164;
             api_key_textBox.Name = "api_key_textBox";
-            api_key_textBox.PlaceholderText = "sk-ccccccccccccccccccaaaaaaaaaaafffffffffeeeeeeeeee";
+            api_key_textBox.PlaceholderText = "sk-proj-caffeecaffeecaffeecaffeecaffeecaffeecaffeecaffeecaffeecaffeecaffeecaffeecaffeecaffeecaffeecaffeecaffeecaffeecaffeecaffeecaffeecaffeecaffeecaffeecaffeecaffee";
             api_key_textBox.Size = new Size(474, 23);
             api_key_textBox.TabIndex = 0;
             api_key_textBox.TextAlign = HorizontalAlignment.Center;

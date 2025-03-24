@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 
 namespace WinGPT;
 
@@ -6,7 +6,8 @@ public partial class API_KEY_Form : Form {
    private readonly ErrorProvider errorProvider = new ErrorProvider(); // create an instance of ErrorProvider
    private readonly ErrorProvider infoProvider  = new ErrorProvider(); // create an instance of ErrorProvider
 
-   private readonly Regex key_regex = new Regex("^sk-[a-zA-Z0-9]{48}$");
+   private readonly Regex old_key_regex = new Regex("^sk-[a-zA-Z0-9]{48}$");       // old format
+   private readonly Regex new_key_regex = new Regex("^sk-proj-.{156}$"); // new format
 
    private DialogResult currentDialogResult = DialogResult.Cancel;
 
@@ -42,7 +43,7 @@ public partial class API_KEY_Form : Form {
       }
 
       var apiKey = api_key_textBox.Text.Trim();
-      if (key_regex.IsMatch(apiKey)) {
+      if (new_key_regex.IsMatch(apiKey) || old_key_regex.IsMatch(apiKey)) {
          // set error message on api_key_textBox
          infoProvider.SetError(api_key_textBox, "Valid OpenAI API key.");
          currentDialogResult       = DialogResult.OK;
