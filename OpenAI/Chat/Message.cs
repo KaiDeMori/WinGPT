@@ -123,7 +123,8 @@ public class FunctionCall {
 [JsonConverter(typeof(StringEnumConverter))]
 public enum content_type {
    text,
-   image_url
+   image_url,
+   file
 }
 
 public abstract class content_part {
@@ -158,8 +159,25 @@ public class image_content_part : content_part {
    }
 }
 
+public class document_content_part : content_part {
+   public override content_type type => content_type.file;
+
+   public file_content @file { get; set; }
+
+   public override content_part Clone() {
+      return new document_content_part {
+         @file = @file
+      };
+   }
+}
+
 public class image_url {
    public string url { get; set; }
+}
+
+public class file_content {
+   public string filename  { get; set; }
+   public string file_data { get; set; }
 }
 
 public enum Tool_Choices {

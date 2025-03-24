@@ -69,7 +69,7 @@ public static class Markf278DownHelper {
             //that was a stupid idea
             //var markdown_textblock = create_markdown_text_block(file); 
             //sb.AppendLine(markdown_textblock);
-            MessageBox.Show("File type not supported:\r\n" + file.Extension, "So sorry.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //MessageBox.Show("File type not supported:\r\n" + file.Extension, "So sorry.", MessageBoxButtons.OK, MessageBoxIcon.Error);
             break;
          case FileType.Image:
             //not available. We need to use the Vision API for that!

@@ -54,7 +54,8 @@ public static class FileTypeIdentifier {
       var defaultFileTypes = new Dictionary<string, List<string>> {
          {"Image", [".bmp", ".gif", ".jpeg", ".jpg", ".png"]},
          {"Code", [".cpp", ".cs", ".csv", ".css", ".go", ".gs", ".html", ".java", ".js", ".json", ".md", ".php", ".py", ".rb", ".ts", ".txt", ".vb", ".xml"]},
-         {"Document", [".doc", ".docx", ".pdf", ".ppt", ".pptx", ".txt", ".xls", ".xlsx"]}
+         {"Document", [".pdf"]}
+         //{"Document", [".doc", ".docx", ".pdf", ".ppt", ".pptx", ".txt", ".xls", ".xlsx"]}
       };
 
       var json = JsonConvert.SerializeObject(defaultFileTypes, Formatting.Indented);

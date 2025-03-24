@@ -119,6 +119,7 @@ public class Tulpa : InterTulpa {
          all_messages.Add(new_system_message);
 
       add_images_to_user_message(user_message, associated_files);
+      add_documents_to_user_message(user_message, associated_files);
 
       all_messages.Add(user_message);
 
@@ -141,6 +142,34 @@ public class Tulpa : InterTulpa {
       }
 
       return request;
+   }
+
+   /// <summary>
+   /// So far, only PDF is really supported. And only with vision models.
+   /// <see href="https://platform.openai.com/docs/guides/pdf-files?api-mode=chat">API documentation</see>
+   /// </summary>
+   /// <param name="user_message"></param>
+   /// <param name="associated_files"></param>
+   private void add_documents_to_user_message(Complex_Message user_message, FileInfo[]? associated_files) {
+      if (associated_files is null)
+         return;
+
+      if (!Tools.is_vision_model())
+         return;
+
+      foreach (var file in associated_files) {
+         if (FileTypeIdentifier.GetFileType(file.FullName) != FileType.Document)
+            continue;
+
+         string base64DataUrl = ImageHelper.GetBase64DataUrl(file.FullName);
+         document_content_part documentContent = new() {
+            file = new() {
+               filename  = file.Name,
+               file_data = base64DataUrl
+            }
+         };
+         user_message.content.Add(documentContent);
+      }
    }
 
    private void add_images_to_user_message(Complex_Message user_message, FileInfo[]? associated_files) {
@@ -377,7 +406,7 @@ public class Tulpa : InterTulpa {
       if (Config.Tulpa_Directory.GetFiles(Config.marf278down_filter).Length > 0)
          return;
 
-      var    default_tulpa_file   = new FileInfo(Path.Join(Config.Tulpa_Directory.FullName, Config.DefaultAssistant_Filename));
+      var default_tulpa_file = new FileInfo(Path.Join(Config.Tulpa_Directory.FullName, Config.DefaultAssistant_Filename));
       System.IO.File.WriteAllText(default_tulpa_file.FullName, "");
    }
 }
