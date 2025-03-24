@@ -8,9 +8,9 @@ public static class ImageHelper {
    /// </summary>
    /// <param name="imagePath">The path to the image file.</param>
    /// <returns>A Base64 data URL representing the image.</returns>
-   public static string GetBase64DataUrl(string imagePath) {
+   public static string GetBase64DataUrl_for_Image(string imagePath) {
       using Image image = Image.FromFile(imagePath);
-      return GetBase64DataUrl(image);
+      return GetBase64DataUrl_for_Image(image);
    }
 
    /// <summary>
@@ -18,7 +18,7 @@ public static class ImageHelper {
    /// </summary>
    /// <param name="image">The Image to convert.</param>
    /// <returns>A Base64 data URL representing the image.</returns>
-   public static string GetBase64DataUrl(Image image) {
+   public static string GetBase64DataUrl_for_Image(Image image) {
       using MemoryStream m = new MemoryStream();
       // Save the image to the stream in PNG format
       image.Save(m, ImageFormat.Png);
@@ -31,5 +31,16 @@ public static class ImageHelper {
 
       // Construct the data URL
       return $"data:image/png;base64,{base64String}";
+   }
+
+   /// <summary>
+   /// Converts a PDF to a Base64 data URL.
+   /// </summary>
+   /// <param name="docPath">The path to the PDF document file.</param>
+   /// <returns>A Base64 data URL representing the PDF document.</returns>
+   public static string GetBase64DataUrl_for_Document(string docPath) {
+      byte[] docBytes = File.ReadAllBytes(docPath);
+      string base64String = Convert.ToBase64String(docBytes);
+      return $"data:application/pdf;base64,{base64String}";
    }
 }

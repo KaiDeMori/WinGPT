@@ -244,7 +244,8 @@ public partial class WinGPT_Form : Form {
       if (Debugger.IsAttached) {
          //prompt_textBox.Text = "What is bigger than a town?";
          //prompt_textBox.Text = "Please translate the file to french.";
-         prompt_textBox.Text = "Hi";
+         prompt_textBox.Text = "Hey chatty! What's in the document?";
+         //prompt_textBox.Text = "Hi";
          //prompt_textBox.Text = "What's in the picture?";
       }
    }

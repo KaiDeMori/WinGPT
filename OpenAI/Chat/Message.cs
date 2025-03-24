@@ -162,11 +162,11 @@ public class image_content_part : content_part {
 public class document_content_part : content_part {
    public override content_type type => content_type.file;
 
-   public file_content @file { get; set; }
+   public file_content file { get; set; }
 
    public override content_part Clone() {
       return new document_content_part {
-         @file = @file
+         file = file
       };
    }
 }
@@ -176,7 +176,11 @@ public class image_url {
 }
 
 public class file_content {
-   public string filename  { get; set; }
+   public string filename { get; set; }
+
+   /// <summary>
+   /// Has to be a base64 encoded file url.
+   /// </summary>
    public string file_data { get; set; }
 }
 
