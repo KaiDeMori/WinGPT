@@ -1216,18 +1216,26 @@ public partial class WinGPT_Form : Form {
          }
       };
 
-      process.Start();
-      string? image_full_filename = process.StandardOutput.ReadLine();
-      process.WaitForExit();
+      try {
+         process.Start();
 
-      Show();
-      BringToFront();
+         string? image_full_filename = process.StandardOutput.ReadLine();
+         process.WaitForExit();
 
-      if (string.IsNullOrEmpty(image_full_filename))
-         return;
-
-      var image_file = new FileInfo(image_full_filename);
-      Associated_files.Add(new(image_file));
-
+         if (process.ExitCode != 0) {
+            MessageBox.Show($"Screenshot tool ended with code: {process.ExitCode}");
+         }
+         else if (!string.IsNullOrEmpty(image_full_filename)) {
+            var image_file = new FileInfo(image_full_filename);
+            Associated_files.Add(new(image_file));
+         }
+      }
+      catch (Exception ex) {
+         MessageBox.Show(ex.Message, "Error while taking a screenshot", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
+      finally {
+         Show();
+         BringToFront();
+      }
    }
 }
