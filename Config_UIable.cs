@@ -98,6 +98,12 @@ public class Config_UIable {
       "Constrains effort on reasoning for reasoning models. Currently supported values are low, medium, and high. Reducing reasoning effort can result in faster responses and fewer tokens used on reasoning in a response.")]
 
    public reasoning_effort reasoning_effort { get; set; } = reasoning_effort.medium;
+
+   [Category("Vision")]
+   [DisplayName("Image Detail")]
+   [Description(
+      "The detail parameter tells the model what level of detail to use when processing and understanding the image (low, high, or auto to let the model decide). If you skip the parameter, the model will use auto.")]
+   public image_detail image_detail { get; set; } = image_detail.auto;
 }
 
 /// <summary>

@@ -1,46 +1,65 @@
-using System.Drawing.Imaging;
-
 namespace WinGPT;
 
+/// <summary>
+/// Not entirely sure why we still distinguish between images and documents.
+/// </summary>
 public static class ImageHelper {
    /// <summary>
+   /// A dictionary that maps file extensions to their associated MIME type.
+   /// </summary>
+   private static Dictionary<string, string> file_extension_mime_map { get; } = new() {
+      [".png"]  = "image/png",
+      [".jpg"]  = "image/jpeg",
+      [".jpeg"] = "image/jpeg",
+      [".webp"] = "image/webp",
+      [".gif"]  = "image/gif",
+      [".pdf"]  = "application/pdf"
+   };
+
+   /// <summary>
    /// Reads an image from a file and converts it to a Base64 data URL.
+   /// Uses <see cref="file_extension_mime_map"/> to determine the associated MIME type.
+   /// In case of error, returns an empty string.
    /// </summary>
-   /// <param name="imagePath">The path to the image file.</param>
+   /// <param name="image_path">The path to the image file.</param>
    /// <returns>A Base64 data URL representing the image.</returns>
-   public static string GetBase64DataUrl_for_Image(string imagePath) {
-      using Image image = Image.FromFile(imagePath);
-      return GetBase64DataUrl_for_Image(image);
+   public static string GetBase64DataUrl_for_Image(string image_path) {
+      return get_base64_data_url_for_file(image_path);
    }
 
    /// <summary>
-   /// Converts an Image to a Base64 data URL.
+   /// Converts a document to a Base64 data URL.
+   /// Uses <see cref="file_extension_mime_map"/> to determine the associated MIME type.
+   /// In case of error, returns an empty string.
+   /// Currently only PDF is supported.
    /// </summary>
-   /// <param name="image">The Image to convert.</param>
-   /// <returns>A Base64 data URL representing the image.</returns>
-   public static string GetBase64DataUrl_for_Image(Image image) {
-      using MemoryStream m = new MemoryStream();
-      // Save the image to the stream in PNG format
-      image.Save(m, ImageFormat.Png);
-
-      // Convert the image to byte array
-      byte[] imageBytes = m.ToArray();
-
-      // Convert byte array to Base64 string
-      string base64String = Convert.ToBase64String(imageBytes);
-
-      // Construct the data URL
-      return $"data:image/png;base64,{base64String}";
+   /// <param name="document_path">The path to the document.</param>
+   /// <returns>A Base64 data URL representing the document.</returns>
+   public static string GetBase64DataUrl_for_Document(string document_path) {
+      return get_base64_data_url_for_file(document_path);
    }
 
    /// <summary>
-   /// Converts a PDF to a Base64 data URL.
+   /// Returns the Base64 data URL for a specified file.
+   /// Uses <see cref="file_extension_mime_map"/> to determine the associated MIME type.
+   /// In case of error, returns an empty string.
    /// </summary>
-   /// <param name="docPath">The path to the PDF document file.</param>
-   /// <returns>A Base64 data URL representing the PDF document.</returns>
-   public static string GetBase64DataUrl_for_Document(string docPath) {
-      byte[] docBytes = File.ReadAllBytes(docPath);
-      string base64String = Convert.ToBase64String(docBytes);
-      return $"data:application/pdf;base64,{base64String}";
+   /// <param name="file_path">The path to the file.</param>
+   /// <returns>A Base64 data URL, or an empty string if there's an error.</returns>
+   private static string get_base64_data_url_for_file(string file_path) {
+      if (string.IsNullOrWhiteSpace(file_path) || !File.Exists(file_path))
+         return string.Empty;
+
+      try {
+         string extension = Path.GetExtension(file_path).ToLowerInvariant();
+         string mime_type = file_extension_mime_map.GetValueOrDefault(extension, "application/octet-stream");
+
+         byte[] file_bytes    = File.ReadAllBytes(file_path);
+         string base64_string = Convert.ToBase64String(file_bytes);
+         return $"data:{mime_type};base64,{base64_string}";
+      }
+      catch {
+         return string.Empty;
+      }
    }
 }

@@ -127,6 +127,14 @@ public enum content_type {
    file
 }
 
+[JsonConverter(typeof(StringEnumConverter))]
+public enum image_detail {
+   auto,
+   high,
+   low,
+}
+
+
 public abstract class content_part {
    public abstract content_type type { get; }
 
@@ -173,7 +181,11 @@ public class document_content_part : content_part {
 
 public class image_url {
    public string url { get; set; }
+
+   public image_detail detail { get; set; }
 }
+
+
 
 public class file_content {
    public string filename { get; set; }

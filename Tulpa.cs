@@ -186,7 +186,8 @@ public class Tulpa : InterTulpa {
          string base64DataUrl = ImageHelper.GetBase64DataUrl_for_Image(file.FullName);
          var imageContent = new image_content_part {
             image_url = new image_url {
-               url = base64DataUrl
+               url    = base64DataUrl,
+               detail = Config.Active.UIable.image_detail
             }
          };
          user_message.content.Add(imageContent);
