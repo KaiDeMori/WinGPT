@@ -16,8 +16,7 @@ public static class FileHelper {
 
    static FileHelper() {
       try {
-         var json      = File.ReadAllText(File_Types_Json_FileName);
-         var all_types = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(json);
+         var all_types = Defaults.DefaultFilesHandler.load_json_file<Dictionary<string, Dictionary<string, string>>>(File_Types_Json_FileName);
 
          if (all_types == null)
             throw new Exception("Failed to load file types from JSON file.");
@@ -32,9 +31,9 @@ public static class FileHelper {
             }
          }
       }
-      catch (Exception) {
+      catch (Exception e) {
          MessageBox.Show(
-            $"Failed to load file extension MIME map from {File_Types_Json_FileName}.",
+            $"Failed to load file types from {File_Types_Json_FileName}: {e.Message}",
             "Error",
             MessageBoxButtons.OK,
             MessageBoxIcon.Error

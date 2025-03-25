@@ -10,23 +10,28 @@ public enum FileType {
 }
 
 public static class FileTypeIdentifier {
-   private static readonly Dictionary<FileType, List<string>> _fileTypes;
+   private static readonly Dictionary<FileType, List<string>> File_Types;
 
    private const string File_Types_Json_FileName = "File_Types.json";
 
    static FileTypeIdentifier() {
       try {
-         _fileTypes = LoadFileTypes(File_Types_Json_FileName);
+         File_Types = LoadFileTypes(File_Types_Json_FileName);
       }
-      catch (Exception) {
-         MessageBox.Show($"Failed to load file types from file {File_Types_Json_FileName} .", "Error", MessageBoxButtons.OK,
-            MessageBoxIcon.Error);
+      catch (Exception e) {
+         File_Types = new();
+         //show a message box with the exception message
+         MessageBox.Show(
+            $"Failed to load file types from {File_Types_Json_FileName}: {e.Message}",
+            "Error",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Error
+         );
       }
    }
 
    private static Dictionary<FileType, List<string>> LoadFileTypes(string jsonFilePath) {
-      var json                  = File.ReadAllText(jsonFilePath);
-      var file_types_dictionary = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(json);
+      var file_types_dictionary = Defaults.DefaultFilesHandler.load_json_file<Dictionary<string, Dictionary<string, string>>>(jsonFilePath);
 
       if (file_types_dictionary == null)
          throw new Exception("Failed to load file types from JSON file.");
@@ -42,7 +47,7 @@ public static class FileTypeIdentifier {
    public static FileType GetFileType(string file_fullname) {
       var extension = Path.GetExtension(file_fullname).ToLower();
 
-      foreach (var fileType in _fileTypes.Where(fileType => fileType.Value.Contains(extension)))
+      foreach (var fileType in File_Types.Where(fileType => fileType.Value.Contains(extension)))
          return fileType.Key;
 
       return FileType.Other;

@@ -1206,14 +1206,15 @@ public partial class WinGPT_Form : Form {
    private void take_screenshot_ToolStripMenuItem_Click(object sender, EventArgs e) {
       //ScreenshotForm.shoot(this);
 
-      Hide();
+      Hide(); // Hide the form to exclude it from the screenshot
 
-      var process = new Process {
+      using var process = new Process {
          StartInfo = new ProcessStartInfo {
             FileName               = "ExternalScreenshotTool.exe",
             Arguments              = $"\"{Config.Screenshot_Directory.FullName}\"",
-            UseShellExecute        = false,
+            UseShellExecute        = false, // Important for redirection
             RedirectStandardOutput = true,
+            RedirectStandardError  = true,
             CreateNoWindow         = true,
          }
       };
@@ -1221,13 +1222,24 @@ public partial class WinGPT_Form : Form {
       try {
          process.Start();
 
+         // Read the screenshot path from stdout
          string? image_full_filename = process.StandardOutput.ReadLine();
+         // Read any error message(s) from stderr
+         string error_message = process.StandardError.ReadToEnd();
+
          process.WaitForExit();
 
          if (process.ExitCode != 0) {
-            MessageBox.Show($"Screenshot tool ended with code: {process.ExitCode}");
+            // The user either canceled or an error occurred
+            string message = $"Screenshot tool ended with code: {process.ExitCode}";
+            if (!string.IsNullOrWhiteSpace(error_message)) {
+               message += Environment.NewLine + error_message;
+            }
+
+            MessageBox.Show(message);
          }
          else if (!string.IsNullOrEmpty(image_full_filename)) {
+            // We have a valid output filename
             var image_file = new FileInfo(image_full_filename);
             Associated_files.Add(new(image_file));
          }
