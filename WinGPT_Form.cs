@@ -15,6 +15,8 @@ using WinGPT.OpenAI.Chat;
 using WinGPT.Taxonomy;
 using WinGPT.Tokenizer;
 
+// ReSharper disable SuggestVarOrType_BuiltInTypes
+
 namespace WinGPT;
 
 public partial class WinGPT_Form : Form {
@@ -266,7 +268,8 @@ public partial class WinGPT_Form : Form {
          Conversation.Active.Save();
 
       //notify the user
-      Set_status_bar("Conversation saved…", TimeSpan.FromMilliseconds(Config.Active.UIable.prompt_actions_timer_interval));
+      Set_status_bar($"Conversation saved to {Conversation.Active.HistoryFile.FullName}",
+         TimeSpan.FromMilliseconds(Config.Active.UIable.prompt_actions_timer_interval));
    }
 
    private void update_prompt_token_count() {
@@ -331,8 +334,6 @@ public partial class WinGPT_Form : Form {
       catch (Exception e) {
          MessageBox.Show(e.Message, "Tokens could not be counted.", MessageBoxButtons.OK);
       }
-
-      check_context_window();
    }
 
    private void WinGPT_Form_Closing(object? sender, CancelEventArgs e) {
@@ -827,7 +828,7 @@ public partial class WinGPT_Form : Form {
    private void Initialize_Models_MenuItems() {
       models_ToolStripMenuItem.DropDownItems.Clear();
       models_ToolStripMenuItem.ToolTipText = "Model ID (context window size) * =is alias";
-      foreach (var model in Models.Supported) {
+      foreach (var model in Models.Available) {
          var model_label = model.friendly_name;
          var item        = new ToolStripMenuItem(model_label);
          item.Tag = model;
@@ -838,15 +839,14 @@ public partial class WinGPT_Form : Form {
             foreach (ToolStripMenuItem oneitem in models_ToolStripMenuItem.DropDownItems)
                oneitem.Checked = oneitem == item;
             realculate_all_token_counts();
-            check_context_window();
          };
          models_ToolStripMenuItem.DropDownItems.Add(item);
       }
 
-      var current_model = Models.Supported.FirstOrDefault(m => m.id == Config.Active.Language_Model);
+      var current_model = Models.Available.FirstOrDefault(m => m.id == Config.Active.Language_Model);
 
       if (current_model is null) {
-         current_model                = Models.Supported.First();
+         current_model                = Models.Available.First();
          Config.Active.Language_Model = current_model.id;
          Config.Save();
       }
@@ -1176,9 +1176,9 @@ public partial class WinGPT_Form : Form {
    }
 
    private void checkModelsToolStripMenuItem_Click(object sender, EventArgs e) {
-      var available_models = Models.get_available_models_for_api_key();
+      Models.initialize_available_models_for_api_key();
 
-      var message     = available_models.Order().Aggregate("Available models:\r\n", (current, model) => current + $"{model}\r\n");
+      var message     = Models.Available.Order().Aggregate("Available models:\r\n", (current, model) => current + $"{model}\r\n");
       var models_file = Path.Join(Config.AdHoc_Downloads_Path.FullName, Config.models_text_filename);
       File.WriteAllText(models_file, message);
       MessageBox.Show($"Available models written to\r\n{models_file}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1186,37 +1186,23 @@ public partial class WinGPT_Form : Form {
       var toolStripItemCollection = models_ToolStripMenuItem.DropDownItems;
       foreach (ToolStripItem toolStripItem in toolStripItemCollection) {
          var model     = toolStripItem.Tag as Model;
-         var available = available_models.Contains(model?.id);
+         var available = Models.Available.Contains(model);
          toolStripItem.Enabled = available;
       }
    }
 
-   private void check_context_window() {
-      var current_model = Models.Supported.First(m => m.id == Config.Active.Language_Model);
-      if (last_calculated_request_token_count > current_model.context_window) {
-         send_prompt_button.FlatStyle = FlatStyle.Standard;
-         send_prompt_button.BackColor = Color.Coral;
-      }
-      else {
-         send_prompt_button.FlatStyle = FlatStyle.System;
-         send_prompt_button.BackColor = SystemColors.Control;
-      }
-   }
-
    private void take_screenshot_ToolStripMenuItem_Click(object sender, EventArgs e) {
-      //ScreenshotForm.shoot(this);
+      // Hide the form to exclude it from the screenshot
+      Hide();
 
-      Hide(); // Hide the form to exclude it from the screenshot
-
-      using var process = new Process {
-         StartInfo = new ProcessStartInfo {
-            FileName               = "ExternalScreenshotTool.exe",
-            Arguments              = $"\"{Config.Screenshot_Directory.FullName}\"",
-            UseShellExecute        = false, // Important for redirection
-            RedirectStandardOutput = true,
-            RedirectStandardError  = true,
-            CreateNoWindow         = true,
-         }
+      using var process = new Process();
+      process.StartInfo = new ProcessStartInfo {
+         FileName               = "ExternalScreenshotTool.exe",
+         Arguments              = $"\"{Config.Screenshot_Directory.FullName}\"",
+         UseShellExecute        = false, // Important for redirection
+         RedirectStandardOutput = true,
+         RedirectStandardError  = true,
+         CreateNoWindow         = true,
       };
 
       try {
@@ -1229,19 +1215,33 @@ public partial class WinGPT_Form : Form {
 
          process.WaitForExit();
 
-         if (process.ExitCode != 0) {
-            // The user either canceled or an error occurred
-            string message = $"Screenshot tool ended with code: {process.ExitCode}";
-            if (!string.IsNullOrWhiteSpace(error_message)) {
-               message += Environment.NewLine + error_message;
-            }
+         switch (process.ExitCode) {
+            case 0: {
+               //file was created successfully
+               if (!string.IsNullOrEmpty(image_full_filename)) {
+                  // We have a valid output filename
+                  var image_file = new FileInfo(image_full_filename);
+                  Associated_files.Add(new(image_file));
+               }
+               else {
+                  //No sure how this could happen.
+               }
 
-            MessageBox.Show(message);
-         }
-         else if (!string.IsNullOrEmpty(image_full_filename)) {
-            // We have a valid output filename
-            var image_file = new FileInfo(image_full_filename);
-            Associated_files.Add(new(image_file));
+               break;
+            }
+            case 1:
+               // The user canceled the screenshot
+               break;
+            case > 1: {
+               // An error occurred
+               string message = $"Screenshot tool ended with code: {process.ExitCode}";
+               if (!string.IsNullOrWhiteSpace(error_message)) {
+                  message += Environment.NewLine + error_message;
+               }
+
+               MessageBox.Show(message);
+               break;
+            }
          }
       }
       catch (Exception ex) {

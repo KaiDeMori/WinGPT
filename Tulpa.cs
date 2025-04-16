@@ -240,12 +240,9 @@ public class Tulpa : InterTulpa {
       ///////////////////////////
 
       Request request;
-      if (Models.get_model_by_id(Config.Active.Language_Model)!.is_preview) {
-         string text_from_usermessage = user_message.ToString_Content_Only();
-         request = Create_Preview_Request(new Simple_Message {content = text_from_usermessage}, conversation, associated_files);
-      }
-      else
-         request = Create_Multimodal_Request(user_message, conversation, associated_files);
+      // We only support complex requests for now. Some older or preview models may
+      // not support this, but le's just see.
+      request = Create_Multimodal_Request(user_message, conversation, associated_files);
 
       // done with Pre-Production
       /////////////////////////////

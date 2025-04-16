@@ -1,23 +1,24 @@
 {
   "Image": {
-    "png": "image/png",
-    "jpg": "image/jpeg",
-    "jpeg": "image/jpeg",
     "gif": "image/gif",
+    "jpeg": "image/jpeg",
+    "jpg": "image/jpeg",
+    "png": "image/png",
     "webp": "image/webp"
   },
   "Document": {
     "pdf": "application/pdf"
   },
   "Code": {
-    "cs": "text/plain",
+	"cs": "text/plain",
     "cpp": "text/plain",
-    "js": "text/javascript",
-    "ts": "text/typescript",
-    "py": "text/plain",
-    "html": "text/html",
     "css": "text/css",
+    "html": "text/html",
+    "js": "text/javascript",
     "json": "application/json",
     "md": "text/markdown"
+    "py": "text/plain",
+    "ts": "text/typescript",
+    "txt": "text/plain",
   }
 }

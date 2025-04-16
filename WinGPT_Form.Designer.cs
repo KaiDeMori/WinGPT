@@ -80,17 +80,17 @@
             tokenCounter_ToolStripMenuItem = new ToolStripMenuItem();
             sysmsghack_ToolStripMenuItem = new ToolStripMenuItem();
             open_Config_Directory_ToolStripMenuItem = new ToolStripMenuItem();
-            open_AdHoc_Directory_ToolStripMenuItem = new ToolStripMenuItem();
-            open_Tulpas_Directory_ToolStripMenuItem = new ToolStripMenuItem();
             open_Downloads_Directory_ToolStripMenuItem = new ToolStripMenuItem();
             open_Screenshot_DirectoryToolStripMenuItem = new ToolStripMenuItem();
+            open_AdHoc_Directory_ToolStripMenuItem = new ToolStripMenuItem();
+            open_Tulpas_Directory_ToolStripMenuItem = new ToolStripMenuItem();
             refresh_ConversationHistory_ToolStripMenuItem = new ToolStripMenuItem();
             checkModelsToolStripMenuItem = new ToolStripMenuItem();
+            take_screenshot_ToolStripMenuItem = new ToolStripMenuItem();
             help_ToolStripMenuItem = new ToolStripMenuItem();
             about_ToolStripMenuItem = new ToolStripMenuItem();
             goTo_WinGPT_Wiki_ToolStripMenuItem = new ToolStripMenuItem();
             update_wingpt_ToolStripMenuItem = new ToolStripMenuItem();
-            take_screenshot_ToolStripMenuItem = new ToolStripMenuItem();
             main_panel = new Panel();
             tulpas_tableLayoutPanel = new TableLayoutPanel();
             tulpas_flowLayoutPanel = new FlowLayoutPanel();
@@ -539,7 +539,7 @@
             // 
             // main_menuStrip
             // 
-            main_menuStrip.Items.AddRange(new ToolStripItem[] { base_directory_toolStripMenuItem, settings_ToolStripMenuItem, models_ToolStripMenuItem, tools_ToolStripMenuItem, take_screenshot_ToolStripMenuItem, help_ToolStripMenuItem });
+            main_menuStrip.Items.AddRange(new ToolStripItem[] { base_directory_toolStripMenuItem, settings_ToolStripMenuItem, models_ToolStripMenuItem, take_screenshot_ToolStripMenuItem, tools_ToolStripMenuItem, help_ToolStripMenuItem });
             main_menuStrip.Location = new Point(0, 0);
             main_menuStrip.Name = "main_menuStrip";
             main_menuStrip.ShowItemToolTips = true;
@@ -627,6 +627,22 @@
             open_Config_Directory_ToolStripMenuItem.Text = "Open Config Directory";
             open_Config_Directory_ToolStripMenuItem.Click += open_Config_Directory_ToolStripMenuItem_Click;
             // 
+            // open_Downloads_Directory_ToolStripMenuItem
+            // 
+            open_Downloads_Directory_ToolStripMenuItem.Image = Properties.Resources.FolderOpened;
+            open_Downloads_Directory_ToolStripMenuItem.Name = "open_Downloads_Directory_ToolStripMenuItem";
+            open_Downloads_Directory_ToolStripMenuItem.Size = new Size(227, 22);
+            open_Downloads_Directory_ToolStripMenuItem.Text = "Open Downloads Directory";
+            open_Downloads_Directory_ToolStripMenuItem.Click += open_Downloads_Directory_ToolStripMenuItem_Click;
+            // 
+            // open_Screenshot_DirectoryToolStripMenuItem
+            // 
+            open_Screenshot_DirectoryToolStripMenuItem.Image = Properties.Resources.FolderOpened;
+            open_Screenshot_DirectoryToolStripMenuItem.Name = "open_Screenshot_DirectoryToolStripMenuItem";
+            open_Screenshot_DirectoryToolStripMenuItem.Size = new Size(227, 22);
+            open_Screenshot_DirectoryToolStripMenuItem.Text = "Open Screenshot Directory";
+            open_Screenshot_DirectoryToolStripMenuItem.Click += open_Screenshot_DirectoryToolStripMenuItem_Click;
+            // 
             // open_AdHoc_Directory_ToolStripMenuItem
             // 
             open_AdHoc_Directory_ToolStripMenuItem.Image = Properties.Resources.FolderOpened;
@@ -644,14 +660,6 @@
             open_Tulpas_Directory_ToolStripMenuItem.Text = "Open Tulpas Directory";
             open_Tulpas_Directory_ToolStripMenuItem.Click += open_Tulpas_Directory_ToolStripMenuItem_Click;
             // 
-            // open_Downloads_Directory_ToolStripMenuItem
-            // 
-            open_Downloads_Directory_ToolStripMenuItem.Image = Properties.Resources.FolderOpened;
-            open_Downloads_Directory_ToolStripMenuItem.Name = "open_Downloads_Directory_ToolStripMenuItem";
-            open_Downloads_Directory_ToolStripMenuItem.Size = new Size(227, 22);
-            open_Downloads_Directory_ToolStripMenuItem.Text = "Open Downloads Directory";
-            open_Downloads_Directory_ToolStripMenuItem.Click += open_Downloads_Directory_ToolStripMenuItem_Click;
-            // 
             // refresh_ConversationHistory_ToolStripMenuItem
             // 
             refresh_ConversationHistory_ToolStripMenuItem.Image = Properties.Resources.RefreshConversationHistory;
@@ -668,6 +676,15 @@
             checkModelsToolStripMenuItem.Text = "CheckModels";
             checkModelsToolStripMenuItem.ToolTipText = "Get the available models for this API key and disable missing ones.";
             checkModelsToolStripMenuItem.Click += checkModelsToolStripMenuItem_Click;
+            // 
+            // take_screenshot_ToolStripMenuItem
+            // 
+            take_screenshot_ToolStripMenuItem.Image = Properties.Resources.Camera;
+            take_screenshot_ToolStripMenuItem.Name = "take_screenshot_ToolStripMenuItem";
+            take_screenshot_ToolStripMenuItem.Size = new Size(93, 20);
+            take_screenshot_ToolStripMenuItem.Text = "Screenshot";
+            take_screenshot_ToolStripMenuItem.ToolTipText = "Take and attach a screenshot ";
+            take_screenshot_ToolStripMenuItem.Click += take_screenshot_ToolStripMenuItem_Click;
             // 
             // help_ToolStripMenuItem
             // 
@@ -700,15 +717,6 @@
             update_wingpt_ToolStripMenuItem.Size = new Size(174, 22);
             update_wingpt_ToolStripMenuItem.Text = "Update";
             update_wingpt_ToolStripMenuItem.Click += update_wingpt_ToolStripMenuItem_Click;
-            // 
-            // take_screenshot_ToolStripMenuItem
-            // 
-            take_screenshot_ToolStripMenuItem.Image = Properties.Resources.Camera;
-            take_screenshot_ToolStripMenuItem.Name = "take_screenshot_ToolStripMenuItem";
-            take_screenshot_ToolStripMenuItem.Size = new Size(93, 20);
-            take_screenshot_ToolStripMenuItem.Text = "Screenshot";
-            take_screenshot_ToolStripMenuItem.ToolTipText = "Take and attach a screenshot ";
-            take_screenshot_ToolStripMenuItem.Click += take_screenshot_ToolStripMenuItem_Click;
             // 
             // main_panel
             // 
@@ -792,14 +800,6 @@
             upload_vistaOpenFileDialog.Multiselect = true;
             upload_vistaOpenFileDialog.SupportMultiDottedExtensions = true;
             upload_vistaOpenFileDialog.Title = "Choose wisely!";
-            // 
-            // open_Screenshot_DirectoryToolStripMenuItem
-            // 
-            open_Screenshot_DirectoryToolStripMenuItem.Image = Properties.Resources.FolderOpened;
-            open_Screenshot_DirectoryToolStripMenuItem.Name = "open_Screenshot_DirectoryToolStripMenuItem";
-            open_Screenshot_DirectoryToolStripMenuItem.Size = new Size(227, 22);
-            open_Screenshot_DirectoryToolStripMenuItem.Text = "Open Screenshot Directory";
-            open_Screenshot_DirectoryToolStripMenuItem.Click += open_Screenshot_DirectoryToolStripMenuItem_Click;
             // 
             // WinGPT_Form
             // 

@@ -1,14 +1,11 @@
-﻿namespace WinGPT.OpenAI;
+namespace WinGPT.OpenAI;
 
 public class Model {
    //from API
-   public string id       { get; set; }
-   public string owned_by { get; set; }
+   public required string id       { get; set; }
+   public required string @object  { get; set; } // new property to match JSON's "object"
+   public          int    created  { get; set; } // new property to match JSON's "created"
+   public required string owned_by { get; set; }
 
-   //custom
-   public int  context_window { get; set; }
-   public bool is_alias       { get; set; }
-   public bool is_preview     { get; set; } = false;
-
-   public string friendly_name => $"{id} ({context_window:N0}) {(is_alias ? "*" : "")} {(is_preview ? "P" : "")}";
+   public string friendly_name => id;
 }

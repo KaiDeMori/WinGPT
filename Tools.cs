@@ -177,14 +177,7 @@ public static class Tools {
          _                                      => false
       };
    }
-
-   public static bool isImageGenerationModel() {
-      return Config.Active.Language_Model switch {
-         Models.dall_e_3 => true,
-         _               => false
-      };
-   }
-
+   
    public static Version Version => Assembly.GetExecutingAssembly().GetName().Version!;
 
    public static string VersionString => $"{Version} {(Environment.Is64BitProcess ? "x64" : "x32")}";

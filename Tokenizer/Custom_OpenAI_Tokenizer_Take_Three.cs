@@ -1,11 +1,9 @@
 using System.Collections.Immutable;
-using System.Windows.Navigation;
 using WinGPT.OpenAI;
 using WinGPT.OpenAI.Chat;
 using Message = WinGPT.OpenAI.Chat.Message;
 
 namespace WinGPT.Tokenizer;
-
 
 /// <summary>
 /// This time we are using TryAGI.Tokenizer
@@ -48,8 +46,9 @@ internal class Custom_OpenAI_Tokenizer_Take_Three {
 
    // This method calculates the token count for messages and IFunction array based on the model
    public static int count_tokens(ImmutableList<Message> messages, Function[] functions) {
-      Model? model = Models.get_model_by_id(Config.Active.Language_Model);
-      if (model == null || model.is_preview)
+      Model? model = Models.Available.FirstOrDefault(m => m.id == Config.Active.Language_Model);
+
+      if (model == null)
          return -1;
 
       if (model.id.StartsWith("o1"))
