@@ -1,5 +1,3 @@
-using Newtonsoft.Json;
-
 namespace WinGPT;
 
 public enum FileType {
@@ -31,14 +29,15 @@ public static class FileTypeIdentifier {
    }
 
    private static Dictionary<FileType, List<string>> LoadFileTypes(string jsonFilePath) {
-      var file_types_dictionary = Defaults.DefaultFilesHandler.load_json_file<Dictionary<string, Dictionary<string, string>>>(jsonFilePath);
+      var file_types_dictionary = Defaults.DefaultFilesHandler
+         .load_json_file<Dictionary<string, List<string>>>(jsonFilePath);
 
       if (file_types_dictionary == null)
          throw new Exception("Failed to load file types from JSON file.");
 
       return file_types_dictionary.ToDictionary(
          kvp => Enum.Parse<FileType>(kvp.Key),
-         kvp => kvp.Value.Select(ext => "." + ext.Key.ToLower()).ToList()
+         kvp => kvp.Value.Select(ext => "." + ext.ToLower()).ToList()
       );
    }
 
