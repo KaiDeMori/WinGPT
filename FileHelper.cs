@@ -19,7 +19,6 @@ public static class FileHelper {
          return string.Empty;
 
       try {
-         // Identify the extension so we can look up the correct MIME type
          var extension = Path.GetExtension(file_path).ToLowerInvariant();
          var mime_type = MimeTypeMap.GetMimeType(extension);
 

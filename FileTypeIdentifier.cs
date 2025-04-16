@@ -18,7 +18,6 @@ public static class FileTypeIdentifier {
       }
       catch (Exception e) {
          File_Types = new();
-         //show a message box with the exception message
          MessageBox.Show(
             $"Failed to load file types from {File_Types_Json_FileName}: {e.Message}",
             "Error",
