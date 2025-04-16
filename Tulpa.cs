@@ -128,10 +128,14 @@ public class Tulpa : InterTulpa {
 
       var all_immutable = all_messages.ToImmutableList();
 
+      double? temperature = Configuration.Temperature;
+      if (Models.get_active_Model().no_temperature)
+         temperature = null;
+
       Request request = new() {
          messages    = all_immutable,
          model       = Config.Active.Language_Model,
-         temperature = Configuration.Temperature,
+         temperature = temperature,
          tool_choice = null,
          //functions   = save_function is not null ? [save_function] : null,
          max_tokens = Config.Active.UIable.Max_Tokens

@@ -18,8 +18,13 @@ public class Model {
       id.Contains("vision")            ||
       id.StartsWith("gpt-4o")          ||
       id.StartsWith("o1")              ||
-      id.StartsWith("o3-mini")         ||
+      id.StartsWith("o3")              ||
+      id.StartsWith("o4")              ||
       id.StartsWith("gpt-4-turbo")     ||
       id.StartsWith("gpt-4.5-preview") ||
       id.StartsWith("gpt-4.1");
+
+   public bool no_temperature =>
+      id.Equals("gpt-4o-search-preview") ||
+      id.Equals("gpt-4o-mini-search-preview");
 }
