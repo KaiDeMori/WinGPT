@@ -72,4 +72,9 @@ public static class Models {
          Available = model_list.ToArray();
       }
    }
+
+   public static Model get_active_Model() {
+      string current = Config.Active.Language_Model;
+      return Available.First(m => m.id == current);
+   }
 }

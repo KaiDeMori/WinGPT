@@ -154,7 +154,7 @@ public class Tulpa : InterTulpa {
       if (associated_files is null)
          return;
 
-      if (!Tools.is_vision_model())
+      if (!Models.get_active_Model().is_vision_model)
          return;
 
       foreach (var file in associated_files) {
@@ -176,7 +176,7 @@ public class Tulpa : InterTulpa {
       if (associated_files is null)
          return;
 
-      if (!Tools.is_vision_model())
+      if (!Models.get_active_Model().is_vision_model)
          return;
 
       foreach (var file in associated_files) {

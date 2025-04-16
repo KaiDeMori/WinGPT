@@ -165,19 +165,6 @@ public static class Tools {
       return intermediateDirectories.ToArray();
    }
 
-   public static bool is_vision_model() {
-      var model = Config.Active.Language_Model;
-      return model switch {
-         _ when model.Contains("vision") => true,
-         //_ when model.Contains("preview")       => true,  //NOPE
-         _ when model.StartsWith("o1")      => true,
-         _ when model.StartsWith("gpt-4.5")      => true,
-         _ when model.StartsWith("gpt-4o")      => true,
-         _ when model.StartsWith("gpt-4-turbo") => true,
-         _                                      => false
-      };
-   }
-   
    public static Version Version => Assembly.GetExecutingAssembly().GetName().Version!;
 
    public static string VersionString => $"{Version} {(Environment.Is64BitProcess ? "x64" : "x32")}";
