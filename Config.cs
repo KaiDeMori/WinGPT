@@ -18,7 +18,6 @@ public class Config {
    private const   string        screenshot_directory = "Screenshots";
    internal static DirectoryInfo Screenshot_Directory => new(Path.Join(Active.Base_Directory, screenshot_directory));
 
-
    internal const string marf278down_extenstion = ".md";
    internal const string marf278down_filter     = "*.md";
 
@@ -60,7 +59,6 @@ public class Config {
    public double            MainSplitter_relative_position     { get; set; } = .2;
    public double            TextSplitter_relative_position     { get; set; } = .5;
    public WindowParameters? WindowParameters                   { get; set; }
-
 
    static Config() {
       Application_Paths.Config_File.Directory.Create();

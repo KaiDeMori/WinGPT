@@ -87,6 +87,9 @@ public class Tulpa : InterTulpa {
       //Just don't enumerate it.
       var tuned_up_system_message_content = new StringBuilder();
 
+      if (Config.Active.UIable.reenable_formatting)
+         tuned_up_system_message_content.AppendLine(Config_UIable.reenable_formatting_spell);
+
       //add the content of the old system message to the new one
       tuned_up_system_message_content.Append(first_system_message.content);
 

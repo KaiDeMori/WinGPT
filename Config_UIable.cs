@@ -104,6 +104,18 @@ public class Config_UIable {
    [Description(
       "The detail parameter tells the model what level of detail to use when processing and understanding the image (low, high, or auto to let the model decide). If you skip the parameter, the model will use auto.")]
    public image_detail image_detail { get; set; } = image_detail.auto;
+
+   
+   /// <summary>
+   /// They changed the style again (because of course they did) *sigh*
+   /// For now, this dirty hack has to suffice.
+   /// </summary>
+   [Category("Experimental")]
+   [DisplayName("Formatting re-enabled")]
+   [Description("Supposedly makes the model love markdown again.")]
+   public bool reenable_formatting { get; set; } = true;
+
+   public const string reenable_formatting_spell = "Formatting re-enabled";
 }
 
 /// <summary>
