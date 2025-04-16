@@ -78,7 +78,6 @@
             tools_ToolStripMenuItem = new ToolStripMenuItem();
             openai_api_key_toolStripMenuItem = new ToolStripMenuItem();
             tokenCounter_ToolStripMenuItem = new ToolStripMenuItem();
-            sysmsghack_ToolStripMenuItem = new ToolStripMenuItem();
             open_Config_Directory_ToolStripMenuItem = new ToolStripMenuItem();
             open_Downloads_Directory_ToolStripMenuItem = new ToolStripMenuItem();
             open_Screenshot_DirectoryToolStripMenuItem = new ToolStripMenuItem();
@@ -588,7 +587,7 @@
             // 
             // tools_ToolStripMenuItem
             // 
-            tools_ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openai_api_key_toolStripMenuItem, tokenCounter_ToolStripMenuItem, sysmsghack_ToolStripMenuItem, open_Config_Directory_ToolStripMenuItem, open_Downloads_Directory_ToolStripMenuItem, open_Screenshot_DirectoryToolStripMenuItem, open_AdHoc_Directory_ToolStripMenuItem, open_Tulpas_Directory_ToolStripMenuItem, refresh_ConversationHistory_ToolStripMenuItem, checkModelsToolStripMenuItem });
+            tools_ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openai_api_key_toolStripMenuItem, tokenCounter_ToolStripMenuItem, open_Config_Directory_ToolStripMenuItem, open_Downloads_Directory_ToolStripMenuItem, open_Screenshot_DirectoryToolStripMenuItem, open_AdHoc_Directory_ToolStripMenuItem, open_Tulpas_Directory_ToolStripMenuItem, refresh_ConversationHistory_ToolStripMenuItem, checkModelsToolStripMenuItem });
             tools_ToolStripMenuItem.Image = Properties.Resources.ToolWindow;
             tools_ToolStripMenuItem.Name = "tools_ToolStripMenuItem";
             tools_ToolStripMenuItem.Size = new Size(62, 20);
@@ -609,15 +608,6 @@
             tokenCounter_ToolStripMenuItem.Size = new Size(227, 22);
             tokenCounter_ToolStripMenuItem.Text = "Token Counter";
             tokenCounter_ToolStripMenuItem.Click += token_Counter_ToolStripMenuItem_Click;
-            // 
-            // sysmsghack_ToolStripMenuItem
-            // 
-            sysmsghack_ToolStripMenuItem.CheckOnClick = true;
-            sysmsghack_ToolStripMenuItem.Image = Properties.Resources.AddField;
-            sysmsghack_ToolStripMenuItem.Name = "sysmsghack_ToolStripMenuItem";
-            sysmsghack_ToolStripMenuItem.Size = new Size(227, 22);
-            sysmsghack_ToolStripMenuItem.Text = "GPT4 sysmsghack";
-            sysmsghack_ToolStripMenuItem.Click += sysmsghack_ToolStripMenuItem_Click;
             // 
             // open_Config_Directory_ToolStripMenuItem
             // 
@@ -873,7 +863,6 @@
         private  Ookii.Dialogs.WinForms.VistaFolderBrowserDialog base_directory_vistaFolderBrowserDialog;
         internal ToolTip                                         main_toolTip;
         private  ToolStripMenuItem                               tokenCounter_ToolStripMenuItem;
-        private  ToolStripMenuItem                               sysmsghack_ToolStripMenuItem;
         private  TabControl                                      preview_tabControl;
         private  TabPage                                         markf278down_tabPage;
         private  TabPage                                         webview2_tabPage;

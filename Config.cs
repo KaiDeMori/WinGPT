@@ -7,10 +7,6 @@ public class Config {
    public static Config Active       = new();
    public static Tulpa  Active_Tulpa = new();
 
-   //public static Conversation? ActiveConversation { get; set; }
-
-   public bool Use_SysMsg_Hack { get; set; }
-
    public Config_UIable UIable { get; set; } = new();
 
    private const   string        tulpas_directory = "Tulpas";

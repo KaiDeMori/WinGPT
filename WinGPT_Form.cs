@@ -187,8 +187,6 @@ public partial class WinGPT_Form : Form {
       //AGI.Init();
       Config.Active.Token_Counter.LimitReached = () => MessageBox.Show("Token limit reached.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-      sysmsghack_ToolStripMenuItem.Checked = Config.Active.Use_SysMsg_Hack;
-
       //var success = stupid_edge_mumble_mumble.WaitOne(TimeSpan.FromSeconds(10));
       //if (!success) {
       //   MessageBox.Show("Edge is taking too long to initialize. Please restart the program.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -377,8 +375,6 @@ public partial class WinGPT_Form : Form {
          Conversation.Create_Conversation(user_message, Config.Active_Tulpa);
       }
 
-      Conversation.Active.useSysMsgHack = sysmsghack_ToolStripMenuItem.Checked;
-
       //check all Associated_files for existence
       //if a file doesnt exist, show an error and remove it from the list
       for (int i = Associated_files.Count - 1; i >= 0; i--) {
@@ -509,11 +505,6 @@ public partial class WinGPT_Form : Form {
       //recreate the new tulpa buttons
       tulpa_DirectoryWatcher?.Stop();
       tulpa_DirectoryWatcher = new(CreateTulpaButtons_safe);
-   }
-
-   private void sysmsghack_ToolStripMenuItem_Click(object sender, EventArgs e) {
-      Config.Active.Use_SysMsg_Hack = sysmsghack_ToolStripMenuItem.Checked;
-      Config.Save();
    }
 
    private void conversation_name_textBox_MouseDoubleClick(object sender, MouseEventArgs e) {
