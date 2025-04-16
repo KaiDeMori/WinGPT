@@ -8,7 +8,7 @@ public class Model {
    public required string owned_by { get; set; }
 
    //Ours
-   public string friendly_name => id;
+   public string friendly_name => id + (is_vision_model ? " \ud83d\udc41" : string.Empty);
 
    /// <summary>
    /// Determines if the model is a vision/multimodal model.

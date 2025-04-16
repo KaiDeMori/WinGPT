@@ -817,7 +817,7 @@ public partial class WinGPT_Form : Form {
 
    private void Initialize_Models_MenuItems() {
       models_ToolStripMenuItem.DropDownItems.Clear();
-      models_ToolStripMenuItem.ToolTipText = "Model ID (context window size) * =is alias";
+      models_ToolStripMenuItem.ToolTipText = "Model ID (\ud83d\udc41 = vision)";
       foreach (var model in Models.Available) {
          var model_label = model.friendly_name;
          var item        = new ToolStripMenuItem(model_label);
@@ -833,13 +833,7 @@ public partial class WinGPT_Form : Form {
          models_ToolStripMenuItem.DropDownItems.Add(item);
       }
 
-      var current_model = Models.Available.FirstOrDefault(m => m.id == Config.Active.Language_Model);
-
-      if (current_model is null) {
-         current_model                = Models.Available.First();
-         Config.Active.Language_Model = current_model.id;
-         Config.Save();
-      }
+      var current_model = Models.get_active_Model();
 
       //now we have to set the checked property of the correct menu item
       foreach (ToolStripMenuItem item in models_ToolStripMenuItem.DropDownItems) {
@@ -1157,7 +1151,13 @@ public partial class WinGPT_Form : Form {
       response_total_token_count_label.Text  = string.Empty;
    }
 
+   /// <summary>
+   /// When we are getting into the millions, this complex way of token counting
+   /// is too slow. For now, we disable it completely.
+   /// </summary>
    private void realculate_all_token_counts() {
+      //DRAGONS
+      return;
       Config.Active_Tulpa.update_token_count();
       Set_Tulpa_TextBox(Config.Active_Tulpa);
       update_prompt_token_count();
