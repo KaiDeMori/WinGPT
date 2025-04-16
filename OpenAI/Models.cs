@@ -44,7 +44,7 @@ public static class Models {
          return;
       }
 
-      var model_list = raw_models.ToList();
+      var model_list = raw_models.OrderBy(m => m.id).ToList();
 
       // If favourite_models.txt is present, reorder so its entries appear first
       if (File.Exists(json_filename)) {

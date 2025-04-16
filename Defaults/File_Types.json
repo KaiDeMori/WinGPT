@@ -4,19 +4,20 @@
     "jpeg": "image/jpeg",
     "jpg": "image/jpeg",
     "png": "image/png",
-    "webp": "image/webp"
+    "webp": "image/webp",
   },
   "Document": {
-    "pdf": "application/pdf"
+    "pdf": "application/pdf",
   },
   "Code": {
-	"cs": "text/plain",
+    "cs": "text/plain",
     "cpp": "text/plain",
     "css": "text/css",
+    "csv": "text/csv",
     "html": "text/html",
     "js": "text/javascript",
     "json": "application/json",
-    "md": "text/markdown"
+    "md": "text/markdown",
     "py": "text/plain",
     "ts": "text/typescript",
     "txt": "text/plain",

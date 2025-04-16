@@ -185,7 +185,6 @@ public partial class WinGPT_Form : Form {
       Startup.AssertPrerequisitesOrFail(PromptUserForBaseDirectory);
       Template_Engine.Init();
       //AGI.Init();
-      HTTP_Client.Init(Config.Active.OpenAI_API_Key);
       Config.Active.Token_Counter.LimitReached = () => MessageBox.Show("Token limit reached.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
       sysmsghack_ToolStripMenuItem.Checked = Config.Active.Use_SysMsg_Hack;
