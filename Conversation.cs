@@ -152,12 +152,7 @@ public class Conversation {
    /// Saves the conversation to the history file.
    /// </summary>
    public void Save() {
-      //Let's first make sure that the converstaion actually contains any prompts
-      if (Messages.Count == 0)
-         return;
-
-      //and that they are not empty string
-      if (Messages.All(m => string.IsNullOrWhiteSpace(m.ToString_Content_Only())))
+      if (is_empty())
          return;
 
       if (HistoryFile is null)
@@ -519,5 +514,22 @@ public class Conversation {
       var new_file      = new FileInfo(Path.Join(directory, new_file_name));
 
       HistoryFile = new_file;
+   }
+
+   public bool is_empty() {
+      switch (Messages.Count) {
+         case 0:
+            return true;
+         case 1:
+            switch (Messages[0]) {
+               case Simple_Message simple_message when string.IsNullOrWhiteSpace(simple_message.content):
+               case Complex_Message {content.Count: 0}:
+                  return true;
+            }
+
+            break;
+      }
+
+      return false;
    }
 }

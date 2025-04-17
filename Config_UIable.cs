@@ -32,7 +32,7 @@ public class Config_UIable {
    [Category("Features")]
    [DisplayName("Auto-Save")]
    [Description("Automatically saves the conversation.")]
-   public bool Auto_Save { get; set; } = false;
+   public bool Auto_Save { get; set; } = true;
 
    [DisplayName("Prompt Font")]
    [Description("This controls the font of the prompt text-box.")]
@@ -105,7 +105,7 @@ public class Config_UIable {
       "The detail parameter tells the model what level of detail to use when processing and understanding the image (low, high, or auto to let the model decide). If you skip the parameter, the model will use auto.")]
    public image_detail image_detail { get; set; } = image_detail.auto;
 
-   
+
    /// <summary>
    /// They changed the style again (because of course they did) *sigh*
    /// For now, this dirty hack has to suffice.
@@ -116,6 +116,11 @@ public class Config_UIable {
    public bool reenable_formatting { get; set; } = true;
 
    public const string reenable_formatting_spell = "Formatting re-enabled";
+
+   [Category("Experimental")]
+   [DisplayName("Service Tier")]
+   [Description("aka 'Flex processing'")]
+   public Service_Tier service_tier { get; set; } = Service_Tier.auto;
 }
 
 /// <summary>

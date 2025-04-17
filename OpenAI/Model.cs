@@ -25,6 +25,14 @@ public class Model {
       id.StartsWith("gpt-4.1");
 
    public bool no_temperature =>
+      id.StartsWith("o4-mini") ||
+      id.StartsWith("o3") ||
+      id.StartsWith("o1-mini") ||
       id.Equals("gpt-4o-search-preview") ||
       id.Equals("gpt-4o-mini-search-preview");
+
+   //only o3 and o4-mini for now
+   public bool supports_flex_tier =>
+      id.Equals("o4-mini") ||
+      id.Equals("o3");
 }

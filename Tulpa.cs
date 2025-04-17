@@ -132,13 +132,18 @@ public class Tulpa : InterTulpa {
       if (Models.get_active_Model().no_temperature)
          temperature = null;
 
+      Service_Tier st = Config.Active.UIable.service_tier;
+      if (st == Service_Tier.flex && !Models.get_active_Model().supports_flex_tier)
+         st = Service_Tier.auto;
+
       Request request = new() {
          messages    = all_immutable,
          model       = Config.Active.Language_Model,
          temperature = temperature,
          tool_choice = null,
          //functions   = save_function is not null ? [save_function] : null,
-         max_tokens = Config.Active.UIable.Max_Tokens
+         max_tokens   = Config.Active.UIable.Max_Tokens,
+         service_tier = st
       };
 
       //lezzgotools!

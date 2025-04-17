@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using WinGPT.Taxonomy;
 
 namespace WinGPT.OpenAI.Chat;
@@ -43,4 +44,13 @@ public class Request {
 
    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
    public reasoning_effort? reasoning_effort { get; set; } = null;
+
+   public Service_Tier service_tier { get; init; } = Service_Tier.auto;
+}
+
+[JsonConverter(typeof(StringEnumConverter))]
+public enum Service_Tier {
+   auto,
+   @default,
+   flex
 }

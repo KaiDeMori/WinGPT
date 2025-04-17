@@ -13,4 +13,6 @@ public class Response {
    public long         created { get; init; }
    public List<Choice> choices { get; init; } = null!;
    public Usage        usage   { get; init; } = null!;
+
+   public Service_Tier service_tier { get; init; } = Service_Tier.auto;
 }

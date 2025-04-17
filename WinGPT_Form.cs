@@ -261,12 +261,12 @@ public partial class WinGPT_Form : Form {
          return;
       previous_prompt = current_prompt;
 
-      if (Conversation.Active is not null)
+      if (Conversation.Active is not null) {
          Conversation.Active.Save();
-
-      //notify the user
-      Set_status_bar($"Conversation saved to {Conversation.Active.HistoryFile.FullName}",
-         TimeSpan.FromMilliseconds(Config.Active.UIable.prompt_actions_timer_interval));
+         //notify the user
+         Set_status_bar($"Conversation saved to {Conversation.Active.HistoryFile.FullName}",
+            TimeSpan.FromMilliseconds(Config.Active.UIable.prompt_actions_timer_interval));
+      }
    }
 
    private void update_prompt_token_count() {
