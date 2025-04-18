@@ -13,10 +13,9 @@ namespace WinGPT.OpenAI;
 /// that can be used to reorder the models.
 /// </summary>
 public static class Models {
-   //this should be private
    private static Model[]     All = [];
-   public static  List<Model> Regular    { get; set; } = [];
-   public static  List<Model> Favourites { get; set; } = [];
+   private static List<Model> Regular    { get; set; } = [];
+   private static List<Model> Favourites { get; set; } = [];
 
    private const           string Endpoint            = "models";
    private const           string favourites_filename = "OpenAI/favourite_models.txt";
@@ -76,7 +75,7 @@ public static class Models {
       var json = response.Content.ReadAsStringAsync().Result;
 
       var r = JsonConvert.DeserializeObject<ModelListResponse>(json);
-      All = r?.data.ToArray() ?? [];
+      All = r?.data.OrderBy(m => m.id).ToArray() ?? [];
    }
 
    public static Model get_active_Model() {
@@ -90,6 +89,7 @@ public static class Models {
 
       var favourite_model_ids = File.ReadAllLines(favourites_filename)
          .Where(line => !string.IsNullOrWhiteSpace(line))
+         .OrderBy(line => line)
          .ToList();
 
       var unkown_models = favourite_model_ids.Except(All.Select(m => m.id)).ToList();
@@ -183,6 +183,8 @@ public static class Models {
          // If we didn't insert before, add at the end
          all_models_root_menu.DropDownItems.Add(selected_item);
       }
+
+      save_favourites_file();
    }
 
    public static void save_available_models_info() {
@@ -190,6 +192,11 @@ public static class Models {
       var models_file = Path.Join(Config.AdHoc_Downloads_Path.FullName, Config.models_text_filename);
       File.WriteAllText(models_file, message);
       MessageBox.Show($"Available models written to\r\n{models_file}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+   }
+
+   public static void save_favourites_file() {
+      var favourite_model_ids = Favourites.Select(m => m.id).ToList();
+      File.WriteAllLines(favourites_filename, favourite_model_ids);
    }
 }
 

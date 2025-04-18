@@ -8,7 +8,9 @@ public class Model {
    public required string owned_by { get; set; }
 
    //Ours
-   public string friendly_name => id + (is_vision_model ? " \ud83d\udc41" : string.Empty);
+   public string friendly_name => id
+                                  + (is_vision_model ? " \ud83d\udc41" : string.Empty)
+                                  + (is_reasoning_model ? " \U0001f4a1" : string.Empty);
 
    /// <summary>
    /// Determines if the model is a vision/multimodal model.
@@ -24,10 +26,15 @@ public class Model {
       id.StartsWith("gpt-4.5-preview") ||
       id.StartsWith("gpt-4.1");
 
-   public bool no_temperature =>
-      id.StartsWith("o4-mini") ||
+   public bool is_reasoning_model =>
+      id.StartsWith("o1") ||
       id.StartsWith("o3") ||
-      id.StartsWith("o1-mini") ||
+      id.StartsWith("o4");
+
+   public bool no_temperature =>
+      id.StartsWith("o4-mini")           ||
+      id.StartsWith("o3")                ||
+      id.StartsWith("o1-mini")           ||
       id.Equals("gpt-4o-search-preview") ||
       id.Equals("gpt-4o-mini-search-preview");
 
