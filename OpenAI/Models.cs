@@ -27,7 +27,7 @@ public static class Models {
       initialize_favourites();
 
       all_models_root_menu.DropDownItems.Clear();
-      all_models_root_menu.ToolTipText = "Model ID (\ud83d\udc41 = vision)";
+      all_models_root_menu.ToolTipText = "Model ID (\ud83d\udc41 vision, \U0001f4a1 reasoning)";
 
       foreach (var model in Favourites)
          create_menu_items(all_models_root_menu, model);
