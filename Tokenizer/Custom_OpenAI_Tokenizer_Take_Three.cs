@@ -49,7 +49,7 @@ internal class Custom_OpenAI_Tokenizer_Take_Three {
       //not anymore it doesnt!
       return -1;
 
-      Model? model = Models.Available.FirstOrDefault(m => m.id == Config.Active.Language_Model);
+      Model? model = Models.get_active_Model();
 
       if (model == null)
          return -1;

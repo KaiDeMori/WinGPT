@@ -14,7 +14,6 @@ internal static class WinGPT_Main {
       Application.SetCompatibleTextRenderingDefault(false);
 
       HTTP_Client.Init(Config.Active.OpenAI_API_Key);
-      Models.initialize_available_models_for_api_key();
 
       ApplicationConfiguration.Initialize();
       Application.Run(new WinGPT_Form());

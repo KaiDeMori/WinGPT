@@ -67,7 +67,7 @@ public partial class WinGPT_Form : Form {
       Text += $" v{Tools.VersionString} › {Application_Paths.APP_MODE}";
 
       Set_status_bar("Initializing available models.");
-      Initialize_Models_MenuItems();
+      Models.initialize_models_menu(models_ToolStripMenuItem);
       uploaded_files_comboBox.Items.Clear();
       uploaded_files_comboBox.DataSource    = Associated_files;
       uploaded_files_comboBox.DisplayMember = "DisplayName";
@@ -816,34 +816,7 @@ public partial class WinGPT_Form : Form {
    }
 
    private void Initialize_Models_MenuItems() {
-      models_ToolStripMenuItem.DropDownItems.Clear();
-      models_ToolStripMenuItem.ToolTipText = "Model ID (\ud83d\udc41 = vision)";
-      foreach (var model in Models.Available) {
-         var model_label = model.friendly_name;
-         var item        = new ToolStripMenuItem(model_label);
-         item.Tag = model;
-         item.Click += (sender, args) => {
-            Config.Active.Language_Model  = model.id;
-            models_ToolStripMenuItem.Text = model_label;
-            Config.Save();
-            foreach (ToolStripMenuItem oneitem in models_ToolStripMenuItem.DropDownItems)
-               oneitem.Checked = oneitem == item;
-            realculate_all_token_counts();
-         };
-         models_ToolStripMenuItem.DropDownItems.Add(item);
-      }
-
-      var current_model = Models.get_active_Model();
-
-      //now we have to set the checked property of the correct menu item
-      foreach (ToolStripMenuItem item in models_ToolStripMenuItem.DropDownItems) {
-         if (item.Tag == current_model) {
-            item.Checked = true;
-         }
-      }
-
-      //and set the text of the main menu item
-      models_ToolStripMenuItem.Text = current_model.friendly_name;
+      Models.initialize_models_menu(models_ToolStripMenuItem);
    }
 
    /// <summary>
@@ -1166,20 +1139,10 @@ public partial class WinGPT_Form : Form {
    }
 
    private void checkModelsToolStripMenuItem_Click(object sender, EventArgs e) {
-      Models.initialize_available_models_for_api_key();
-
-      var message     = Models.Available.Order().Aggregate("Available models:\r\n", (current, model) => current + $"{model}\r\n");
-      var models_file = Path.Join(Config.AdHoc_Downloads_Path.FullName, Config.models_text_filename);
-      File.WriteAllText(models_file, message);
-      MessageBox.Show($"Available models written to\r\n{models_file}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-      var toolStripItemCollection = models_ToolStripMenuItem.DropDownItems;
-      foreach (ToolStripItem toolStripItem in toolStripItemCollection) {
-         var model     = toolStripItem.Tag as Model;
-         var available = Models.Available.Contains(model);
-         toolStripItem.Enabled = available;
-      }
+      Models.initialize_models_menu(models_ToolStripMenuItem);
+      Models.save_available_models_info();
    }
+
 
    private void take_screenshot_ToolStripMenuItem_Click(object sender, EventArgs e) {
       // Hide the form to exclude it from the screenshot
