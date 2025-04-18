@@ -46,6 +46,9 @@ internal class Custom_OpenAI_Tokenizer_Take_Three {
 
    // This method calculates the token count for messages and IFunction array based on the model
    public static int count_tokens(ImmutableList<Message> messages, Function[] functions) {
+      //not anymore it doesnt!
+      return -1;
+
       Model? model = Models.Available.FirstOrDefault(m => m.id == Config.Active.Language_Model);
 
       if (model == null)
