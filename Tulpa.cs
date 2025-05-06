@@ -295,20 +295,11 @@ public class Tulpa : InterTulpa {
 
       //FunctionCall? function_call = zeroth_Choice.message.function_call;
 
-      Tool_Call.Function? function_call = zeroth_Choice.message.tool_calls?.FirstOrDefault()?.function;
-
-      if (function_call is not null) {
-         //Also the docs are vague about the finish reason, so let's check that too
-         var finish_reason = zeroth_Choice.finish_reason;
-         if (finish_reason != Finish_Reason.tool_calls) {
-            MessageBox.Show($"The API returned a finish reason: {finish_reason}.\r\nWhat's going on here?!", "?!?!?!1?", MessageBoxButtons.YesNoCancel,
-               MessageBoxIcon.Question);
-         }
-
-         //see if function name is "saveFunction"
-         if (function_call.name == "saveFile") {
-            Save_CallArguments? save_CallArguments = JsonConvert.DeserializeObject<Save_CallArguments>(
-               function_call.arguments);
+      var           tool_calls            = zeroth_Choice.message.tool_calls ?? [];
+      StringBuilder function_call_content = new StringBuilder();
+      foreach (var tool_call in tool_calls) {
+         if (tool_call.function.name == "saveFile") {
+            Save_CallArguments? save_CallArguments = JsonConvert.DeserializeObject<Save_CallArguments>(tool_call.function.arguments);
             if (save_CallArguments is null) {
                throw new Exception("The arguments are is null!");
             }
@@ -318,14 +309,50 @@ public class Tulpa : InterTulpa {
             AssociatedFilesSaver.SaveFile(save_CallArguments.filename, save_CallArguments.text_content, associated_files, out var dummy_assistant_content);
 
             //in case we have no content for the user, provide some feedback
-            if (string.IsNullOrWhiteSpace(response_message.content)) {
-               response_message = new Simple_Message() {
-                  role    = Role.assistant,
-                  content = dummy_assistant_content
-               };
-            }
+            function_call_content.AppendLine(dummy_assistant_content);
          }
       }
+
+      if (tool_calls.Length > 0 && string.IsNullOrWhiteSpace(response_message.content)) {
+         response_message = new Simple_Message {
+            role    = Role.assistant,
+            content = function_call_content.ToString()
+         };
+      }
+
+
+      //old code. now we support multiple tool calls
+      //Tool_Call.Function? function_call = zeroth_Choice.message.tool_calls?.FirstOrDefault()?.function;
+
+      //if (function_call is not null) {
+      //   //Also the docs are vague about the finish reason, so let's check that too
+      //   var finish_reason = zeroth_Choice.finish_reason;
+      //   if (finish_reason != Finish_Reason.tool_calls) {
+      //      MessageBox.Show($"The API returned a finish reason: {finish_reason}.\r\nWhat's going on here?!", "?!?!?!1?", MessageBoxButtons.YesNoCancel,
+      //         MessageBoxIcon.Question);
+      //   }
+
+      //   //see if function name is "saveFunction"
+      //   if (function_call.name == "saveFile") {
+      //      Save_CallArguments? save_CallArguments = JsonConvert.DeserializeObject<Save_CallArguments>(
+      //         function_call.arguments);
+      //      if (save_CallArguments is null) {
+      //         throw new Exception("The arguments are is null!");
+      //      }
+
+      //      Debug.WriteLine($"saveFunctionCall: {save_CallArguments}");
+      //      //see if the file is in the associated files use the new AssociatedFilesSaver
+      //      AssociatedFilesSaver.SaveFile(save_CallArguments.filename, save_CallArguments.text_content, associated_files, out var dummy_assistant_content);
+
+      //      //in case we have no content for the user, provide some feedback
+      //      if (string.IsNullOrWhiteSpace(response_message.content)) {
+      //         response_message = new Simple_Message() {
+      //            role    = Role.assistant,
+      //            content = dummy_assistant_content
+      //         };
+      //      }
+      //   }
+      //}
 
       //// done with post
       ///////////////////
