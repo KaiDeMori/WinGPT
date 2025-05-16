@@ -188,7 +188,7 @@ public static class Models {
    }
 
    public static void save_available_models_info() {
-      var message     = All.Order().Aggregate("Available models:\r\n", (current, model) => current + $"{model}\r\n");
+      var message     = All.OrderBy(model => model.id).Aggregate("Available models:\r\n", (current, model) => current + $"{model.id}\r\n");
       var models_file = Path.Join(Config.AdHoc_Downloads_Path.FullName, Config.models_text_filename);
       File.WriteAllText(models_file, message);
       MessageBox.Show($"Available models written to\r\n{models_file}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
