@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -130,7 +131,7 @@ public static class Models {
       all_models_root_menu.DropDownItems.Remove(selected_item);
 
       // Add or remove model from favourites
-      var model = (Model) selected_item.Tag;
+      var model = selected_item.Tag as Model;
 
       if (Favourites.Contains(model)) {
          // Move from Favourites to Regular
@@ -146,6 +147,8 @@ public static class Models {
       // Sort both lists
       Favourites = Favourites.OrderBy(m => m.id).ToList();
       Regular    = Regular.OrderBy(m => m.id).ToList();
+
+      save_favourites_file();
 
       // Now re-insert the item in the correct position
       var separator_index = all_models_root_menu.DropDownItems
@@ -183,8 +186,6 @@ public static class Models {
          // If we didn't insert before, add at the end
          all_models_root_menu.DropDownItems.Add(selected_item);
       }
-
-      save_favourites_file();
    }
 
    public static void save_available_models_info() {
