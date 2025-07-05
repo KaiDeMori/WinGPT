@@ -100,9 +100,6 @@ public class Tulpa : InterTulpa {
       if (Config.Active.UIable.Math_Rendering)
          spice_up_system_message("markf278digger/math_render_block_system_message.md", tuned_up_system_message_content);
 
-      // "Upload"
-      add_associated_files_to_system_message(associated_files, tuned_up_system_message_content);
-
       var system_message_content = tuned_up_system_message_content.ToString();
       //content is a list now!
       var new_system_message = new Simple_Message() {
@@ -123,7 +120,9 @@ public class Tulpa : InterTulpa {
 
       add_images_to_user_message(user_message, associated_files);
       add_documents_to_user_message(user_message, associated_files);
-
+      // "Upload"
+      add_associated_files_to_system_message(associated_files, tuned_up_system_message_content);
+      
       all_messages.Add(user_message);
 
       var all_immutable = all_messages.ToImmutableList();
