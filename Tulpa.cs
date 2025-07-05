@@ -100,6 +100,9 @@ public class Tulpa : InterTulpa {
       if (Config.Active.UIable.Math_Rendering)
          spice_up_system_message("markf278digger/math_render_block_system_message.md", tuned_up_system_message_content);
 
+      // "Upload" not to system message anymore.
+      //add_associated_files_to_system_message(associated_files, tuned_up_system_message_content);
+
       var system_message_content = tuned_up_system_message_content.ToString();
       //content is a list now!
       var new_system_message = new Simple_Message() {
@@ -120,9 +123,9 @@ public class Tulpa : InterTulpa {
 
       add_images_to_user_message(user_message, associated_files);
       add_documents_to_user_message(user_message, associated_files);
-      // "Upload"
-      add_associated_files_to_system_message(associated_files, tuned_up_system_message_content);
-      
+      //Add the documents to the user message now, since the new models really don't like it in the system-message.
+      add_associated_files_to_user_message(user_message, associated_files);
+
       all_messages.Add(user_message);
 
       var all_immutable = all_messages.ToImmutableList();
@@ -233,6 +236,25 @@ public class Tulpa : InterTulpa {
       //add the associated files to the system message
       foreach (var file in associated_files) {
          Markf278DownHelper.create_markdown_for_file(tuned_up_system_message_content, file);
+      }
+   }
+
+   private static void add_associated_files_to_user_message(Complex_Message user_message, FileInfo[]? associated_files) {
+      if (associated_files is null)
+         return;
+
+      foreach (var file in associated_files) {
+         if (FileTypeIdentifier.GetFileType(file.FullName) != FileType.Code)
+            continue;
+
+         string base64DataUrl = FileHelper.get_base64_data_url(file);
+         document_content_part documentContent = new() {
+            file = new() {
+               filename  = file.Name,
+               file_data = base64DataUrl
+            }
+         };
+         user_message.content.Add(documentContent);
       }
    }
 
@@ -359,7 +381,15 @@ public class Tulpa : InterTulpa {
       return response_message;
    }
 
-   // Very limited functionality: NO functions, NO system messages, NO associated files, NO images
+   /// <summary>
+   /// Special requests for "preview" models.
+   /// Actually they are so expensive, that I should remove them.
+   /// Very limited functionality: NO functions, NO system messages, NO associated files, NO images
+   /// </summary>
+   /// <param name="user_message"></param>
+   /// <param name="conversation"></param>
+   /// <param name="associated_files"></param>
+   /// <returns></returns>
    private Request Create_Preview_Request(Simple_Message user_message, Conversation conversation, FileInfo[]? associated_files = null) {
       // Pre-Production
       /////////////////////////
@@ -384,8 +414,6 @@ public class Tulpa : InterTulpa {
       if (Config.Active.UIable.Math_Rendering)
          spice_up_system_message("markf278digger/math_render_block_system_message.md", tuned_up_fake_system_message_content);
 
-      // "Upload"
-      add_associated_files_to_system_message(associated_files, tuned_up_fake_system_message_content);
 
       var system_message_content = tuned_up_fake_system_message_content.ToString();
       //content is a list now!
