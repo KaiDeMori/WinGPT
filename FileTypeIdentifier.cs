@@ -2,7 +2,7 @@ namespace WinGPT;
 
 public enum FileType {
    Image,
-   Code,
+   Code, //a.k.a "Text"
    Document,
    Other
 }

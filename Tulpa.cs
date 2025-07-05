@@ -123,8 +123,8 @@ public class Tulpa : InterTulpa {
 
       add_images_to_user_message(user_message, associated_files);
       add_documents_to_user_message(user_message, associated_files);
-      //Add the documents to the user message now, since the new models really don't like it in the system-message.
-      add_associated_files_to_user_message(user_message, associated_files);
+      //Add the code files to the **user message**, since the new models really don't like it in the system-message.
+      add_associated_code_files_to_user_message(user_message, associated_files);
 
       all_messages.Add(user_message);
 
@@ -239,7 +239,7 @@ public class Tulpa : InterTulpa {
       }
    }
 
-   private static void add_associated_files_to_user_message(Complex_Message user_message, FileInfo[]? associated_files) {
+    private static void add_associated_code_files_to_user_message(Complex_Message user_message, FileInfo[]? associated_files) {
       if (associated_files is null)
          return;
 
