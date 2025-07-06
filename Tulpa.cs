@@ -5,9 +5,7 @@ using Newtonsoft.Json;
 using WinGPT.markf278digger;
 using WinGPT.OpenAI;
 using WinGPT.OpenAI.Chat;
-using WinGPT.Taxonomy;
 using WinGPT.Tokenizer;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 using Message = WinGPT.OpenAI.Chat.Message;
 
 // ReSharper disable MethodHasAsyncOverload
@@ -100,9 +98,6 @@ public class Tulpa : InterTulpa {
       if (Config.Active.UIable.Math_Rendering)
          spice_up_system_message("markf278digger/math_render_block_system_message.md", tuned_up_system_message_content);
 
-      // "Upload" not to system message anymore.
-      //add_associated_files_to_system_message(associated_files, tuned_up_system_message_content);
-
       var system_message_content = tuned_up_system_message_content.ToString();
       //content is a list now!
       var new_system_message = new Simple_Message() {
@@ -123,8 +118,10 @@ public class Tulpa : InterTulpa {
 
       add_images_to_user_message(user_message, associated_files);
       add_documents_to_user_message(user_message, associated_files);
-      //Add the code files to the **user message**, since the new models really don't like it in the system-message.
-      add_associated_code_files_to_user_message(user_message, associated_files);
+
+      var code_files_message = create_message_from_associated_code_files(associated_files);
+      if (code_files_message is not null)
+         all_messages.Add(code_files_message);
 
       all_messages.Add(user_message);
 
@@ -235,27 +232,52 @@ public class Tulpa : InterTulpa {
 
       //add the associated files to the system message
       foreach (var file in associated_files) {
-         Markf278DownHelper.create_markdown_for_file(tuned_up_system_message_content, file);
+         var fileType = FileTypeIdentifier.GetFileType(file.FullName);
+
+         if (fileType != FileType.Code) {
+            //if the file is not supported, we just return
+            MessageBox.Show("File type not supported:\r\n" + file.Extension, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+         }
+
+         var markdown_codeblock = Markf278DownHelper.create_markdown_code_block(file);
+         tuned_up_system_message_content.AppendLine(markdown_codeblock);
       }
    }
 
-    private static void add_associated_code_files_to_user_message(Complex_Message user_message, FileInfo[]? associated_files) {
-      if (associated_files is null)
-         return;
+   /// <summary>
+   /// Creates a <see cref="WinGPT.OpenAI.Chat.Complex_Message"/> from the provided associated code files.
+   /// Each code file is formatted as a markdown code block and added to the message as a separate content part of type <see cref="text_content_part"/>.
+   /// </summary>
+   /// <param name="associated_files">
+   /// An array of <see cref="System.IO.FileInfo"/> objects representing the associated code files.
+   /// If the array is <c>null</c> or empty, the method returns <c>null</c>.
+   /// </param>
+   /// <returns>
+   /// A <see cref="WinGPT.OpenAI.Chat.Complex_Message"/> containing the content of the associated code files
+   /// formatted as Markdown code blocks, or <c>null</c> if no valid code files are provided.
+   /// </returns>
+   private static Complex_Message? create_message_from_associated_code_files(FileInfo[]? associated_files) {
+      var code_files_message = new Complex_Message();
+
+      if (associated_files is not {Length: > 0})
+         return null;
 
       foreach (var file in associated_files) {
          if (FileTypeIdentifier.GetFileType(file.FullName) != FileType.Code)
             continue;
 
-         string base64DataUrl = FileHelper.get_base64_data_url(file);
-         document_content_part documentContent = new() {
-            file = new() {
-               filename  = file.Name,
-               file_data = base64DataUrl
-            }
+         string markdown_data = Markf278DownHelper.create_markdown_code_block(file);
+
+         content_part content_part = new text_content_part {
+            text = markdown_data
          };
-         user_message.content.Add(documentContent);
+
+         code_files_message.content.Add(content_part);
       }
+
+      //no code files found, return null
+      return code_files_message.content.Count == 0 ? null : code_files_message;
    }
 
    /// <summary>

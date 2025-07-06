@@ -168,6 +168,9 @@
 		<None Update="Filetransfer\saveFile_system_message.md">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<None Update="markf278digger\extension_to_language_map.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="markf278digger\math_render_block_system_message.md">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
